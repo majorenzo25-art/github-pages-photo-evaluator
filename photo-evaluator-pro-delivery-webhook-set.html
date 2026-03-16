@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Photo Eval">
+<link rel="manifest" href="./manifest.webmanifest">
+<title>起動対象 | フォト評価 Mobile Ready</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #18181c;
+    --surface2: #222228;
+    --border: #2e2e38;
+    --text: #f0f0f4;
+    --text-muted: #7a7a8e;
+    --text-dim: #3e3e52;
+    --accent: #e8ff47;
+    --accent-dim: rgba(232,255,71,0.12);
+    --accent-border: rgba(232,255,71,0.3);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.12);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,0.12);
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  /* ── ノイズテクスチャ背景 ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── ナビ ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,15,17,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+  }
+  .nav-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-weight: 900;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo span { color: var(--text-muted); font-weight: 400; }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .tab-btn:hover { background: var(--surface2); color: var(--text); }
+  .tab-btn.active { background: var(--accent); color: #0f0f11; font-weight: 700; }
+
+  /* ── レイアウト ── */
+  .page { display: none; position: relative; z-index: 1; }
+  .page.active { display: block; }
+  .container { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── タイポ ── */
+  .page-title {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .page-sub {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 32px;
+  }
+  .page-sub.note {
+    margin-top: -20px;
+    margin-bottom: 20px;
+    font-size: 0.78rem;
+  }
+
+  .settings-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .settings-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .settings-sub {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .settings-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+  .settings-field {
+    flex: 1 1 280px;
+  }
+  .settings-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .settings-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 11px 12px;
+    font: inherit;
+  }
+  .settings-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding-bottom: 11px;
+  }
+  .settings-hint {
+    margin-top: 10px;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+  .settings-input:focus {
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: 0 0 0 3px rgba(232,255,71,0.08);
+  }
+  .launch-card {
+    background: linear-gradient(135deg, rgba(232,255,71,0.08), rgba(96,165,250,0.08));
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .launch-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .launch-item {
+    flex: 1 1 220px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .launch-label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .launch-value {
+    font-size: 0.88rem;
+    color: var(--text);
+    word-break: break-word;
+  }
+  .launch-warning {
+    display: none;
+    background: var(--red-dim);
+    border: 1px solid rgba(248,113,113,0.35);
+    border-radius: var(--radius);
+    color: var(--red);
+    padding: 16px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .launch-warning.active {
+    display: block;
+  }
+  .launch-recommend {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
+  /* ── ドロップゾーン ── */
+  #dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+  }
+  #dropzone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, var(--accent-dim) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #dropzone:hover, #dropzone.drag-over {
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+  #dropzone:hover::before, #dropzone.drag-over::before { opacity: 1; }
+  #dropzone.drag-over { transform: scale(1.01); }
+
+  #dropzone input[type="file"] { display: none; }
+  .drop-icon { font-size: 3rem; margin-bottom: 12px; display: block; }
+  .drop-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .drop-sub { color: var(--text-muted); font-size: 0.8rem; }
+
+  /* プレビュー */
+  #preview-wrap {
+    display: none;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  #preview-img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+    background: #000;
+  }
+  .preview-bar {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+  }
+  .preview-name { font-size: 0.8rem; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .preview-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .preview-change, .btn-secondary {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .preview-change:hover, .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* ── ボタン ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: #0f0f11;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.04em;
+    margin-top: 16px;
+  }
+  .btn-primary:hover:not(:disabled) { background: #f5ff70; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,255,71,0.25); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── ローディング ── */
+  #loading {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+  }
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-label { color: var(--text-muted); font-size: 0.875rem; }
+  .loading-steps { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+  .loading-step {
+    width: 6px; height: 6px;
+    background: var(--border);
+    border-radius: 50%;
+    animation: pulse-step 1.5s ease-in-out infinite;
+  }
+  .loading-step:nth-child(2) { animation-delay: 0.2s; }
+  .loading-step:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse-step {
+    0%, 100% { background: var(--border); transform: scale(1); }
+    50% { background: var(--accent); transform: scale(1.4); }
+  }
+
+  /* ── エラー ── */
+  #error-box {
+    display: none;
+    background: var(--red-dim);
+    border: 1px solid rgba(248,113,113,0.3);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 0.875rem;
+    color: var(--red);
+  }
+
+  /* ── 結果エリア ── */
+  #result-section { display: none; margin-top: 32px; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .result-title { font-weight: 700; font-size: 1rem; }
+  .result-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-reset {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* 総合スコア */
+  .total-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease-out;
+  }
+  .total-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+  }
+  .total-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .total-number {
+    font-size: clamp(4rem, 15vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -0.04em;
+  }
+  .total-number.score-good { color: var(--green); }
+  .total-number.score-avg  { color: var(--amber); }
+  .total-number.score-poor { color: var(--red); }
+  .total-unit { font-size: 1.2rem; color: var(--text-muted); margin-left: 4px; font-weight: 400; }
+  .total-badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  /* 項目スコアグリッド */
+  .scores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.4s ease-out 0.1s both;
+  }
+  .score-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    transition: border-color 0.15s;
+  }
+  .score-item:hover { border-color: var(--text-dim); }
+  .score-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .score-item-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .score-item-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+  .score-bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.16,1,0.3,1);
+    width: 0;
+  }
+
+  /* コメント */
+  .comments-section {
+    display: grid;
+    gap: 10px;
+    animation: fadeUp 0.4s ease-out 0.2s both;
+  }
+  .comment-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+  }
+  .comment-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .comment-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .comment-label.label-good { color: var(--green); }
+  .comment-label.label-imp  { color: var(--amber); }
+  .comment-label.label-all  { color: var(--blue); }
+  .comment-text { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
+
+  .delivery-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-top: 16px;
+    animation: fadeUp 0.4s ease-out 0.25s both;
+  }
+  .delivery-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .delivery-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .delivery-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .delivery-pill.pending { background: var(--surface2); color: var(--text-muted); }
+  .delivery-pill.success { background: var(--green-dim); color: var(--green); }
+  .delivery-pill.error { background: var(--red-dim); color: var(--red); }
+  .delivery-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .delivery-meta-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .delivery-meta-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .delivery-meta-value {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    word-break: break-word;
+  }
+  .delivery-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .delivery-note {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 履歴ページ ── */
+  .history-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .history-count { color: var(--text-muted); font-size: 0.8rem; }
+  .btn-clear-all {
+    background: none;
+    border: 1px solid rgba(248,113,113,0.3);
+    color: var(--red);
+    font-family: inherit;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-clear-all:hover { background: var(--red-dim); }
+
+  #history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .history-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: fadeUp 0.3s ease-out both;
+  }
+  .history-card:hover { border-color: var(--accent-border); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .history-thumb {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: var(--surface2);
+    position: relative;
+  }
+  .history-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+  .history-card:hover .history-thumb img { transform: scale(1.04); }
+  .history-score-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    backdrop-filter: blur(8px);
+  }
+  .history-info { padding: 12px; }
+  .history-info-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .history-score-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  .history-date { font-size: 0.7rem; color: var(--text-dim); font-family: 'DM Mono', monospace; }
+  .history-comment {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .history-card-footer {
+    display: flex;
+    gap: 6px;
+  }
+  .btn-detail, .btn-delete {
+    flex: 1;
+    padding: 5px 0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .btn-detail { background: var(--surface2); color: var(--text-muted); }
+  .btn-detail:hover { background: var(--accent); color: #0f0f11; }
+  .btn-delete { background: var(--red-dim); color: var(--red); }
+  .btn-delete:hover { background: var(--red); color: #fff; }
+
+  #history-empty {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+  }
+  .empty-icon { font-size: 3.5rem; margin-bottom: 16px; opacity: 0.3; }
+  .empty-text { color: var(--text-muted); font-size: 0.875rem; }
+
+  /* ── 詳細モーダル ── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  #modal-overlay.active { display: flex; align-items: flex-start; justify-content: center; }
+  #modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 640px;
+    margin: auto;
+    overflow: hidden;
+    animation: modalIn 0.25s cubic-bezier(0.16,1,0.3,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title { font-weight: 700; font-size: 0.9rem; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--surface2); color: var(--text); }
+  .modal-img { width: 100%; max-height: 300px; object-fit: contain; background: #000; display: block; }
+  .modal-body { padding: 20px; }
+
+  /* スコアバーの色 */
+  .bar-excellent { background: var(--green); }
+  .bar-good      { background: var(--blue); }
+  .bar-avg       { background: var(--amber); }
+  .bar-poor      { background: var(--red); }
+
+  /* レスポンシブ */
+  @media (max-width: 600px) {
+    .scores-grid { grid-template-columns: 1fr 1fr; }
+    #history-grid { grid-template-columns: 1fr 1fr; }
+    .container { padding: 24px 16px 60px; }
+    .preview-bar, .result-header { align-items: flex-start; }
+  }
+  @media (max-width: 380px) {
+    .scores-grid { grid-template-columns: 1fr; }
+    #history-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ナビ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">📸 <span>PHOTO</span>EVAL</div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="showPage('evaluate')">評価する</button>
+      <button class="tab-btn" onclick="showPage('history')">履歴</button>
+    </div>
+  </div>
+</nav>
+
+<!-- 評価ページ -->
+<div id="page-evaluate" class="page active">
+  <div class="container">
+    <h1 class="page-title">写真を評価する / 起動対象ファイル</h1>
+    <p class="page-sub">この画面は正式な起動先です。PCではローカル起動スクリプト、iPhoneではHTTPS公開URLから開いてください。構図・明るさ・ピントなど7項目でスコアリングします</p>
+    <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応します。HEIFはお使いのブラウザによってはプレビューや解析ができない場合があります。</p>
+
+    <div id="launch-warning" class="launch-warning"></div>
+
+    <div class="launch-card">
+      <div class="launch-row">
+        <div class="launch-item">
+          <span class="launch-label">起動モード</span>
+          <span class="launch-value" id="launch-mode">確認中...</span>
+        </div>
+        <div class="launch-item">
+          <span class="launch-label">Webhook URL</span>
+          <span class="launch-value" id="webhook-status-view">確認中...</span>
+        </div>
+      </div>
+      <p class="launch-recommend">推奨: PCは `start-local-app` で起動、iPhoneはHTTPSで公開したこのHTMLをSafariで開き、必要ならホーム画面に追加してください。</p>
+    </div>
+
+    <div class="settings-card">
+      <p class="settings-title">送信設定 / 起動固定版</p>
+      <p class="settings-sub">評価完了後にWebhookへ画像と評価結果をPOSTし、Google Apps Script側でDrive保存やメール送信を行います。資格情報はHTMLに保持しません。</p>
+      <div class="settings-row">
+        <div class="settings-field">
+          <label class="settings-label" for="webhook-url">Webhook URL</label>
+          <input class="settings-input" id="webhook-url" type="url" value="https://script.google.com/macros/s/AKfycbyBeavKTziPWneYuiiLNTgVuTTajtjGJeRp29-4VuPG86c3Xis91t7duj_-oB4d6eIgWA/exec" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div class="settings-field">
+          <label class="settings-label" for="webhook-key">Webhook Key（任意）</label>
+          <input class="settings-input" id="webhook-key" type="text" placeholder="secret-key">
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-field">
+          <label class="settings-label" for="delivery-email">宛先メールアドレス</label>
+          <input class="settings-input" id="delivery-email" type="email" placeholder="name@example.com">
+        </div>
+        <div class="settings-field">
+          <label class="settings-label" for="delivery-target">送信先種別</label>
+          <select class="settings-input" id="delivery-target">
+            <option value="both">Drive + Email</option>
+            <option value="drive">Driveのみ</option>
+            <option value="email">Emailのみ</option>
+          </select>
+        </div>
+        <label class="settings-check">
+          <input id="auto-send-toggle" type="checkbox">
+          評価完了後に自動送信
+        </label>
+      </div>
+      <p class="settings-hint">送信時は画像を長辺1920pxのJPEGへ変換し、ファイル名・評価結果・作成日時と合わせて送信します。</p>
+    </div>
+
+    <!-- ドロップゾーン -->
+    <div id="dropzone" onclick="document.getElementById('file-input').click()">
+      <input type="file" id="file-input" accept="image/jpeg,image/jpg,image/png,image/webp,image/heif,image/heic,.jpg,.jpeg,.png,.webp,.heif,.heic" capture="environment">
+      <span class="drop-icon">📷</span>
+      <p class="drop-title">写真をドラッグ＆ドロップ</p>
+      <p class="drop-sub">または クリックして選択 ／ JPG・JPEG・PNG・WebP・HEIF ／ 最大25MB</p>
+    </div>
+
+    <!-- プレビュー -->
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="プレビュー">
+      <div class="preview-bar">
+        <span class="preview-name" id="preview-name">—</span>
+        <div class="preview-actions">
+          <a class="btn-secondary" id="download-current-photo" href="#" download>写真を保存</a>
+          <button class="preview-change" onclick="resetFile()">変更</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="error-box"></div>
+
+    <!-- 評価ボタン -->
+    <button class="btn-primary" id="eval-btn" disabled onclick="runEvaluation()">
+      ✦ 写真を評価する
+    </button>
+
+    <!-- ローディング -->
+    <div id="loading">
+      <div class="loader"></div>
+      <p class="loading-label" id="loading-label">画像を解析中...</p>
+      <div class="loading-steps">
+        <div class="loading-step"></div>
+        <div class="loading-step"></div>
+        <div class="loading-step"></div>
+      </div>
+    </div>
+
+    <!-- 結果 -->
+    <div id="result-section">
+      <div class="result-header">
+        <p class="result-title">✦ 評価結果</p>
+        <div class="result-actions">
+          <a class="btn-secondary" id="download-result-photo" href="#" download>画像を保存</a>
+          <button class="btn-reset" id="manual-send-btn" onclick="sendLatestRecord()">Webhook送信</button>
+          <button class="btn-reset" onclick="resetAll()">新しく評価</button>
+        </div>
+      </div>
+      <div id="result-inner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 履歴ページ -->
+<div id="page-history" class="page">
+  <div class="container">
+    <h1 class="page-title">評価履歴</h1>
+    <p class="page-sub">保存された評価結果の一覧です</p>
+
+    <div class="history-toolbar">
+      <span class="history-count" id="history-count">0件</span>
+      <button class="btn-clear-all" onclick="clearAllHistory()">すべて削除</button>
+    </div>
+
+    <div id="history-grid"></div>
+    <div id="history-empty">
+      <div class="empty-icon">📭</div>
+      <p class="empty-text">まだ評価がありません<br>写真をアップロードして最初の評価をしましょう</p>
+    </div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">評価詳細</span>
+      <div class="result-actions">
+        <a class="btn-secondary" id="download-modal-photo" href="#" download>画像を保存</a>
+        <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      </div>
+    </div>
+    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+
+<script>
+const SCORE_ITEMS = [
+  { label: '構図', key: 'compositionScore', icon: '🖼️' },
+  { label: '明るさ', key: 'brightnessScore', icon: '☀️' },
+  { label: 'ピント', key: 'focusScore', icon: '🔍' },
+  { label: '表情', key: 'expressionScore', icon: '😊' },
+  { label: '背景', key: 'backgroundScore', icon: '🌿' },
+  { label: '清潔感', key: 'cleanlinessScore', icon: '✨' },
+  { label: '印象', key: 'impressionScore', icon: '💫' },
+];
+
+const ITEM_COMMENT_MAP = {
+  compositionScore: {
+    high: ['左右・上下のバランスが安定し、主題配置もまとまっています。', '三分割構図との整合が高く、視線誘導が自然です。'],
+    mid: ['構図は成立していますが、主題位置を少し動かすと伸びます。', '全体のバランスは悪くありませんが、余白の整理で印象が上がります。'],
+    low: ['主題の位置が曖昧です。三分割線付近へ寄せると改善しやすいです。', '左右または上下の重心が偏っています。撮影位置やトリミングを見直してください。'],
+  },
+  brightnessScore: {
+    high: ['露出が安定しており、白飛び・黒つぶれがよく抑えられています。', '平均輝度とコントラストのバランスが良く、見やすい明るさです。'],
+    mid: ['明るさは許容範囲ですが、露出補正でさらに見栄えが上がります。', '大きな破綻はありませんが、ハイライトと暗部の扱いに改善余地があります。'],
+    low: ['露出が極端です。白飛びや黒つぶれを抑える再撮影が必要です。', '平均輝度のズレが大きく、明るさ評価を下げています。'],
+  },
+  focusScore: {
+    high: ['エッジ量とシャープネスが十分で、主題の輪郭が明瞭です。', 'ピントの芯があり、情報がきれいに残っています。'],
+    mid: ['大きなピンボケではありませんが、やや甘さがあります。', '輪郭情報は取れていますが、もう少しシャープさが欲しい状態です。'],
+    low: ['エッジ量が不足しており、ピントが甘く見えます。', 'シャープネスが低く、手ブレかピントずれの可能性があります。'],
+  },
+  expressionScore: {
+    high: ['顔検出結果と主題のまとまりから見て、人物訴求力が高いです。', '人物がしっかり主題化されており、表情項目は高評価です。'],
+    mid: ['表情項目は平均的です。顔の向きや距離感を整えると伸びます。', '顔は捉えられていますが、印象づけはまだ改善できます。'],
+    low: ['顔検出が弱いか、主題化が不足しているため表情評価が伸びていません。', '人物の見せ方が弱く、顔位置や距離感の再設計が必要です。'],
+  },
+  backgroundScore: {
+    high: ['背景の情報量が抑えられ、主題分離ができています。', '背景が整理されており、視線が主題へ素直に集まります。'],
+    mid: ['背景は許容範囲ですが、やや情報量が多めです。', '背景の整理は概ねできていますが、余計な要素を減らす余地があります。'],
+    low: ['背景の情報量が多く、主題より先に周辺が目に入ります。', '背景の散らかり度が高く、場所変更や整理が必要です。'],
+  },
+  cleanlinessScore: {
+    high: ['ノイズが少なく、画面全体に整頓感があります。', '視覚ノイズが抑えられ、清潔感のある見え方です。'],
+    mid: ['清潔感は平均的です。背景整理やノイズ低減で改善できます。', '大きな崩れはありませんが、細部の整頓で印象が上がります。'],
+    low: ['ノイズや背景の散らかりが清潔感を下げています。', '画面内の不要情報が多く、清潔感評価が低く出ています。'],
+  },
+  impressionScore: {
+    high: ['第一印象が強く、総合的な完成度が高い一枚です。', '構図・明るさ・主題性のバランスが良く、印象に残りやすい写真です。'],
+    mid: ['印象は平均以上ですが、決定力はまだ伸ばせます。', '破綻は少ないものの、強い記憶点はあと一歩です。'],
+    low: ['主題の押し出しが弱く、印象形成が不足しています。', '構図や背景の再設計で、印象スコアを大きく改善できます。'],
+  },
+};
+
+const STORAGE_KEYS = {
+  deliverySettings: 'photo_eval_delivery_settings',
+};
+const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyBeavKTziPWneYuiiLNTgVuTTajtjGJeRp29-4VuPG86c3Xis91t7duj_-oB4d6eIgWA/exec';
+
+const DB_NAME = 'photo_eval_db';
+const DB_VERSION = 1;
+const STORE_NAME = 'history';
+const MAX_HISTORY_ITEMS = 100;
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
+const DELIVERY_MAX_SIDE = 1920;
+
+let currentFile = null;
+let currentFileUrl = '';
+let latestResultRecord = null;
+let sendingRecordId = null;
+let modalRecordId = null;
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function round(value, digits = 0) {
+  const scale = 10 ** digits;
+  return Math.round(value * scale) / scale;
+}
+
+function normalize(value, min, max) {
+  if (max === min) return 0;
+  return clamp((value - min) / (max - min), 0, 1);
+}
+
+function scoreFromDeviation(value, ideal, tolerance, hardLimit = tolerance * 1.8) {
+  const deviation = Math.abs(value - ideal);
+  if (deviation <= tolerance) return 92 - (deviation / tolerance) * 12;
+  if (deviation >= hardLimit) return 24;
+  return 80 - ((deviation - tolerance) / (hardLimit - tolerance)) * 56;
+}
+
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function formatDate(iso) {
+  const date = new Date(iso);
+  return date.toLocaleDateString('ja-JP', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function getFileExtension(name = '') {
+  const parts = name.split('.');
+  return parts.length > 1 ? parts.pop().toLowerCase() : '';
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function showError(message) {
+  const box = document.getElementById('error-box');
+  box.textContent = `⚠ ${message}`;
+  box.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('error-box').style.display = 'none';
+}
+
+function getScoreColor(score) {
+  if (score >= 85) return { text: 'var(--green)', bar: 'bar-excellent', badge: 'score-good', label: '優秀' };
+  if (score >= 70) return { text: 'var(--blue)', bar: 'bar-good', badge: 'score-good', label: '良好' };
+  if (score >= 50) return { text: 'var(--amber)', bar: 'bar-avg', badge: 'score-avg', label: '普通' };
+  return { text: 'var(--red)', bar: 'bar-poor', badge: 'score-poor', label: '要改善' };
+}
+
+function getTier(score) {
+  if (score >= 85) return 'high';
+  if (score >= 60) return 'mid';
+  return 'low';
+}
+
+function pick(list, seed) {
+  return list[Math.abs(seed) % list.length];
+}
+
+function getDeliveryStatus(record) {
+  if (record?.delivery?.status === 'success') {
+    return { className: 'success', label: '送信成功' };
+  }
+  if (record?.delivery?.status === 'error') {
+    return { className: 'error', label: '送信失敗' };
+  }
+  if (record?.delivery?.status === 'sending') {
+    return { className: 'pending', label: '送信中' };
+  }
+  return { className: 'pending', label: '未送信' };
+}
+
+function readDeliverySettings() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.deliverySettings) || '{"webhookUrl":"","webhookKey":"","email":"","target":"both","autoSend":false}');
+    if (!parsed.webhookUrl) parsed.webhookUrl = DEFAULT_WEBHOOK_URL;
+    return parsed;
+  } catch {
+    return { webhookUrl: DEFAULT_WEBHOOK_URL, webhookKey: '', email: '', target: 'both', autoSend: false };
+  }
+}
+
+function writeDeliverySettings() {
+  try {
+    const settings = collectDeliverySettings();
+    if (!settings.webhookUrl) settings.webhookUrl = DEFAULT_WEBHOOK_URL;
+    localStorage.setItem(STORAGE_KEYS.deliverySettings, JSON.stringify(settings));
+    updateLaunchStatus(settings.webhookUrl);
+  } catch (error) {
+    console.warn('Failed to save delivery settings', error);
+    showError('送信設定の保存に失敗しました');
+  }
+}
+
+function applyDeliverySettings() {
+  const settings = readDeliverySettings();
+  document.getElementById('webhook-url').value = settings.webhookUrl || DEFAULT_WEBHOOK_URL;
+  document.getElementById('webhook-key').value = settings.webhookKey || '';
+  document.getElementById('delivery-email').value = settings.email || '';
+  document.getElementById('delivery-target').value = settings.target || 'both';
+  document.getElementById('auto-send-toggle').checked = Boolean(settings.autoSend);
+  updateLaunchStatus(document.getElementById('webhook-url').value.trim());
+}
+
+function collectDeliverySettings() {
+  return {
+    webhookUrl: document.getElementById('webhook-url').value.trim(),
+    webhookKey: document.getElementById('webhook-key').value.trim(),
+    email: document.getElementById('delivery-email').value.trim(),
+    target: document.getElementById('delivery-target').value,
+    autoSend: document.getElementById('auto-send-toggle').checked,
+  };
+}
+
+function validateDeliverySettings(settings) {
+  if (!settings.webhookUrl) return 'Webhook URLを入力してください';
+  if (!/^https?:\/\//.test(settings.webhookUrl)) return 'Webhook URLの形式が正しくありません';
+  if ((settings.target === 'email' || settings.target === 'both') && !settings.email) {
+    return 'メール送信先の宛先メールアドレスを入力してください';
+  }
+  if ((settings.target === 'email' || settings.target === 'both') && !isValidEmail(settings.email)) {
+    return '宛先メールアドレスの形式が正しくありません';
+  }
+  return '';
+}
+
+function updateLaunchStatus(webhookUrl = '') {
+  const modeEl = document.getElementById('launch-mode');
+  const webhookEl = document.getElementById('webhook-status-view');
+  const warningEl = document.getElementById('launch-warning');
+  const protocol = window.location.protocol;
+  const host = window.location.hostname;
+  const isFile = protocol === 'file:';
+  const isLocalServer = protocol === 'http:' && (host === '127.0.0.1' || host === 'localhost');
+  const isHostedHttps = protocol === 'https:';
+  const isSupported = isLocalServer || isHostedHttps;
+
+  if (modeEl) {
+    modeEl.textContent = isLocalServer
+      ? 'Local Server'
+      : isHostedHttps
+        ? 'Hosted Web App (iPhone対応)'
+        : (isFile ? 'File Direct Open' : `Unsupported (${window.location.origin || protocol})`);
+  }
+  if (webhookEl) {
+    webhookEl.textContent = webhookUrl || DEFAULT_WEBHOOK_URL;
+  }
+
+  if (!warningEl) return;
+  if (isFile) {
+    warningEl.classList.add('active');
+    warningEl.innerHTML = 'このHTMLは直接開かないでください。PCはローカル起動スクリプト、iPhoneはHTTPS公開URLから開いてください。`file://` 直開きではWebhook送信に失敗しやすくなります。';
+    return;
+  }
+  if (!isSupported) {
+    warningEl.classList.add('active');
+    warningEl.innerHTML = 'このページはPCではローカルHTTPサーバー、iPhoneではHTTPS公開URLから開いてください。現在のURLでは安定動作を保証できません。';
+    return;
+  }
+  warningEl.classList.remove('active');
+  warningEl.textContent = '';
+}
+
+function revokeCurrentFileUrl() {
+  if (currentFileUrl) {
+    URL.revokeObjectURL(currentFileUrl);
+    currentFileUrl = '';
+  }
+}
+
+function updateActionLinks(record = null) {
+  const previewLink = document.getElementById('download-current-photo');
+  const resultLink = document.getElementById('download-result-photo');
+  const modalLink = document.getElementById('download-modal-photo');
+  const sendButton = document.getElementById('manual-send-btn');
+
+  const setLinkState = (link, enabled, href, name) => {
+    if (!link) return;
+    if (enabled) {
+      link.href = href;
+      link.download = name;
+      link.style.pointerEvents = '';
+      link.style.opacity = '1';
+    } else {
+      link.removeAttribute('href');
+      link.removeAttribute('download');
+      link.style.pointerEvents = 'none';
+      link.style.opacity = '0.45';
+    }
+  };
+
+  setLinkState(previewLink, Boolean(currentFileUrl && currentFile), currentFileUrl, currentFile?.name || '');
+  setLinkState(resultLink, Boolean(record?.imageSrc), record?.imageSrc || '', record?.fileName || '');
+  setLinkState(modalLink, Boolean(record?.imageSrc), record?.imageSrc || '', record?.fileName || '');
+
+  if (sendButton) {
+    sendButton.disabled = !latestResultRecord || sendingRecordId === latestResultRecord.id;
+    sendButton.textContent = sendingRecordId === latestResultRecord?.id ? '送信中...' : 'Webhook送信';
+  }
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(button => button.classList.remove('active'));
+  document.getElementById(`page-${name}`).classList.add('active');
+  document.querySelectorAll('.tab-btn')[name === 'evaluate' ? 0 : 1].classList.add('active');
+  if (name === 'history') void renderHistory();
+}
+
+document.getElementById('file-input').addEventListener('change', event => {
+  const file = event.target.files[0];
+  if (file) void setFile(file);
+  event.target.value = '';
+});
+
+['webhook-url', 'webhook-key', 'delivery-email', 'delivery-target', 'auto-send-toggle'].forEach(id => {
+  document.getElementById(id).addEventListener(id === 'auto-send-toggle' || id === 'delivery-target' ? 'change' : 'input', writeDeliverySettings);
+});
+
+const dropzone = document.getElementById('dropzone');
+dropzone.addEventListener('dragover', event => {
+  event.preventDefault();
+  dropzone.classList.add('drag-over');
+});
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', event => {
+  event.preventDefault();
+  dropzone.classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (file) void setFile(file);
+});
+
+async function setFile(file) {
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heif', 'image/heic'];
+  const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'heif', 'heic'];
+  const extension = getFileExtension(file.name);
+
+  if (!allowedTypes.includes(file.type) && !allowedExts.includes(extension)) {
+    showError('JPG・JPEG・PNG・WebP・HEIF形式のみ対応しています');
+    return;
+  }
+  if (file.size > MAX_UPLOAD_BYTES) {
+    showError('ファイルサイズは25MB以下にしてください');
+    return;
+  }
+
+  currentFile = file;
+  latestResultRecord = null;
+  revokeCurrentFileUrl();
+  currentFileUrl = URL.createObjectURL(file);
+  hideError();
+
+  try {
+    const dataUrl = await readFileAsDataURL(file);
+    document.getElementById('preview-img').src = dataUrl;
+    document.getElementById('preview-name').textContent = file.name;
+    document.getElementById('dropzone').style.display = 'none';
+    document.getElementById('preview-wrap').style.display = 'block';
+    document.getElementById('eval-btn').disabled = false;
+    document.getElementById('result-section').style.display = 'none';
+    updateActionLinks();
+  } catch (error) {
+    console.error(error);
+    resetFile();
+    showError('画像の読み込みに失敗しました。HEIF形式はブラウザによって未対応の場合があります');
+  }
+}
+
+function resetFile() {
+  currentFile = null;
+  latestResultRecord = null;
+  revokeCurrentFileUrl();
+  document.getElementById('preview-img').src = '';
+  document.getElementById('preview-name').textContent = '—';
+  document.getElementById('dropzone').style.display = '';
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('eval-btn').disabled = true;
+  document.getElementById('result-section').style.display = 'none';
+  updateActionLinks();
+  hideError();
+}
+
+function resetAll() {
+  resetFile();
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => resolve(event.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function dataUrlToBase64(dataUrl) {
+  return String(dataUrl).split(',')[1] || '';
+}
+
+async function loadImageElement(source) {
+  const src = typeof source === 'string' ? source : URL.createObjectURL(source);
+  const shouldRevoke = typeof source !== 'string';
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error('Image loading failed'));
+      element.src = src;
+    });
+    return image;
+  } finally {
+    if (shouldRevoke) URL.revokeObjectURL(src);
+  }
+}
+
+function createCanvasFromImage(image, maxSide = 768) {
+  const scale = Math.min(1, maxSide / Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height));
+  const width = Math.max(48, Math.round((image.naturalWidth || image.width) * scale));
+  const height = Math.max(48, Math.round((image.naturalHeight || image.height) * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(image, 0, 0, width, height);
+  return { canvas, ctx, width, height };
+}
+
+function extractImageStats(ctx, width, height) {
+  const { data } = ctx.getImageData(0, 0, width, height);
+  const totalPixels = width * height;
+  const gray = new Float32Array(totalPixels);
+  const histogram = new Uint32Array(256);
+  let sum = 0;
+  let sumSq = 0;
+  let overexposed = 0;
+  let underexposed = 0;
+  let saturated = 0;
+
+  for (let index = 0, pixel = 0; index < data.length; index += 4, pixel++) {
+    const r = data[index];
+    const g = data[index + 1];
+    const b = data[index + 2];
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    gray[pixel] = luminance;
+    histogram[Math.max(0, Math.min(255, luminance | 0))]++;
+    sum += luminance;
+    sumSq += luminance * luminance;
+    if (luminance >= 245) overexposed++;
+    if (luminance <= 18) underexposed++;
+    const maxChannel = Math.max(r, g, b);
+    const minChannel = Math.min(r, g, b);
+    if (maxChannel > 0 && (maxChannel - minChannel) / maxChannel > 0.45) saturated++;
+  }
+
+  const mean = sum / totalPixels;
+  const variance = Math.max(0, sumSq / totalPixels - mean * mean);
+  const std = Math.sqrt(variance);
+  let entropy = 0;
+  for (let i = 0; i < histogram.length; i++) {
+    if (!histogram[i]) continue;
+    const probability = histogram[i] / totalPixels;
+    entropy -= probability * Math.log2(probability);
+  }
+
+  return {
+    gray,
+    histogram,
+    mean,
+    variance,
+    std,
+    contrast: std / 128,
+    entropy,
+    overexposedRatio: overexposed / totalPixels,
+    underexposedRatio: underexposed / totalPixels,
+    saturationRatio: saturated / totalPixels,
+  };
+}
+
+function analyzeSpatialFeatures(gray, width, height, stats) {
+  const cellCols = 6;
+  const cellRows = 6;
+  const saliencyGrid = Array.from({ length: cellRows * cellCols }, () => 0);
+  const edgeValues = [];
+  let edgeSum = 0;
+  let laplacianSum = 0;
+  let lowEdgeNoiseSum = 0;
+  let lowEdgeCount = 0;
+  let subjectWeightedX = 0;
+  let subjectWeightedY = 0;
+  let totalSaliency = 0;
+
+  const leftBoundary = Math.floor(width / 3);
+  const rightBoundary = Math.floor((width * 2) / 3);
+  const topBoundary = Math.floor(height / 3);
+  const bottomBoundary = Math.floor((height * 2) / 3);
+
+  const bands = {
+    left: 0,
+    center: 0,
+    right: 0,
+    top: 0,
+    middle: 0,
+    bottom: 0,
+    total: 0,
+    peripheral: 0,
+  };
+
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      const gx = -gray[idx - width - 1] - 2 * gray[idx - 1] - gray[idx + width - 1]
+        + gray[idx - width + 1] + 2 * gray[idx + 1] + gray[idx + width + 1];
+      const gy = -gray[idx - width - 1] - 2 * gray[idx - width] - gray[idx - width + 1]
+        + gray[idx + width - 1] + 2 * gray[idx + width] + gray[idx + width + 1];
+      const edge = Math.sqrt(gx * gx + gy * gy);
+      const laplacian = Math.abs(
+        gray[idx - width] + gray[idx + width] + gray[idx - 1] + gray[idx + 1] - 4 * gray[idx]
+      );
+      const localMean = (
+        gray[idx] + gray[idx - 1] + gray[idx + 1] + gray[idx - width] + gray[idx + width]
+      ) / 5;
+      const localNoise = Math.abs(gray[idx] - localMean);
+
+      edgeValues.push(edge);
+      edgeSum += edge;
+      laplacianSum += laplacian;
+      if (edge < 28) {
+        lowEdgeNoiseSum += localNoise;
+        lowEdgeCount++;
+      }
+
+      if (x < leftBoundary) bands.left += edge;
+      else if (x < rightBoundary) bands.center += edge;
+      else bands.right += edge;
+
+      if (y < topBoundary) bands.top += edge;
+      else if (y < bottomBoundary) bands.middle += edge;
+      else bands.bottom += edge;
+
+      bands.total += edge;
+      if (x < width * 0.16 || x > width * 0.84 || y < height * 0.16 || y > height * 0.84) {
+        bands.peripheral += edge;
+      }
+
+      const saliency = edge * 0.65 + laplacian * 0.25 + Math.abs(gray[idx] - stats.mean) * 0.1;
+      subjectWeightedX += x * saliency;
+      subjectWeightedY += y * saliency;
+      totalSaliency += saliency;
+
+      const cellX = Math.min(cellCols - 1, Math.floor((x / width) * cellCols));
+      const cellY = Math.min(cellRows - 1, Math.floor((y / height) * cellRows));
+      saliencyGrid[cellY * cellCols + cellX] += saliency;
+    }
+  }
+
+  edgeValues.sort((a, b) => a - b);
+  const dominantEdge = edgeValues[Math.floor(edgeValues.length * 0.85)] || 0;
+  const meanEdge = edgeSum / Math.max(1, edgeValues.length);
+  const sharpnessRaw = laplacianSum / Math.max(1, edgeValues.length);
+  const noiseEstimate = lowEdgeNoiseSum / Math.max(1, lowEdgeCount);
+
+  const subjectX = totalSaliency ? subjectWeightedX / totalSaliency : width / 2;
+  const subjectY = totalSaliency ? subjectWeightedY / totalSaliency : height / 2;
+  const thirdsPoints = [
+    [width / 3, height / 3],
+    [(width * 2) / 3, height / 3],
+    [width / 3, (height * 2) / 3],
+    [(width * 2) / 3, (height * 2) / 3],
+  ];
+  const nearestThird = Math.min(...thirdsPoints.map(([tx, ty]) => Math.hypot(subjectX - tx, subjectY - ty)));
+  const thirdsAlignment = 1 - clamp(nearestThird / (Math.min(width, height) * 0.45), 0, 1);
+  const subjectConcentration = Math.max(...saliencyGrid) / Math.max(1, totalSaliency);
+  const hotCellCount = saliencyGrid.filter(value => value > totalSaliency / (saliencyGrid.length * 0.75)).length;
+  const backgroundInformation = normalize(stats.entropy, 4.8, 7.6) * 0.45 + normalize(bands.peripheral / (width * height), 8, 60) * 0.55;
+  const clutterScore = clamp(hotCellCount / saliencyGrid.length * 0.6 + backgroundInformation * 0.4, 0, 1);
+
+  return {
+    meanEdge,
+    dominantEdge,
+    sharpnessRaw,
+    noiseEstimate,
+    leftRightBalance: 1 - Math.abs(bands.left - bands.right) / Math.max(1, bands.left + bands.right),
+    topBottomBalance: 1 - Math.abs(bands.top - bands.bottom) / Math.max(1, bands.top + bands.bottom),
+    thirdsAlignment,
+    subjectConcentration,
+    backgroundInformation,
+    backgroundClutter: clutterScore,
+    subjectXRatio: subjectX / width,
+    subjectYRatio: subjectY / height,
+    edgeBands: bands,
+  };
+}
+
+async function detectFacesFromImage(image) {
+  if (!('FaceDetector' in window)) {
+    return { supported: false, faces: [] };
+  }
+  try {
+    const detector = new FaceDetector({ fastMode: true, maxDetectedFaces: 5 });
+    const faces = await detector.detect(image);
+    return { supported: true, faces };
+  } catch (error) {
+    console.warn('FaceDetector failed', error);
+    return { supported: false, faces: [] };
+  }
+}
+
+function computeFaceMetrics(faces, width, height) {
+  if (!faces.length) {
+    return {
+      hasFace: false,
+      faceCount: 0,
+      faceAreaRatio: 0,
+      faceCenteredness: 0,
+      faceStability: 0,
+      primaryFaceXRatio: 0.5,
+      primaryFaceYRatio: 0.5,
+    };
+  }
+
+  const primary = [...faces].sort((a, b) =>
+    (b.boundingBox.width * b.boundingBox.height) - (a.boundingBox.width * a.boundingBox.height)
+  )[0];
+  const box = primary.boundingBox;
+  const faceAreaRatio = (box.width * box.height) / (width * height);
+  const centerX = box.x + box.width / 2;
+  const centerY = box.y + box.height / 2;
+  const dx = Math.abs(centerX - width / 2) / (width / 2);
+  const dy = Math.abs(centerY - height / 2) / (height / 2);
+  const faceCenteredness = 1 - clamp((dx + dy) / 1.45, 0, 1);
+  const aspect = box.width / Math.max(1, box.height);
+  const faceStability = clamp(1 - Math.abs(aspect - 0.85) / 0.7, 0.2, 1);
+
+  return {
+    hasFace: true,
+    faceCount: faces.length,
+    faceAreaRatio,
+    faceCenteredness,
+    faceStability,
+    primaryFaceXRatio: centerX / width,
+    primaryFaceYRatio: centerY / height,
+  };
+}
+
+function deriveScoresFromMetrics(metrics) {
+  const brightnessScore = clamp(round(
+    scoreFromDeviation(metrics.brightnessMean, 138, 22, 62) * 0.34 +
+    scoreFromDeviation(metrics.brightnessStd, 58, 18, 48) * 0.18 +
+    scoreFromDeviation(metrics.contrast, 0.42, 0.16, 0.44) * 0.18 +
+    (1 - clamp(metrics.overexposedRatio / 0.11, 0, 1)) * 15 +
+    (1 - clamp(metrics.underexposedRatio / 0.14, 0, 1)) * 15
+  ), 16, 98);
+
+  const focusScore = clamp(round(
+    normalize(metrics.meanEdge, 8, 46) * 34 +
+    normalize(metrics.dominantEdge, 18, 96) * 22 +
+    normalize(metrics.sharpnessRaw, 6, 30) * 32 +
+    (1 - normalize(metrics.noiseEstimate, 3, 18)) * 12
+  ), 14, 98);
+
+  const compositionScore = clamp(round(
+    metrics.leftRightBalance * 22 +
+    metrics.topBottomBalance * 18 +
+    metrics.thirdsAlignment * 28 +
+    normalize(metrics.subjectConcentration, 0.035, 0.14) * 18 +
+    (metrics.faceMetrics.hasFace ? metrics.faceMetrics.faceCenteredness * 14 : normalize(metrics.subjectConcentration, 0.04, 0.12) * 14)
+  ), 18, 97);
+
+  const backgroundScore = clamp(round(
+    (1 - metrics.backgroundInformation) * 34 +
+    (1 - metrics.backgroundClutter) * 38 +
+    normalize(metrics.subjectConcentration, 0.03, 0.14) * 18 +
+    (1 - normalize(metrics.edgeBands.peripheral / Math.max(1, metrics.edgeBands.total), 0.45, 0.9)) * 10
+  ), 18, 96);
+
+  const cleanlinessScore = clamp(round(
+    (1 - normalize(metrics.noiseEstimate, 2, 18)) * 30 +
+    brightnessScore * 0.26 +
+    backgroundScore * 0.24 +
+    (1 - metrics.backgroundClutter) * 20
+  ), 18, 96);
+
+  const expressionBase = metrics.faceMetrics.hasFace
+    ? (
+      normalize(metrics.faceMetrics.faceAreaRatio, 0.03, 0.18) * 36 +
+      metrics.faceMetrics.faceCenteredness * 24 +
+      metrics.faceMetrics.faceStability * 18 +
+      normalize(focusScore, 45, 95) * 12 +
+      normalize(brightnessScore, 45, 95) * 10
+    )
+    : (
+      normalize(metrics.subjectConcentration, 0.04, 0.14) * 22 +
+      normalize(compositionScore, 40, 90) * 18 +
+      normalize(focusScore, 40, 90) * 14 + 8
+    );
+  const expressionScore = clamp(round(expressionBase), metrics.faceMetrics.hasFace ? 24 : 20, metrics.faceMetrics.hasFace ? 95 : 64);
+
+  const impressionScore = clamp(round(
+    compositionScore * 0.22 +
+    brightnessScore * 0.16 +
+    focusScore * 0.18 +
+    expressionScore * 0.14 +
+    backgroundScore * 0.14 +
+    cleanlinessScore * 0.16
+  ), 18, 98);
+
+  const totalScore = clamp(round(
+    compositionScore * 0.16 +
+    brightnessScore * 0.15 +
+    focusScore * 0.17 +
+    expressionScore * 0.12 +
+    backgroundScore * 0.14 +
+    cleanlinessScore * 0.11 +
+    impressionScore * 0.15
+  ), 16, 98);
+
+  return {
+    compositionScore,
+    brightnessScore,
+    focusScore,
+    expressionScore,
+    backgroundScore,
+    cleanlinessScore,
+    impressionScore,
+    totalScore,
+  };
+}
+
+function buildImprovementSignals(metrics, scores) {
+  const signals = [];
+  if (metrics.overexposedRatio > 0.08) signals.push('白飛びが目立ちます');
+  if (metrics.underexposedRatio > 0.12) signals.push('黒つぶれが多めです');
+  if (metrics.noiseEstimate > 10.5) signals.push('高ISO由来のノイズ感があります');
+  if (metrics.backgroundClutter > 0.58) signals.push('背景が過密です');
+  if (scores.focusScore < 60) signals.push('ピント不足です');
+  if (metrics.thirdsAlignment < 0.35) signals.push('主題配置が三分割構図から外れています');
+  if (!metrics.faceMetrics.hasFace && metrics.faceDetectionSupported) signals.push('顔未検出のため表情評価は保守的です');
+  if (!metrics.faceDetectionSupported) signals.push('FaceDetector非対応環境です');
+  return signals;
+}
+
+function generateCommentsFromAnalysis(scores, metrics, improvementSignals) {
+  const ranked = Object.entries(scores)
+    .filter(([key]) => key !== 'totalScore')
+    .sort((a, b) => b[1] - a[1]);
+  const bestKey = ranked[0][0];
+  const worstKey = ranked[ranked.length - 1][0];
+  const seed = Math.round(metrics.brightnessMean + metrics.sharpnessRaw * 9 + metrics.entropy * 7);
+  const strengthsComment = pick(ITEM_COMMENT_MAP[bestKey][getTier(scores[bestKey])], seed + 3);
+
+  const concreteIssues = [];
+  if (metrics.overexposedRatio > 0.08) concreteIssues.push(`白飛び率${round(metrics.overexposedRatio * 100)}%が出ています`);
+  if (metrics.underexposedRatio > 0.12) concreteIssues.push(`黒つぶれ率${round(metrics.underexposedRatio * 100)}%が高めです`);
+  if (metrics.backgroundClutter > 0.58) concreteIssues.push('背景の散らかりが主題を弱めています');
+  if (scores.focusScore < 60) concreteIssues.push(`シャープネス指標${round(metrics.sharpnessRaw, 1)}で輪郭が弱めです`);
+  if (metrics.noiseEstimate > 10.5) concreteIssues.push(`ノイズ推定値${round(metrics.noiseEstimate, 1)}でざらつきがあります`);
+
+  const weakestBase = pick(ITEM_COMMENT_MAP[worstKey][getTier(scores[worstKey])], seed + 11);
+  const improvementComment = [
+    weakestBase,
+    concreteIssues.slice(0, 2).join('。'),
+    improvementSignals.slice(0, 2).length ? `主な課題は ${improvementSignals.slice(0, 2).join('・')} です。` : '',
+  ].filter(Boolean).join(' ');
+
+  const faceNote = !metrics.faceMetrics.hasFace
+    ? (metrics.faceDetectionSupported ? '顔が検出できなかったため、表情は評価精度低で保守的に算出しています。' : 'FaceDetector非対応環境のため、表情は画像特徴量から推定しています。')
+    : `顔検出${metrics.faceMetrics.faceCount}件。顔面積比${round(metrics.faceMetrics.faceAreaRatio * 100, 1)}%。`;
+
+  let overallComment = `総合${scores.totalScore}点。`;
+  if (scores.totalScore >= 85) {
+    overallComment += '露出・構図・主題性のバランスが良く、完成度の高い写真です。';
+  } else if (scores.totalScore >= 70) {
+    overallComment += '全体水準は良好ですが、弱い項目を1〜2点改善すると見栄えが大きく伸びます。';
+  } else if (scores.totalScore >= 50) {
+    overallComment += '基本は成立していますが、露出や背景整理に改善余地があります。';
+  } else {
+    overallComment += '技術的な不足が目立つため、再撮影を前提に整えた方が早い状態です。';
+  }
+  overallComment += ` 平均輝度${round(metrics.brightnessMean)}、コントラスト${round(metrics.contrast, 2)}、背景散らかり度${round(metrics.backgroundClutter, 2)}。 ${faceNote}`;
+
+  return { strengthsComment, improvementComment, overallComment };
+}
+
+async function analyzeImageFile(file) {
+  const image = await loadImageElement(file);
+  const { ctx, width, height } = createCanvasFromImage(image, 768);
+  const stats = extractImageStats(ctx, width, height);
+  const spatial = analyzeSpatialFeatures(stats.gray, width, height, stats);
+  const faceDetection = await detectFacesFromImage(image);
+  const faceMetrics = computeFaceMetrics(faceDetection.faces, width, height);
+
+  const metrics = {
+    width,
+    height,
+    brightnessMean: stats.mean,
+    brightnessVariance: stats.variance,
+    brightnessStd: stats.std,
+    overexposedRatio: stats.overexposedRatio,
+    underexposedRatio: stats.underexposedRatio,
+    contrast: stats.contrast,
+    entropy: stats.entropy,
+    saturationRatio: stats.saturationRatio,
+    meanEdge: spatial.meanEdge,
+    dominantEdge: spatial.dominantEdge,
+    sharpnessRaw: spatial.sharpnessRaw,
+    noiseEstimate: spatial.noiseEstimate,
+    leftRightBalance: spatial.leftRightBalance,
+    topBottomBalance: spatial.topBottomBalance,
+    thirdsAlignment: spatial.thirdsAlignment,
+    subjectConcentration: spatial.subjectConcentration,
+    backgroundInformation: spatial.backgroundInformation,
+    backgroundClutter: spatial.backgroundClutter,
+    subjectXRatio: spatial.subjectXRatio,
+    subjectYRatio: spatial.subjectYRatio,
+    edgeBands: spatial.edgeBands,
+    faceMetrics,
+    faceDetectionSupported: faceDetection.supported,
+  };
+
+  const scores = deriveScoresFromMetrics(metrics);
+  const improvementSignals = buildImprovementSignals(metrics, scores);
+  const comments = generateCommentsFromAnalysis(scores, metrics, improvementSignals);
+
+  return { scores, metrics, improvementSignals, comments };
+}
+
+function buildDeliveryPayload(record, imageBase64, settings) {
+  return {
+    webhookKey: settings.webhookKey || '',
+    destination: settings.target,
+    toEmail: settings.email || '',
+    fileName: record.fileName,
+    createdAt: record.createdAt,
+    imageBase64,
+    imageContentType: 'image/jpeg',
+    evaluation: {
+      compositionScore: record.compositionScore,
+      brightnessScore: record.brightnessScore,
+      focusScore: record.focusScore,
+      expressionScore: record.expressionScore,
+      backgroundScore: record.backgroundScore,
+      cleanlinessScore: record.cleanlinessScore,
+      impressionScore: record.impressionScore,
+      totalScore: record.totalScore,
+      strengthsComment: record.strengthsComment,
+      improvementComment: record.improvementComment,
+      overallComment: record.overallComment,
+      analysisMeta: record.analysisMeta,
+      improvementSignals: record.improvementSignals || [],
+    },
+  };
+}
+
+async function resizeImageForDelivery(source) {
+  const image = await loadImageElement(source);
+  const longest = Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height);
+  const scale = Math.min(1, DELIVERY_MAX_SIDE / longest);
+  const width = Math.max(1, Math.round((image.naturalWidth || image.width) * scale));
+  const height = Math.max(1, Math.round((image.naturalHeight || image.height) * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0, width, height);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+  return {
+    dataUrl,
+    base64: dataUrlToBase64(dataUrl),
+    width,
+    height,
+  };
+}
+
+async function sendRecordToWebhook(record) {
+  const settings = collectDeliverySettings();
+  const validationError = validateDeliverySettings(settings);
+  if (validationError) throw new Error(validationError);
+
+  const deliveryImage = await resizeImageForDelivery(record.imageSrc);
+  const payload = buildDeliveryPayload(record, deliveryImage.base64, settings);
+  try {
+    const response = await fetch(settings.webhookUrl, {
+      method: 'POST',
+      headers: {
+        // Apps Script web apps often fail CORS preflight on application/json.
+        // text/plain keeps this as a simple request so static HTML can POST reliably.
+        'Content-Type': 'text/plain;charset=utf-8',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const rawText = await response.text();
+    let data = null;
+    try {
+      data = rawText ? JSON.parse(rawText) : null;
+    } catch {
+      throw new Error(`Webhookレスポンスエラー: JSONではありません (${rawText.slice(0, 120)})`);
+    }
+
+    if (!response.ok) {
+      throw new Error(data?.message ? `Webhookレスポンスエラー: ${data.message}` : `Webhookレスポンスエラー: HTTP ${response.status}`);
+    }
+
+    const requiresDrive = settings.target === 'drive' || settings.target === 'both';
+    if (!data?.success) {
+      throw new Error(data?.driveError ? `Webhookレスポンスエラー: ${data.driveError}` : `Webhookレスポンスエラー: ${data?.message || 'Webhook処理に失敗しました'}`);
+    }
+    if (requiresDrive && !data.savedToDrive) {
+      throw new Error(data?.driveError ? `Webhookレスポンスエラー: ${data.driveError}` : `Webhookレスポンスエラー: ${data?.message || 'Google Drive保存に失敗しました'}`);
+    }
+
+    return {
+      ...data,
+      deliveryImageMeta: {
+        width: deliveryImage.width,
+        height: deliveryImage.height,
+      },
+    };
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error('ネットワークエラー: Webhookへ接続できません。起動スクリプト経由で開いているか、Webhook URLと公開設定を確認してください');
+    }
+    throw error;
+  }
+}
+
+function buildAnalysisMeta(metrics, scores) {
+  return {
+    brightnessMean: round(metrics.brightnessMean),
+    brightnessVariance: round(metrics.brightnessVariance, 1),
+    whiteClipRatio: round(metrics.overexposedRatio * 100, 1),
+    blackClipRatio: round(metrics.underexposedRatio * 100, 1),
+    contrast: round(metrics.contrast, 2),
+    edgeAmount: round(metrics.meanEdge, 1),
+    sharpnessRaw: round(metrics.sharpnessRaw, 1),
+    noiseEstimate: round(metrics.noiseEstimate, 1),
+    leftRightBalance: round(metrics.leftRightBalance, 2),
+    topBottomBalance: round(metrics.topBottomBalance, 2),
+    thirdsAlignment: round(metrics.thirdsAlignment, 2),
+    subjectConcentration: round(metrics.subjectConcentration, 3),
+    backgroundInformation: round(metrics.backgroundInformation, 2),
+    backgroundClutter: round(metrics.backgroundClutter, 2),
+    faceDetected: metrics.faceMetrics.hasFace,
+    faceCount: metrics.faceMetrics.faceCount,
+    faceAreaRatio: round(metrics.faceMetrics.faceAreaRatio * 100, 1),
+    faceCenteredness: round(metrics.faceMetrics.faceCenteredness, 2),
+    faceDetectionSupported: metrics.faceDetectionSupported,
+    totalScore: scores.totalScore,
+  };
+}
+
+async function runEvaluation() {
+  if (!currentFile) {
+    showError('先に画像を選択してください');
+    return;
+  }
+
+  const evalButton = document.getElementById('eval-btn');
+  const loading = document.getElementById('loading');
+  const loadingLabel = document.getElementById('loading-label');
+
+  evalButton.disabled = true;
+  loading.style.display = 'block';
+  document.getElementById('result-section').style.display = 'none';
+  hideError();
+
+  const loadingLabels = [
+    '平均輝度・白飛び・黒つぶれを解析中...',
+    'エッジ量・シャープネス・ノイズを推定中...',
+    '構図・主題集中度・背景散らかり度を計算中...',
+    'コメントと送信データを組み立てています...',
+  ];
+  let index = 0;
+  loadingLabel.textContent = loadingLabels[0];
+  const interval = setInterval(() => {
+    index = (index + 1) % loadingLabels.length;
+    loadingLabel.textContent = loadingLabels[index];
+  }, 620);
+
+  try {
+    const analysis = await analyzeImageFile(currentFile);
+    const imageData = await readFileAsDataURL(currentFile);
+    const record = {
+      id: Date.now(),
+      fileName: currentFile.name,
+      imageSrc: imageData,
+      createdAt: new Date().toISOString(),
+      ...analysis.scores,
+      ...analysis.comments,
+      improvementSignals: analysis.improvementSignals,
+      analysisMeta: buildAnalysisMeta(analysis.metrics, analysis.scores),
+      delivery: {
+        status: 'pending',
+        target: collectDeliverySettings().target,
+        destination: collectDeliverySettings().target,
+        sent: false,
+        sentAt: '',
+        driveUrl: '',
+        driveFileId: '',
+        emailed: false,
+        savedToDrive: false,
+        error: '',
+        sendError: '',
+      },
+    };
+
+    await saveToHistory(record);
+    renderCurrentRecord(record);
+    if (collectDeliverySettings().autoSend) {
+      await sendRecordById(record.id);
+    }
+  } catch (error) {
+    console.error(error);
+    showError(error.message || '画像解析に失敗しました');
+  } finally {
+    clearInterval(interval);
+    loading.style.display = 'none';
+    evalButton.disabled = false;
+  }
+}
+
+function renderScoreBars(scope = document) {
+  requestAnimationFrame(() => {
+    scope.querySelectorAll('.score-bar-fill[data-score]').forEach(element => {
+      element.style.width = `${element.dataset.score}%`;
+    });
+  });
+}
+
+function buildMetaLine(record) {
+  const meta = record.analysisMeta || {};
+  return [
+    Number.isFinite(meta.brightnessMean) ? `平均輝度 ${meta.brightnessMean}` : '',
+    Number.isFinite(meta.whiteClipRatio) ? `白飛び ${meta.whiteClipRatio}%` : '',
+    Number.isFinite(meta.blackClipRatio) ? `黒つぶれ ${meta.blackClipRatio}%` : '',
+    Number.isFinite(meta.sharpnessRaw) ? `シャープネス ${meta.sharpnessRaw}` : '',
+    Number.isFinite(meta.noiseEstimate) ? `ノイズ ${meta.noiseEstimate}` : '',
+    meta.faceDetectionSupported ? (meta.faceDetected ? `顔検出 ${meta.faceCount}件` : '顔検出 0件') : 'FaceDetector 非対応',
+  ].filter(Boolean).join(' ／ ');
+}
+
+function buildDeliveryHtml(record) {
+  const delivery = record.delivery || {};
+  const status = getDeliveryStatus(record);
+  const isSending = sendingRecordId === record.id;
+  const successMessage = delivery.savedToDrive
+    ? 'Google Driveへ保存済みです'
+    : (delivery.emailed ? 'メール送信済みです' : '');
+  return `
+    <div class="delivery-card">
+      <div class="delivery-top">
+        <p class="delivery-title">Delivery</p>
+        <span class="delivery-pill ${status.className}">${escapeHtml(status.label)}</span>
+      </div>
+      <div class="delivery-meta">
+        <div class="delivery-meta-item">
+          <span class="delivery-meta-label">送信先</span>
+          <span class="delivery-meta-value">${escapeHtml(delivery.destination || delivery.target || collectDeliverySettings().target || 'both')}</span>
+        </div>
+        <div class="delivery-meta-item">
+          <span class="delivery-meta-label">送信日時</span>
+          <span class="delivery-meta-value">${delivery.sentAt ? escapeHtml(formatDate(delivery.sentAt)) : '未送信'}</span>
+        </div>
+        <div class="delivery-meta-item">
+          <span class="delivery-meta-label">Drive</span>
+          <span class="delivery-meta-value">${delivery.driveUrl ? `<a href="${escapeHtml(delivery.driveUrl)}" target="_blank" rel="noopener noreferrer">保存先を開く</a>` : (delivery.savedToDrive ? '保存済み' : '未保存')}</span>
+        </div>
+        <div class="delivery-meta-item">
+          <span class="delivery-meta-label">Email</span>
+          <span class="delivery-meta-value">${delivery.emailed ? '送信済み' : '未送信'}</span>
+        </div>
+      </div>
+      <div class="delivery-actions">
+        <button class="btn-secondary" onclick="sendRecordById(${record.id})" ${isSending ? 'disabled' : ''}>${isSending ? '送信中...' : '再送信する'}</button>
+      </div>
+      ${(delivery.sendError || delivery.error)
+        ? `<p class="delivery-note">失敗理由: ${escapeHtml(delivery.sendError || delivery.error)}</p>`
+        : `<p class="delivery-note">${escapeHtml(successMessage || 'Webhook URL・送信先設定を更新したあとでも、この結果から再送信できます。')}</p>`}
+    </div>
+  `;
+}
+
+function buildResultHTML(record) {
+  const totalColor = getScoreColor(record.totalScore);
+  const badgeBackground = record.totalScore >= 85 ? 'var(--green-dim)'
+    : record.totalScore >= 70 ? 'var(--blue-dim)'
+      : record.totalScore >= 50 ? 'var(--amber-dim)'
+        : 'var(--red-dim)';
+
+  const scoreCardsHtml = SCORE_ITEMS.map(item => {
+    const score = record[item.key];
+    const color = getScoreColor(score);
+    return `
+      <div class="score-item">
+        <div class="score-item-header">
+          <div class="score-item-label">${item.icon} ${item.label}</div>
+          <div class="score-item-num" style="color:${color.text}">${score}</div>
+        </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill ${color.bar}" data-score="${score}" style="width:0%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="total-card">
+      <p class="total-label">TOTAL SCORE</p>
+      <div>
+        <span class="total-number ${totalColor.badge}" style="color:${totalColor.text}">${record.totalScore}</span>
+        <span class="total-unit">/100</span>
+      </div>
+      <span class="total-badge" style="color:${totalColor.text};background:${badgeBackground}">${totalColor.label}</span>
+      <p style="margin-top:14px;font-size:0.74rem;color:var(--text-muted)">${escapeHtml(buildMetaLine(record))}</p>
+    </div>
+
+    <div class="scores-grid">${scoreCardsHtml}</div>
+
+    <div class="comments-section">
+      <div class="comment-card">
+        <span class="comment-icon">✅</span>
+        <div>
+          <p class="comment-label label-good">強み・良かった点</p>
+          <p class="comment-text">${escapeHtml(record.strengthsComment)}</p>
+        </div>
+      </div>
+      <div class="comment-card">
+        <span class="comment-icon">💡</span>
+        <div>
+          <p class="comment-label label-imp">改善のヒント</p>
+          <p class="comment-text">${escapeHtml(record.improvementComment)}</p>
+        </div>
+      </div>
+      <div class="comment-card">
+        <span class="comment-icon">📝</span>
+        <div>
+          <p class="comment-label label-all">総合コメント</p>
+          <p class="comment-text">${escapeHtml(record.overallComment)}</p>
+        </div>
+      </div>
+    </div>
+
+    ${buildDeliveryHtml(record)}
+  `;
+}
+
+function renderCurrentRecord(record) {
+  latestResultRecord = record;
+  document.getElementById('result-section').style.display = 'block';
+  document.getElementById('result-inner').innerHTML = buildResultHTML(record);
+  updateActionLinks(record);
+  renderScoreBars(document.getElementById('result-section'));
+}
+
+function renderModalRecord(record) {
+  modalRecordId = record.id;
+  document.getElementById('modal-title').textContent = `評価詳細 — ${formatDate(record.createdAt)}`;
+  document.getElementById('modal-img').src = record.imageSrc;
+  document.getElementById('modal-body').innerHTML = buildResultHTML(record);
+  document.getElementById('modal-overlay').classList.add('active');
+  updateActionLinks(record);
+  renderScoreBars(document.getElementById('modal-body'));
+}
+
+async function saveToHistory(record) {
+  const history = await loadHistory();
+  const next = [record, ...history.filter(item => item.id !== record.id)].slice(0, MAX_HISTORY_ITEMS);
+  await runStoreOperation('readwrite', store => {
+    next.forEach(item => store.put(item));
+    history.filter(item => !next.some(saved => saved.id === item.id)).forEach(item => store.delete(item.id));
+  });
+}
+
+function openHistoryDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = event => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+        store.createIndex('createdAt', 'createdAt', { unique: false });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function runStoreOperation(mode, executor) {
+  return openHistoryDb().then(db => new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, mode);
+    const store = transaction.objectStore(STORE_NAME);
+    let resolved = false;
+
+    transaction.oncomplete = () => {
+      db.close();
+      if (!resolved) resolve();
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+    transaction.onabort = () => {
+      db.close();
+      reject(transaction.error || new Error('IndexedDB transaction aborted'));
+    };
+
+    executor(store, value => {
+      resolved = true;
+      resolve(value);
+    }, error => {
+      resolved = true;
+      reject(error);
+    });
+  }));
+}
+
+async function loadHistory() {
+  return runStoreOperation('readonly', (store, resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const items = request.result || [];
+      items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      resolve(items);
+    };
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getRecordById(id) {
+  const history = await loadHistory();
+  return history.find(record => record.id === id) || null;
+}
+
+async function deleteFromHistory(id) {
+  await runStoreOperation('readwrite', store => {
+    store.delete(id);
+  });
+}
+
+async function clearAllHistory() {
+  if (!confirm('すべての評価履歴を削除しますか？')) return;
+  await runStoreOperation('readwrite', store => {
+    store.clear();
+  });
+  latestResultRecord = null;
+  modalRecordId = null;
+  updateActionLinks();
+  await renderHistory();
+}
+
+function buildHistoryCard(record, index) {
+  const totalColor = getScoreColor(record.totalScore);
+  const badgeBackground = record.totalScore >= 85 ? 'rgba(74,222,128,0.85)'
+    : record.totalScore >= 70 ? 'rgba(96,165,250,0.85)'
+      : record.totalScore >= 50 ? 'rgba(251,191,36,0.85)'
+        : 'rgba(248,113,113,0.85)';
+  const status = getDeliveryStatus(record);
+
+  return `
+    <div class="history-card" style="animation-delay:${index * 0.04}s" onclick="openModal(${record.id})">
+      <div class="history-thumb">
+        <img src="${record.imageSrc}" alt="${escapeHtml(record.fileName)}" loading="lazy">
+        <div class="history-score-badge" style="background:${badgeBackground};color:#0f0f11">${record.totalScore}</div>
+      </div>
+      <div class="history-info">
+        <div class="history-info-top">
+          <span class="history-score-big" style="color:${totalColor.text}">${record.totalScore}<span style="font-size:0.7em;color:var(--text-dim)">/100</span></span>
+          <span class="history-date">${escapeHtml(formatDate(record.createdAt))}</span>
+        </div>
+        <p class="history-comment">${escapeHtml(record.overallComment)}</p>
+        <p class="history-comment" style="margin-bottom:8px;color:var(--text-dim)">送信: ${escapeHtml(status.label)} / ${escapeHtml(record.delivery?.destination || record.delivery?.target || 'both')}</p>
+        <div class="history-card-footer">
+          <button class="btn-detail" onclick="openModal(${record.id});event.stopPropagation()">詳細</button>
+          <button class="btn-delete" onclick="deleteRecord(${record.id}, event)">削除</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function renderHistory() {
+  const grid = document.getElementById('history-grid');
+  const empty = document.getElementById('history-empty');
+  const count = document.getElementById('history-count');
+
+  try {
+    const history = await loadHistory();
+    count.textContent = `${history.length}件`;
+    if (!history.length) {
+      grid.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.innerHTML = history.map(buildHistoryCard).join('');
+  } catch (error) {
+    console.error(error);
+    showError('保存済み履歴の読み込みに失敗しました');
+  }
+}
+
+async function deleteRecord(id, event) {
+  event.stopPropagation();
+  if (!confirm('この評価を削除しますか？')) return;
+  await deleteFromHistory(id);
+  if (latestResultRecord?.id === id) {
+    latestResultRecord = null;
+    document.getElementById('result-section').style.display = 'none';
+  }
+  if (modalRecordId === id) {
+    closeModalDirect();
+  }
+  updateActionLinks(latestResultRecord);
+  await renderHistory();
+}
+
+async function openModal(id) {
+  const record = await getRecordById(id);
+  if (!record) return;
+  renderModalRecord(record);
+}
+
+function closeModal(event) {
+  if (event.target === document.getElementById('modal-overlay')) {
+    closeModalDirect();
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  modalRecordId = null;
+  updateActionLinks(latestResultRecord);
+}
+
+async function refreshRecordViews(record) {
+  await saveToHistory(record);
+  if (latestResultRecord?.id === record.id) {
+    renderCurrentRecord(record);
+  }
+  if (modalRecordId === record.id) {
+    renderModalRecord(record);
+  }
+  await renderHistory();
+}
+
+function buildDeliveryState(record, status, extra = {}) {
+  return {
+    ...(record.delivery || {}),
+    target: extra.target || record.delivery?.target || collectDeliverySettings().target || 'both',
+    destination: extra.target || record.delivery?.destination || collectDeliverySettings().target || 'both',
+    status,
+    sent: extra.sent ?? record.delivery?.sent ?? false,
+    sentAt: extra.sentAt ?? record.delivery?.sentAt ?? '',
+    driveUrl: extra.driveUrl ?? record.delivery?.driveUrl ?? '',
+    driveFileId: extra.driveFileId ?? record.delivery?.driveFileId ?? '',
+    emailed: extra.emailed ?? record.delivery?.emailed ?? false,
+    savedToDrive: extra.savedToDrive ?? record.delivery?.savedToDrive ?? false,
+    error: extra.error ?? '',
+    sendError: extra.sendError ?? record.delivery?.sendError ?? '',
+  };
+}
+
+async function sendRecordById(id) {
+  const record = await getRecordById(id);
+  if (!record) {
+    showError('送信対象の履歴が見つかりません');
+    return;
+  }
+
+  sendingRecordId = id;
+  const sendingRecord = { ...record, delivery: buildDeliveryState(record, 'sending') };
+  await refreshRecordViews(sendingRecord);
+  hideError();
+
+  try {
+    const response = await sendRecordToWebhook(record);
+    const updatedRecord = {
+      ...record,
+      delivery: buildDeliveryState(record, 'success', {
+        target: collectDeliverySettings().target,
+        sent: true,
+        sentAt: new Date().toISOString(),
+        driveUrl: response.driveUrl || '',
+        driveFileId: response.driveFileId || '',
+        emailed: Boolean(response.emailed),
+        savedToDrive: Boolean(response.savedToDrive),
+        error: '',
+        sendError: [response.driveError, response.emailError].filter(Boolean).join(' / '),
+      }),
+    };
+    await refreshRecordViews(updatedRecord);
+  } catch (error) {
+    console.error(error);
+    const updatedRecord = {
+      ...record,
+      delivery: buildDeliveryState(record, 'error', {
+        target: collectDeliverySettings().target,
+        sent: false,
+        sentAt: new Date().toISOString(),
+        error: error.message || '送信失敗',
+        sendError: error.message || '送信失敗',
+      }),
+    };
+    await refreshRecordViews(updatedRecord);
+    showError(error.message || 'Webhook送信に失敗しました');
+  } finally {
+    sendingRecordId = null;
+    if (latestResultRecord) updateActionLinks(latestResultRecord);
+  }
+}
+
+async function sendLatestRecord() {
+  if (!latestResultRecord) {
+    showError('先に評価を実行してください');
+    return;
+  }
+  await sendRecordById(latestResultRecord.id);
+}
+
+applyDeliverySettings();
+updateActionLinks();
+void renderHistory();
+
+if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+  navigator.serviceWorker.register('./service-worker.js').catch(error => {
+    console.warn('Service worker registration failed', error);
+  });
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeModalDirect();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Photo Evaluator Mobile Ready",
+  "short_name": "Photo Eval",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f11",
+  "theme_color": "#0f0f11",
+  "description": "写真評価とGoogle Drive保存を行うモバイル対応アプリ",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230f0f11'/%3E%3Ccircle cx='96' cy='96' r='56' fill='%23e8ff47'/%3E%3Ccircle cx='96' cy='96' r='28' fill='%230f0f11'/%3E%3Crect x='34' y='44' width='34' height='18' rx='8' fill='%23e8ff47'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
