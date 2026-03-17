@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0f0f11">
+<meta name="theme-color" content="#f4f8ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Photo Eval">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>起動対象 | フォト評価 Mobile Ready</title>
+<title>かんたん写真評価 | Photo Eval</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -835,6 +835,457 @@
     .scores-grid { grid-template-columns: 1fr; }
     #history-grid { grid-template-columns: 1fr; }
   }
+
+  /* ── General User Redesign Overrides ── */
+  :root {
+    --bg: #f4f8ff;
+    --surface: rgba(255,255,255,0.96);
+    --surface2: #eef4ff;
+    --border: #dbe6f4;
+    --text: #233247;
+    --text-muted: #63748c;
+    --text-dim: #8fa0b8;
+    --accent: #4f8df7;
+    --accent-dim: rgba(79,141,247,0.12);
+    --accent-border: rgba(79,141,247,0.25);
+    --green: #20b26b;
+    --green-dim: rgba(32,178,107,0.12);
+    --amber: #e6a21d;
+    --amber-dim: rgba(230,162,29,0.14);
+    --red: #db5d6f;
+    --red-dim: rgba(219,93,111,0.12);
+    --blue: #4f8df7;
+    --blue-dim: rgba(79,141,247,0.14);
+    --radius: 16px;
+    --radius-lg: 28px;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(126, 188, 255, 0.2), transparent 30%),
+      radial-gradient(circle at top right, rgba(166, 229, 214, 0.18), transparent 24%),
+      linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+    color: var(--text);
+  }
+  body::before {
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.85), transparent 18%),
+      radial-gradient(circle at 80% 0%, rgba(227,240,255,0.9), transparent 22%);
+    opacity: 1;
+  }
+
+  nav {
+    background: rgba(255,255,255,0.84);
+    border-bottom: 1px solid rgba(219,230,244,0.9);
+    box-shadow: 0 10px 30px rgba(91,118,160,0.08);
+  }
+  .nav-inner {
+    max-width: 960px;
+    height: 72px;
+  }
+  .nav-logo {
+    color: #2f76ea;
+    letter-spacing: 0.01em;
+    font-size: 1.08rem;
+  }
+  .nav-logo span {
+    color: #94a7bf;
+  }
+  .tab-btn {
+    color: #62748c;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    border-radius: 999px;
+  }
+  .tab-btn:hover {
+    background: #eef5ff;
+    color: #2b4f78;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #4f8df7, #69b2ff);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(79,141,247,0.22);
+  }
+
+  .container {
+    max-width: 960px;
+    padding: 36px 20px 92px;
+  }
+  .page-title {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    line-height: 1.15;
+    color: #1f3150;
+    margin-bottom: 12px;
+  }
+  .page-sub {
+    color: #60738d;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .page-sub.note {
+    margin-top: 0;
+    margin-bottom: 26px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(219,230,244,0.9);
+    border-radius: 14px;
+    color: #6d7d92;
+  }
+
+  .welcome-panel {
+    background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(242,248,255,0.98));
+    border: 1px solid rgba(219,230,244,0.95);
+    box-shadow: 0 16px 42px rgba(109,138,180,0.12);
+    border-radius: 28px;
+    padding: 24px;
+    margin-bottom: 22px;
+  }
+  .welcome-panel h2 {
+    font-size: 1.2rem;
+    color: #1f3150;
+    margin-bottom: 8px;
+  }
+  .welcome-panel p {
+    color: #64758d;
+    font-size: 0.94rem;
+    line-height: 1.8;
+  }
+  .step-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .step-card {
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(219,230,244,0.95);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(126,148,184,0.08);
+  }
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #eaf2ff;
+    color: #2f76ea;
+    font-weight: 800;
+    font-size: 0.88rem;
+    margin-bottom: 10px;
+  }
+  .step-card strong {
+    display: block;
+    color: #213451;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+  .step-card span {
+    color: #69809c;
+    font-size: 0.84rem;
+    line-height: 1.7;
+  }
+  .mini-info-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .mini-info-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(219,230,244,0.95);
+    border-radius: 999px;
+    color: #5f7390;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .launch-warning {
+    background: #fff4f6;
+    border-color: #f5c8d0;
+    color: #b6485c;
+    box-shadow: 0 8px 20px rgba(219,93,111,0.08);
+  }
+
+  #dropzone,
+  #preview-wrap,
+  .total-card,
+  .score-item,
+  .comment-card,
+  .ml-summary-card,
+  .feedback-card,
+  .history-card,
+  #modal-box {
+    background: rgba(255,255,255,0.94);
+    border-color: rgba(219,230,244,0.95);
+    box-shadow: 0 16px 36px rgba(111,136,175,0.1);
+  }
+
+  #dropzone {
+    border-style: dashed;
+    padding: 56px 24px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244,249,255,0.98));
+  }
+  #dropzone::before {
+    background: radial-gradient(circle at center, rgba(79,141,247,0.12), transparent 64%);
+  }
+  #dropzone:hover,
+  #dropzone.drag-over {
+    border-color: #8db6ff;
+    background: linear-gradient(180deg, #ffffff, #edf5ff);
+    box-shadow: 0 16px 36px rgba(98,137,199,0.14);
+  }
+  .drop-icon {
+    font-size: 3.4rem;
+    margin-bottom: 16px;
+  }
+  .drop-title {
+    font-size: 1.08rem;
+    color: #213451;
+    margin-bottom: 8px;
+  }
+  .drop-sub {
+    color: #69809b;
+    font-size: 0.9rem;
+  }
+
+  #preview-img,
+  .modal-img {
+    background: linear-gradient(180deg, #f8fbff, #e9f1fb);
+  }
+  .preview-bar,
+  .modal-header {
+    border-top-color: rgba(219,230,244,0.95);
+    border-bottom-color: rgba(219,230,244,0.95);
+  }
+  .preview-name,
+  .history-date {
+    color: #7a8da6;
+  }
+  .preview-change,
+  .btn-secondary,
+  .btn-reset,
+  .btn-toolbar,
+  .btn-detail {
+    background: #f4f8ff;
+    border-color: #d9e6f9;
+    color: #5e7390;
+  }
+  .preview-change:hover,
+  .btn-secondary:hover,
+  .btn-reset:hover,
+  .btn-toolbar:hover,
+  .btn-detail:hover {
+    background: #ecf4ff;
+    border-color: #9ec0ff;
+    color: #2f76ea;
+  }
+
+  .btn-primary,
+  .btn-feedback {
+    background: linear-gradient(135deg, #4f8df7, #69b2ff);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(79,141,247,0.24);
+  }
+  .btn-primary:hover:not(:disabled),
+  .btn-feedback:hover {
+    background: linear-gradient(135deg, #4683ec, #5aa8ff);
+    box-shadow: 0 16px 32px rgba(79,141,247,0.28);
+  }
+
+  #loading {
+    background: rgba(255,255,255,0.6);
+    border: 1px dashed #d7e5f8;
+    border-radius: 24px;
+    margin-top: 18px;
+  }
+  .loader {
+    border-color: #dbe7f8;
+    border-top-color: #4f8df7;
+  }
+  .loading-label {
+    color: #62758e;
+    font-size: 0.95rem;
+  }
+  .loading-step {
+    background: #cfdcf0;
+  }
+
+  #error-box {
+    background: #fff5f6;
+    border-color: #f0c9d1;
+    color: #b34a5f;
+  }
+
+  .result-title,
+  .modal-title {
+    color: #213451;
+    font-size: 1.02rem;
+  }
+  .total-card {
+    text-align: left;
+    padding: 30px 28px;
+  }
+  .total-card::before {
+    top: auto;
+    bottom: -90px;
+    left: auto;
+    right: -30px;
+    transform: none;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(79,141,247,0.15), transparent 66%);
+  }
+  .total-label {
+    color: #7d8ea7;
+    font-size: 0.76rem;
+  }
+  .total-number {
+    color: #2f76ea;
+  }
+  .total-unit {
+    color: #8fa0b8;
+  }
+  .total-badge {
+    margin-top: 14px;
+    background: #eef5ff !important;
+    color: #2f76ea !important;
+  }
+  .scores-grid {
+    gap: 14px;
+  }
+  .score-item {
+    padding: 16px 18px;
+  }
+  .score-item-label {
+    color: #64788f;
+  }
+  .score-item-num {
+    color: #213451;
+  }
+  .score-bar-track {
+    background: #e8eff9;
+    height: 6px;
+  }
+  .comment-card {
+    padding: 18px;
+  }
+  .comment-text {
+    color: #61738a;
+  }
+
+  .section-title,
+  .delivery-title {
+    color: #7488a1;
+    letter-spacing: 0.05em;
+  }
+  .status-pill.rule,
+  .delivery-pill.pending {
+    background: #eef5ff;
+    color: #5f7390;
+  }
+  .status-pill.ml {
+    background: #e9f4ff;
+    color: #2f76ea;
+  }
+  .ml-summary-item,
+  .delivery-meta-item {
+    background: #f8fbff;
+    border-color: #dde8f6;
+  }
+  .summary-label,
+  .field-label,
+  .delivery-meta-label {
+    color: #8092a9;
+  }
+  .summary-value,
+  .delivery-meta-value {
+    color: #24354d;
+  }
+  .feedback-field select,
+  .feedback-field input,
+  .feedback-field textarea {
+    background: #f9fbff;
+    border-color: #d9e5f6;
+    color: #24354d;
+  }
+  .feedback-note,
+  .delivery-note {
+    color: #778aa1;
+  }
+
+  #history-grid {
+    gap: 16px;
+  }
+  .history-card:hover {
+    border-color: #a7c4f9;
+    box-shadow: 0 18px 36px rgba(111,136,175,0.14);
+  }
+  .history-thumb {
+    background: linear-gradient(180deg, #f8fbff, #ecf3fb);
+  }
+  .history-score-big {
+    color: #213451;
+  }
+  .history-comment,
+  .empty-text {
+    color: #66798f;
+  }
+
+  #history-empty {
+    background: rgba(255,255,255,0.72);
+    border: 1px dashed #d7e5f8;
+    border-radius: 24px;
+  }
+
+  #modal-overlay {
+    background: rgba(46, 76, 114, 0.16);
+    backdrop-filter: blur(10px);
+  }
+  .modal-close:hover {
+    background: #edf5ff;
+    color: #2f76ea;
+  }
+
+  @media (max-width: 760px) {
+    .nav-inner {
+      height: auto;
+      padding: 14px 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .nav-logo {
+      justify-content: center;
+    }
+    .nav-tabs {
+      width: 100%;
+    }
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+    }
+    .step-grid {
+      grid-template-columns: 1fr;
+    }
+    .container {
+      padding: 24px 16px 72px;
+    }
+    .page-title {
+      font-size: 2rem;
+    }
+    .total-card {
+      text-align: center;
+    }
+  }
 </style>
 </head>
 <body>
@@ -853,20 +1304,50 @@
 <!-- 評価ページ -->
 <div id="page-evaluate" class="page active">
   <div class="container">
-    <h1 class="page-title">写真を評価する / 起動対象ファイル</h1>
-    <p class="page-sub">写真を選ぶと評価後にGoogle Driveへ自動保存します。構図・明るさ・ピントなど7項目でスコアリングします</p>
-    <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応します。HEIFはお使いのブラウザによってはプレビューや解析ができない場合があります。</p>
+    <h1 class="page-title">かんたん写真評価</h1>
+    <p class="page-sub">写真を選ぶだけで、構図・明るさ・ピントなどを見やすく判定します。評価後の画像は自動で Google Drive に保存されます。</p>
+    <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応しています。HEIFはお使いのブラウザによってはプレビューや解析ができない場合があります。</p>
 
     <div id="launch-warning" class="launch-warning"></div>
 
     <input id="webhook-url" type="hidden" value="https://script.google.com/macros/s/AKfycbyBeavKTziPWneYuiiLNTgVuTTajtjGJeRp29-4VuPG86c3Xis91t7duj_-oB4d6eIgWA/exec">
 
+    <section class="welcome-panel">
+      <div>
+        <span class="mini-info-chip">はじめてでも迷いにくい3ステップ</span>
+        <h2>このアプリでできること</h2>
+        <p>写真をアップロードすると、その場で見やすく点数化し、あとから履歴で見返せます。必要な設定や学習機能は裏側で動くので、まずは気軽に評価してみてください。</p>
+      </div>
+      <div class="step-grid">
+        <article class="step-card">
+          <span class="step-num">1</span>
+          <h3>画像を選ぶ</h3>
+          <p>スマホやパソコンにある写真を1枚選ぶだけです。対応形式ならそのままプレビューできます。</p>
+        </article>
+        <article class="step-card">
+          <span class="step-num">2</span>
+          <h3>評価する</h3>
+          <p>構図や明るさなどを自動で解析して、総合点と項目別の見やすい結果を表示します。</p>
+        </article>
+        <article class="step-card">
+          <span class="step-num">3</span>
+          <h3>結果を見る</h3>
+          <p>結果は履歴にも残り、画像は自動保存されます。必要ならフィードバックで精度改善にも参加できます。</p>
+        </article>
+      </div>
+      <div class="mini-info-row">
+        <span class="mini-info-chip">自動でDrive保存</span>
+        <span class="mini-info-chip">履歴からあとで確認</span>
+        <span class="mini-info-chip">フィードバックで精度アップ</span>
+      </div>
+    </section>
+
     <!-- ドロップゾーン -->
     <div id="dropzone" onclick="document.getElementById('file-input').click()">
       <input type="file" id="file-input" accept="image/jpeg,image/jpg,image/png,image/webp,image/heif,image/heic,.jpg,.jpeg,.png,.webp,.heif,.heic">
       <span class="drop-icon">📷</span>
-      <p class="drop-title">写真をドラッグ＆ドロップ</p>
-      <p class="drop-sub">または クリックして選択 ／ JPG・JPEG・PNG・WebP・HEIF ／ 最大25MB</p>
+      <p class="drop-title">ここをタップして写真を選択</p>
+      <p class="drop-sub">ドラッグ＆ドロップにも対応しています ／ JPG・JPEG・PNG・WebP・HEIF ／ 最大25MB</p>
     </div>
 
     <!-- プレビュー -->
@@ -917,7 +1398,7 @@
 <div id="page-history" class="page">
   <div class="container">
     <h1 class="page-title">評価履歴</h1>
-    <p class="page-sub">保存された評価結果の一覧です</p>
+    <p class="page-sub">これまでに評価した写真を、点数や日時とあわせて一覧で確認できます。</p>
 
     <div class="history-toolbar">
       <span class="history-count" id="history-count">0件</span>
