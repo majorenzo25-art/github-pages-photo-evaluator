@@ -130,54 +130,6 @@
     font-size: 0.78rem;
   }
 
-  .inductive-note {
-    margin-bottom: 16px;
-    padding: 14px 16px;
-    border-radius: var(--radius);
-    background: var(--blue-dim);
-    border: 1px solid rgba(96,165,250,0.22);
-    color: var(--text);
-    font-size: 0.82rem;
-    line-height: 1.7;
-  }
-  .control-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .control-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-  }
-  .control-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 0.76rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 700;
-  }
-  .control-select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font: inherit;
-    padding: 12px 14px;
-    outline: none;
-  }
-  .control-help {
-    margin-top: 8px;
-    font-size: 0.76rem;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
-
   .launch-warning {
     display: none;
     background: var(--red-dim);
@@ -474,98 +426,137 @@
   .comment-label.label-all  { color: var(--blue); }
   .comment-text { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
 
-  .section-card {
+  .ml-summary-card,
+  .feedback-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px 16px;
+    padding: 18px;
+    margin-top: 16px;
+    animation: fadeUp 0.4s ease-out 0.22s both;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
   }
   .section-title {
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.82rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 10px;
-  }
-  .summary-line {
-    font-size: 0.92rem;
-    color: var(--text);
-    line-height: 1.8;
-  }
-  .bullet-list {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding-left: 18px;
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    line-height: 1.7;
-  }
-  .bullet-list li::marker {
-    color: var(--accent);
-  }
-  .metric-list {
-    display: grid;
-    gap: 10px;
-  }
-  .metric-row {
-    display: grid;
-    grid-template-columns: 140px 56px 1fr;
-    gap: 10px;
-    align-items: start;
-    font-size: 0.85rem;
-    line-height: 1.7;
-  }
-  .metric-name {
-    color: var(--text);
     font-weight: 700;
   }
-  .metric-score {
-    font-family: 'DM Mono', monospace;
-    color: var(--accent);
-    font-weight: 500;
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
   }
-  .metric-reason {
+  .status-pill.rule {
+    background: var(--surface2);
     color: var(--text-muted);
   }
-  .mini-grid {
+  .status-pill.ml {
+    background: var(--blue-dim);
+    color: var(--blue);
+  }
+  .ml-summary-grid,
+  .feedback-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
   }
-  .mini-item {
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
+  .ml-summary-item,
+  .feedback-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ml-summary-item {
     background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
   }
-  .mini-label {
-    display: block;
-    font-size: 0.72rem;
+  .field-label,
+  .summary-label {
+    font-size: 0.74rem;
     color: var(--text-dim);
-    margin-bottom: 4px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .mini-value {
-    font-size: 0.9rem;
-    color: var(--text);
+    letter-spacing: 0.04em;
     font-weight: 700;
   }
-  .reference-list {
-    display: grid;
-    gap: 10px;
-  }
-  .reference-link {
-    display: inline-block;
-    margin-top: 4px;
-    color: var(--blue);
-    text-decoration: none;
+  .summary-value {
+    font-size: 0.92rem;
+    color: var(--text);
     word-break: break-word;
   }
-  .reference-link:hover {
-    text-decoration: underline;
+  .feedback-field.full {
+    grid-column: 1 / -1;
+  }
+  .feedback-field select,
+  .feedback-field input,
+  .feedback-field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 12px 13px;
+    outline: none;
+  }
+  .feedback-field textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+  .feedback-field select:focus,
+  .feedback-field input:focus,
+  .feedback-field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
+  }
+  .feedback-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .btn-feedback {
+    background: var(--blue);
+    color: #081018;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-feedback:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(96,165,250,0.25);
+  }
+  .feedback-status {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .feedback-status.success { color: var(--green); }
+  .feedback-status.error { color: var(--red); }
+  .feedback-note {
+    margin-top: 12px;
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    line-height: 1.7;
   }
 
   .delivery-card {
@@ -650,9 +641,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
     margin-bottom: 24px;
   }
   .history-count { color: var(--text-muted); font-size: 0.8rem; }
+  .history-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-toolbar {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-toolbar:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
   .btn-clear-all {
     background: none;
     border: 1px solid rgba(248,113,113,0.3);
@@ -811,15 +825,11 @@
 
   /* レスポンシブ */
   @media (max-width: 600px) {
-    .control-grid,
-    .mini-grid,
-    .metric-row {
-      grid-template-columns: 1fr;
-    }
     .scores-grid { grid-template-columns: 1fr 1fr; }
     #history-grid { grid-template-columns: 1fr 1fr; }
     .container { padding: 24px 16px 60px; }
     .preview-bar, .result-header { align-items: flex-start; }
+    .ml-summary-grid, .feedback-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 380px) {
     .scores-grid { grid-template-columns: 1fr; }
@@ -844,36 +854,8 @@
 <div id="page-evaluate" class="page active">
   <div class="container">
     <h1 class="page-title">写真を評価する / 起動対象ファイル</h1>
-    <p class="page-sub">写真を選ぶと、国際・国内・SNS系フォトコンの過去受賞傾向を模した帰納的評価を行い、Google Driveへ自動保存します。</p>
+    <p class="page-sub">写真を選ぶと評価後にGoogle Driveへ自動保存します。構図・明るさ・ピントなど7項目でスコアリングします</p>
     <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応します。HEIFはお使いのブラウザによってはプレビューや解析ができない場合があります。</p>
-    <div class="inductive-note">
-      この評価は公式審査基準ではなく、主要フォトコン受賞作の共通傾向をもとにした「受賞傾向ベースの帰納的評価」です。選んだ審査思想とジャンル内での相対指標として読み取ってください。
-    </div>
-
-    <div class="control-grid">
-      <div class="control-card">
-        <label class="control-label" for="review-philosophy">審査思想</label>
-        <select id="review-philosophy" class="control-select">
-          <option value="international">国際コンテスト向け</option>
-          <option value="domestic">国内公募展向け</option>
-          <option value="sns">SNS最適化向け</option>
-        </select>
-        <p class="control-help">国際は独創性、国内は完成度、SNSは一目の印象とトリミング耐性を重視します。</p>
-      </div>
-      <div class="control-card">
-        <label class="control-label" for="genre-select">ジャンル</label>
-        <select id="genre-select" class="control-select">
-          <option value="landscape">風景</option>
-          <option value="portrait">ポートレート</option>
-          <option value="snapshot">スナップ</option>
-          <option value="wildlife">動物</option>
-          <option value="architecture">建築</option>
-          <option value="art">アート</option>
-          <option value="other">その他</option>
-        </select>
-        <p class="control-help">顔情報はポートレート時のみ補助利用し、それ以外では構図・光・技術・視線誘導を優先します。</p>
-      </div>
-    </div>
 
     <div id="launch-warning" class="launch-warning"></div>
 
@@ -939,7 +921,11 @@
 
     <div class="history-toolbar">
       <span class="history-count" id="history-count">0件</span>
-      <button class="btn-clear-all" onclick="clearAllHistory()">すべて削除</button>
+      <div class="history-actions">
+        <button class="btn-toolbar" onclick="exportLearningData('json')">学習JSON</button>
+        <button class="btn-toolbar" onclick="exportLearningData('csv')">学習CSV</button>
+        <button class="btn-clear-all" onclick="clearAllHistory()">すべて削除</button>
+      </div>
     </div>
 
     <div id="history-grid"></div>
@@ -967,100 +953,91 @@
 
 
 <script>
-const CONTEST_SCORE_ITEMS = [
-  { label: '構図', key: 'compositionScore', icon: '🖼️' },
-  { label: '光', key: 'lightScore', icon: '💡' },
-  { label: '色', key: 'colorScore', icon: '🎨' },
-  { label: '表現力', key: 'expressionScore', icon: '🫧' },
-  { label: '技術', key: 'technicalScore', icon: '🛠️' },
-  { label: 'ビジュアルウエイト', key: 'visualWeightScore', icon: '⚖️' },
-];
-
-const REVIEW_PHILOSOPHY_LABELS = {
-  international: '国際コンテスト向け',
-  domestic: '国内公募展向け',
-  sns: 'SNS最適化向け',
-};
-
-const GENRE_LABELS = {
-  landscape: '風景',
-  portrait: 'ポートレート',
-  snapshot: 'スナップ',
-  wildlife: '動物',
-  architecture: '建築',
-  art: 'アート',
-  other: 'その他',
-};
-
-const REVIEW_PHILOSOPHY_CONFIG = {
-  international: {
-    label: REVIEW_PHILOSOPHY_LABELS.international,
-    reason: '国際フォトコン受賞傾向で強い、独創性・物語性・視覚的フックを重めに評価',
-    passScale: 1.08,
-    nextDirection: '独創性や物語性をさらに押し出し、「見たことがないが成立している」方向へ寄せる',
-  },
-  domestic: {
-    label: REVIEW_PHILOSOPHY_LABELS.domestic,
-    reason: '国内公募展で好まれやすい、完成度・主題の普遍性・破綻の少なさを重めに評価',
-    passScale: 1,
-    nextDirection: '完成度や主題の普遍性を高め、鑑賞者に意味が伝わる整い方を磨く',
-  },
-  sns: {
-    label: REVIEW_PHILOSOPHY_LABELS.sns,
-    reason: 'SNSでの初見インパクトとトリミング耐性、視線停止力を重めに評価',
-    passScale: 0.92,
-    nextDirection: '一目の印象とトリミング耐性を高め、縮小表示でも主題が勝つ設計へ寄せる',
-  },
-};
-
-const PHILOSOPHY_WEIGHTS = {
-  international: { compositionScore: 0.18, lightScore: 0.17, colorScore: 0.13, expressionScore: 0.22, technicalScore: 0.12, visualWeightScore: 0.18 },
-  domestic:      { compositionScore: 0.19, lightScore: 0.18, colorScore: 0.14, expressionScore: 0.15, technicalScore: 0.19, visualWeightScore: 0.15 },
-  sns:           { compositionScore: 0.18, lightScore: 0.14, colorScore: 0.16, expressionScore: 0.16, technicalScore: 0.12, visualWeightScore: 0.24 },
-};
-
-const GENRE_WEIGHT_MODIFIERS = {
-  landscape:    { compositionScore: 1.08, lightScore: 1.18, colorScore: 1.15, expressionScore: 0.95, technicalScore: 0.94, visualWeightScore: 1.08 },
-  portrait:     { compositionScore: 0.98, lightScore: 1.02, colorScore: 0.92, expressionScore: 1.22, technicalScore: 0.98, visualWeightScore: 0.96 },
-  snapshot:     { compositionScore: 1.02, lightScore: 0.96, colorScore: 0.96, expressionScore: 1.18, technicalScore: 0.9, visualWeightScore: 1.08 },
-  wildlife:     { compositionScore: 1.02, lightScore: 1.02, colorScore: 0.98, expressionScore: 1.08, technicalScore: 1.16, visualWeightScore: 1.02 },
-  architecture: { compositionScore: 1.2, lightScore: 0.92, colorScore: 0.95, expressionScore: 0.88, technicalScore: 1.08, visualWeightScore: 1.1 },
-  art:          { compositionScore: 0.98, lightScore: 1.02, colorScore: 1.12, expressionScore: 1.28, technicalScore: 0.88, visualWeightScore: 1.06 },
-  other:        { compositionScore: 1, lightScore: 1, colorScore: 1, expressionScore: 1, technicalScore: 1, visualWeightScore: 1 },
-};
-
-const GENRE_BASELINES = {
-  landscape: { average100: 71, passBase: 28 },
-  portrait: { average100: 69, passBase: 31 },
-  snapshot: { average100: 67, passBase: 34 },
-  wildlife: { average100: 70, passBase: 30 },
-  architecture: { average100: 68, passBase: 32 },
-  art: { average100: 66, passBase: 36 },
-  other: { average100: 68, passBase: 33 },
-};
-
-const CONTEST_REFERENCE_LIBRARY = {
-  international: [
-    { name: 'Sony World Photography Awards', url: 'https://www.worldphoto.org/', tags: ['landscape', 'portrait', 'snapshot', 'wildlife', 'architecture', 'art', 'other'] },
-    { name: 'Nikon Photo Contest', url: 'https://www.nikon-photocontest.com/en/', tags: ['landscape', 'portrait', 'snapshot', 'wildlife', 'art', 'other'] },
-    { name: 'National Geographic Photography', url: 'https://www.nationalgeographic.com/photography/', tags: ['landscape', 'wildlife', 'snapshot', 'other'] },
+const SCORE_ITEMS_BY_MODE = {
+  portrait: [
+    { label: '構図', key: 'compositionScore', icon: '🖼️' },
+    { label: '明るさ', key: 'brightnessScore', icon: '☀️' },
+    { label: 'ピント', key: 'focusScore', icon: '🔍' },
+    { label: '表情', key: 'expressionScore', icon: '😊' },
+    { label: '背景', key: 'backgroundScore', icon: '🌿' },
+    { label: '清潔感', key: 'cleanlinessScore', icon: '✨' },
+    { label: '印象', key: 'impressionScore', icon: '💫' },
   ],
-  domestic: [
-    { name: '東京カメラ部10選', url: 'https://tokyocameraclub.com/', tags: ['landscape', 'portrait', 'snapshot', 'wildlife', 'architecture', 'other'] },
-    { name: '日本写真協会 公募情報', url: 'https://www.psj.or.jp/', tags: ['landscape', 'portrait', 'snapshot', 'architecture', 'art', 'other'] },
-    { name: 'CAPA フォトコンテスト', url: 'https://capa.getnavi.jp/', tags: ['landscape', 'portrait', 'snapshot', 'wildlife', 'other'] },
+  nonPortrait: [
+    { label: '構図', key: 'compositionScore', icon: '🖼️' },
+    { label: '明るさ', key: 'brightnessScore', icon: '☀️' },
+    { label: 'ピント', key: 'focusScore', icon: '🔍' },
+    { label: '色再現', key: 'colorScore', icon: '🎨' },
+    { label: '背景整理', key: 'organizationScore', icon: '🧩' },
+    { label: '情報量', key: 'informationScore', icon: '📊' },
+    { label: '印象', key: 'impressionScore', icon: '💫' },
   ],
-  sns: [
-    { name: '東京カメラ部 キャンペーン', url: 'https://tokyocameraclub.com/', tags: ['landscape', 'portrait', 'snapshot', 'architecture', 'other'] },
-    { name: 'Instagram Creators', url: 'https://about.instagram.com/creators', tags: ['landscape', 'portrait', 'snapshot', 'art', 'other'] },
-    { name: '500px Community', url: 'https://500px.com/', tags: ['landscape', 'portrait', 'wildlife', 'architecture', 'art', 'other'] },
-  ],
+};
+
+const SCENE_TYPE_LABELS = {
+  portrait: '人物写真',
+  nonPortrait: '非人物写真',
+};
+
+const ITEM_COMMENT_MAP = {
+  compositionScore: {
+    high: ['左右・上下のバランスが安定し、主題配置もまとまっています。', '三分割構図との整合が高く、視線誘導が自然です。'],
+    mid: ['構図は成立していますが、主題位置を少し動かすと伸びます。', '全体のバランスは悪くありませんが、余白の整理で印象が上がります。'],
+    low: ['主題の位置が曖昧です。三分割線付近へ寄せると改善しやすいです。', '左右または上下の重心が偏っています。撮影位置やトリミングを見直してください。'],
+  },
+  brightnessScore: {
+    high: ['露出が安定しており、白飛び・黒つぶれがよく抑えられています。', '平均輝度とコントラストのバランスが良く、見やすい明るさです。'],
+    mid: ['明るさは許容範囲ですが、露出補正でさらに見栄えが上がります。', '大きな破綻はありませんが、ハイライトと暗部の扱いに改善余地があります。'],
+    low: ['露出が極端です。白飛びや黒つぶれを抑える再撮影が必要です。', '平均輝度のズレが大きく、明るさ評価を下げています。'],
+  },
+  focusScore: {
+    high: ['エッジ量とシャープネスが十分で、主題の輪郭が明瞭です。', 'ピントの芯があり、情報がきれいに残っています。'],
+    mid: ['大きなピンボケではありませんが、やや甘さがあります。', '輪郭情報は取れていますが、もう少しシャープさが欲しい状態です。'],
+    low: ['エッジ量が不足しており、ピントが甘く見えます。', 'シャープネスが低く、手ブレかピントずれの可能性があります。'],
+  },
+  colorScore: {
+    high: ['色の乗り方が自然で、白飛びや黒つぶれの影響も少ないです。', '色再現とコントラストの両立ができており、見栄えが安定しています。'],
+    mid: ['色は出ていますが、ハイライトや彩度の調整でさらに整います。', '色再現は平均的で、露出の詰めで印象が上がりやすい状態です。'],
+    low: ['色再現が不安定で、白飛びや黒つぶれが見栄えを下げています。', '彩度やコントラストのバランスが崩れ、色の説得力が弱くなっています。'],
+  },
+  expressionScore: {
+    high: ['顔検出結果と主題のまとまりから見て、人物訴求力が高いです。', '人物がしっかり主題化されており、表情項目は高評価です。'],
+    mid: ['表情項目は平均的です。顔の向きや距離感を整えると伸びます。', '顔は捉えられていますが、印象づけはまだ改善できます。'],
+    low: ['顔検出が弱いか、主題化が不足しているため表情評価が伸びていません。', '人物の見せ方が弱く、顔位置や距離感の再設計が必要です。'],
+  },
+  backgroundScore: {
+    high: ['背景の情報量が抑えられ、主題分離ができています。', '背景が整理されており、視線が主題へ素直に集まります。'],
+    mid: ['背景は許容範囲ですが、やや情報量が多めです。', '背景の整理は概ねできていますが、余計な要素を減らす余地があります。'],
+    low: ['背景の情報量が多く、主題より先に周辺が目に入ります。', '背景の散らかり度が高く、場所変更や整理が必要です。'],
+  },
+  organizationScore: {
+    high: ['不要要素が抑えられ、画面整理ができています。', '背景と主題の役割分担が明快で、視線誘導が安定しています。'],
+    mid: ['大きな破綻はありませんが、周辺整理でさらに見やすくなります。', '背景整理は平均的で、少し要素を減らすと主題が立ちやすくなります。'],
+    low: ['周辺要素が多く、背景整理の不足が目立ちます。', '背景の散らかりが強く、主題の見え方を弱めています。'],
+  },
+  cleanlinessScore: {
+    high: ['ノイズが少なく、画面全体に整頓感があります。', '視覚ノイズが抑えられ、清潔感のある見え方です。'],
+    mid: ['清潔感は平均的です。背景整理やノイズ低減で改善できます。', '大きな崩れはありませんが、細部の整頓で印象が上がります。'],
+    low: ['ノイズや背景の散らかりが清潔感を下げています。', '画面内の不要情報が多く、清潔感評価が低く出ています。'],
+  },
+  informationScore: {
+    high: ['情報量が適切で、見どころが整理されています。', '不足も過多もなく、内容が伝わりやすい密度です。'],
+    mid: ['情報量は標準的です。主題の絞り込みで完成度が上がります。', '見どころはありますが、情報の整理でもう一段見やすくなります。'],
+    low: ['情報量の偏りが大きく、写真の意図が伝わりにくい状態です。', '要素が多すぎるか少なすぎるため、見どころの整理が必要です。'],
+  },
+  impressionScore: {
+    high: ['第一印象が強く、総合的な完成度が高い一枚です。', '構図・明るさ・主題性のバランスが良く、印象に残りやすい写真です。'],
+    mid: ['印象は平均以上ですが、決定力はまだ伸ばせます。', '破綻は少ないものの、強い記憶点はあと一歩です。'],
+    low: ['主題の押し出しが弱く、印象形成が不足しています。', '構図や背景の再設計で、印象スコアを大きく改善できます。'],
+  },
 };
 
 const STORAGE_KEYS = {
   deliverySettings: 'photo_eval_delivery_settings',
+  mlApiBase: 'photo_eval_ml_api_base',
 };
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyBeavKTziPWneYuiiLNTgVuTTajtjGJeRp29-4VuPG86c3Xis91t7duj_-oB4d6eIgWA/exec';
+const DEFAULT_ML_API_BASE = 'http://127.0.0.1:8787';
 
 const DB_NAME = 'photo_eval_db';
 const DB_VERSION = 1;
@@ -1075,6 +1052,14 @@ let currentFileDataUrl = '';
 let latestResultRecord = null;
 let sendingRecordId = null;
 let modalRecordId = null;
+let mlRuntimeState = {
+  mode: 'Rule-based',
+  modelVersion: '',
+  available: false,
+  sampleCount: 0,
+  minimumMlSamples: 12,
+  reason: 'ML API未接続',
+};
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -1208,6 +1193,76 @@ function validateDeliverySettings(settings) {
   if (!settings.webhookUrl) return 'Webhook URLを入力してください';
   if (!/^https?:\/\//.test(settings.webhookUrl)) return 'Webhook URLの形式が正しくありません';
   return '';
+}
+
+function getMlApiBase() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.mlApiBase);
+    if (stored) return stored;
+  } catch {}
+  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    return window.location.origin;
+  }
+  return DEFAULT_ML_API_BASE;
+}
+
+async function apiRequest(path, options = {}) {
+  const responseType = options.responseType || 'json';
+  const response = await fetch(`${getMlApiBase()}${path}`, {
+    method: options.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+
+  if (responseType === 'blob') {
+    if (!response.ok) throw new Error(`APIエラー: HTTP ${response.status}`);
+    return response.blob();
+  }
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error('APIレスポンスのJSON解析に失敗しました');
+  }
+  if (!response.ok || data?.success === false) {
+    throw new Error(data?.message || `APIエラー: HTTP ${response.status}`);
+  }
+  return data;
+}
+
+function setMlRuntimeState(nextState = {}) {
+  mlRuntimeState = {
+    ...mlRuntimeState,
+    ...nextState,
+  };
+}
+
+async function refreshMlStatus() {
+  try {
+    const status = await apiRequest('/api/ml/status');
+    setMlRuntimeState({
+      mode: status.mode || 'Rule-based',
+      modelVersion: status.modelVersion || '',
+      available: Boolean(status.available),
+      sampleCount: Number(status.sampleCount || 0),
+      minimumMlSamples: Number(status.minimumMlSamples || 12),
+      reason: status.reason || '',
+    });
+  } catch (error) {
+    console.warn('ML status unavailable', error);
+    setMlRuntimeState({
+      mode: 'Rule-based',
+      modelVersion: '',
+      available: false,
+      sampleCount: 0,
+      minimumMlSamples: 12,
+      reason: 'ML API未接続',
+    });
+  }
 }
 
 function updateLaunchWarning() {
@@ -1612,482 +1667,228 @@ function computeFaceMetrics(faces, width, height) {
   };
 }
 
-function getSelectedReviewPhilosophy() {
-  return document.getElementById('review-philosophy')?.value || 'international';
+function detectSceneType(metrics) {
+  const faceMetrics = metrics.faceMetrics;
+  if (!faceMetrics.hasFace) return 'nonPortrait';
+
+  const strongFace = faceMetrics.faceAreaRatio >= 0.05;
+  const mediumFace = faceMetrics.faceAreaRatio >= 0.032 && faceMetrics.faceCenteredness >= 0.58;
+  const centeredSingleFace = faceMetrics.faceAreaRatio >= 0.024 && faceMetrics.faceCenteredness >= 0.74 && faceMetrics.faceCount <= 2;
+
+  return (strongFace || mediumFace || centeredSingleFace) ? 'portrait' : 'nonPortrait';
 }
 
-function getSelectedGenre() {
-  return document.getElementById('genre-select')?.value || 'other';
-}
+function deriveScoresFromMetrics(metrics) {
+  const brightnessScore = clamp(round(
+    scoreFromDeviation(metrics.brightnessMean, 138, 22, 62) * 0.34 +
+    scoreFromDeviation(metrics.brightnessStd, 58, 18, 48) * 0.18 +
+    scoreFromDeviation(metrics.contrast, 0.42, 0.16, 0.44) * 0.18 +
+    (1 - clamp(metrics.overexposedRatio / 0.11, 0, 1)) * 15 +
+    (1 - clamp(metrics.underexposedRatio / 0.14, 0, 1)) * 15
+  ), 16, 98);
 
-function normalizeWeights(baseWeights, modifiers) {
-  const entries = Object.entries(baseWeights).map(([key, value]) => [key, value * (modifiers[key] || 1)]);
-  const total = entries.reduce((sum, [, value]) => sum + value, 0) || 1;
-  return Object.fromEntries(entries.map(([key, value]) => [key, value / total]));
-}
+  const focusScore = clamp(round(
+    normalize(metrics.meanEdge, 8, 46) * 34 +
+    normalize(metrics.dominantEdge, 18, 96) * 22 +
+    normalize(metrics.sharpnessRaw, 6, 30) * 32 +
+    (1 - normalize(metrics.noiseEstimate, 3, 18)) * 12
+  ), 14, 98);
 
-function getRelativeGenreBaseline(genre) {
-  return GENRE_BASELINES[genre] || GENRE_BASELINES.other;
-}
-
-function buildContestReason(reviewPhilosophy, genre, metrics, scores) {
-  const philosophy = REVIEW_PHILOSOPHY_CONFIG[reviewPhilosophy] || REVIEW_PHILOSOPHY_CONFIG.international;
-  const strongLight = scores.lightScore >= 78;
-  const strongExpression = scores.expressionScore >= 78;
-  const strongWeight = scores.visualWeightScore >= 78;
-  const genreLabel = GENRE_LABELS[genre] || GENRE_LABELS.other;
-
-  if (reviewPhilosophy === 'international') {
-    if (strongExpression || strongWeight) return `${genreLabel}として視線停止力と物語の余白があり、国際系が好む「一枚の押し」が出ているため`;
-    return `${genreLabel}として独創性余地を見ながらも、視覚的な引力と主題の強さを優先して見る思想に近いため`;
-  }
-  if (reviewPhilosophy === 'domestic') {
-    if (strongLight && scores.technicalScore >= 76) return `${genreLabel}として露出精度と破綻の少なさが安定しており、国内公募展寄りの完成度評価に相性が良いため`;
-    return `${genreLabel}として主題の普遍性と完成度を丁寧に見る国内公募展寄りの読み方が適切なため`;
-  }
-  if (strongWeight) return `${genreLabel}として縮小表示でも主題が勝ちやすく、SNSで重要な一目の印象とトリミング耐性が見やすいため`;
-  return `${genreLabel}として第一印象と視線誘導を優先評価するSNS寄りの読み方が妥当なため`;
-}
-
-function deriveContestScores(metrics, reviewPhilosophy, genre) {
-  const weights = normalizeWeights(
-    PHILOSOPHY_WEIGHTS[reviewPhilosophy] || PHILOSOPHY_WEIGHTS.international,
-    GENRE_WEIGHT_MODIFIERS[genre] || GENRE_WEIGHT_MODIFIERS.other
-  );
-  const sceneType = genre === 'portrait' ? 'portrait' : 'nonPortrait';
-  const faceSupport = genre === 'portrait'
-    ? normalize(metrics.faceMetrics.faceAreaRatio, 0.02, 0.18) * 0.45 + metrics.faceMetrics.faceCenteredness * 0.35 + metrics.faceMetrics.faceStability * 0.2
-    : 0;
-  const subjectCenterSupport = 1 - clamp(Math.hypot(metrics.subjectXRatio - 0.5, metrics.subjectYRatio - 0.5) / 0.74, 0, 1);
-  const peripheralRatio = metrics.edgeBands.peripheral / Math.max(1, metrics.edgeBands.total);
-  const symmetrySupport = (metrics.leftRightBalance + metrics.topBottomBalance) / 2;
-  const tonalSafety = 1 - clamp((metrics.overexposedRatio + metrics.underexposedRatio) / 0.22, 0, 1);
-
-  const compositionScore = clamp(round(
-    metrics.leftRightBalance * 21 +
-    metrics.topBottomBalance * 16 +
-    metrics.thirdsAlignment * 24 +
-    normalize(metrics.subjectConcentration, 0.03, 0.14) * 16 +
-    (1 - clamp(Math.abs(metrics.subjectXRatio - 0.38) / 0.38, 0, 1)) * 9 +
-    subjectCenterSupport * 14
-  ), 24, 98);
-
-  const lightScore = clamp(round(
-    scoreFromDeviation(metrics.brightnessMean, genre === 'architecture' ? 150 : 138, 24, 66) * 0.28 +
-    scoreFromDeviation(metrics.brightnessStd, genre === 'art' ? 64 : 58, 19, 50) * 0.16 +
-    scoreFromDeviation(metrics.contrast, reviewPhilosophy === 'sns' ? 0.48 : 0.42, 0.16, 0.42) * 0.18 +
-    tonalSafety * 24 +
-    normalize(metrics.entropy, 5.2, 7.3) * 14
-  ), 18, 98);
-
-  const colorScore = clamp(round(
-    scoreFromDeviation(metrics.saturationRatio, reviewPhilosophy === 'sns' ? 0.23 : 0.18, 0.08, 0.22) * 0.3 +
-    scoreFromDeviation(metrics.contrast, 0.42, 0.14, 0.38) * 0.2 +
-    tonalSafety * 18 +
-    normalize(metrics.entropy, 5.2, 7.3) * 14 +
-    (1 - normalize(metrics.noiseEstimate, 3, 18)) * 10 +
-    (1 - clamp(Math.abs(metrics.brightnessMean - 138) / 138, 0, 1)) * 8
-  ), 20, 98);
-
-  const expressionBase = genre === 'portrait'
-    ? faceSupport * 54 + normalize(metrics.subjectConcentration, 0.03, 0.15) * 16 + normalize(metrics.entropy, 5, 7.4) * 16 + subjectCenterSupport * 14
-    : normalize(metrics.subjectConcentration, 0.03, 0.15) * 24 +
-      normalize(metrics.entropy, 5.2, 7.5) * 22 +
-      (1 - metrics.backgroundClutter) * 18 +
-      lightScore * 0.18 +
-      compositionScore * 0.18;
-  const expressionScore = clamp(round(expressionBase), 18, 98);
-
-  const technicalScore = clamp(round(
-    normalize(metrics.meanEdge, 8, 46) * 24 +
-    normalize(metrics.dominantEdge, 18, 96) * 16 +
-    normalize(metrics.sharpnessRaw, 6, 30) * 24 +
-    (1 - normalize(metrics.noiseEstimate, 3, 18)) * 14 +
-    tonalSafety * 10 +
-    normalize(metrics.contrast, 0.18, 0.62) * 12
-  ), 18, 98);
-
-  const visualWeightScore = clamp(round(
-    normalize(metrics.subjectConcentration, 0.03, 0.15) * 26 +
-    (1 - normalize(peripheralRatio, 0.42, 0.92)) * 18 +
-    subjectCenterSupport * 20 +
-    symmetrySupport * 12 +
-    (1 - metrics.backgroundClutter) * 12 +
-    (genre === 'portrait' ? faceSupport * 12 : normalize(metrics.entropy, 5.1, 7.3) * 12)
-  ), 20, 98);
-
-  const weightedBase100 = round(
-    compositionScore * weights.compositionScore +
-    lightScore * weights.lightScore +
-    colorScore * weights.colorScore +
-    expressionScore * weights.expressionScore +
-    technicalScore * weights.technicalScore +
-    visualWeightScore * weights.visualWeightScore,
+  const sceneType = detectSceneType(metrics);
+  const subjectCenterSupport = 1 - clamp(
+    Math.hypot(metrics.subjectXRatio - 0.5, metrics.subjectYRatio - 0.5) / 0.72,
+    0,
     1
   );
 
-  const genericity = metrics.thirdsAlignment * 0.34 + symmetrySupport * 0.24 + subjectCenterSupport * 0.22 + (1 - normalize(metrics.entropy, 5.2, 7.4)) * 0.2;
-  const uniquenessSupport = normalize(metrics.brightnessStd, 28, 78) * 0.25 + normalize(metrics.entropy, 5.2, 7.4) * 0.25 + expressionScore / 100 * 0.25 + visualWeightScore / 100 * 0.25;
-  const originalityPenalty = clamp(round(5 + genericity * 11 - uniquenessSupport * 5), 5, 15);
-  const finishBonus = clamp(round(
-    5 +
-    tonalSafety * 6 +
-    normalize(lightScore, 62, 92) * 4 +
-    normalize(technicalScore, 60, 92) * 3 +
-    normalize(expressionScore, 65, 95) * 2
-  ), 5, 20);
+  const compositionScore = clamp(round(
+    metrics.leftRightBalance * 23 +
+    metrics.topBottomBalance * 18 +
+    metrics.thirdsAlignment * 28 +
+    normalize(metrics.subjectConcentration, 0.035, 0.14) * 17 +
+    (sceneType === 'portrait'
+      ? metrics.faceMetrics.faceCenteredness * 14
+      : subjectCenterSupport * 14)
+  ), 18, 97);
 
-  const raw120 = round(weightedBase100 * 1.2, 1);
-  const adjustedScore = clamp(round(raw120 - originalityPenalty + finishBonus, 1), 0, 120);
-  const total120 = clamp(round(adjustedScore), 0, 120);
-  const totalScore = clamp(round(adjustedScore / 1.2), 0, 100);
-  const baseline = getRelativeGenreBaseline(genre);
-  const genreDelta = round(totalScore - baseline.average100, 1);
-  const passEstimate = clamp(round(baseline.passBase - genreDelta * 0.7 * (REVIEW_PHILOSOPHY_CONFIG[reviewPhilosophy]?.passScale || 1)), 3, 85);
-  const rank = totalScore >= 88 ? 'A+' : totalScore >= 80 ? 'A' : totalScore >= 72 ? 'B' : totalScore >= 64 ? 'C' : 'D';
+  if (sceneType === 'portrait') {
+    const backgroundScore = clamp(round(
+      (1 - metrics.backgroundInformation) * 34 +
+      (1 - metrics.backgroundClutter) * 38 +
+      normalize(metrics.subjectConcentration, 0.03, 0.14) * 18 +
+      (1 - normalize(metrics.edgeBands.peripheral / Math.max(1, metrics.edgeBands.total), 0.45, 0.9)) * 10
+    ), 18, 96);
+
+    const cleanlinessScore = clamp(round(
+      (1 - normalize(metrics.noiseEstimate, 2, 18)) * 30 +
+      brightnessScore * 0.26 +
+      backgroundScore * 0.24 +
+      (1 - metrics.backgroundClutter) * 20
+    ), 18, 96);
+
+    const expressionScore = clamp(round(
+      normalize(metrics.faceMetrics.faceAreaRatio, 0.03, 0.18) * 36 +
+      metrics.faceMetrics.faceCenteredness * 24 +
+      metrics.faceMetrics.faceStability * 18 +
+      normalize(focusScore, 45, 95) * 12 +
+      normalize(brightnessScore, 45, 95) * 10
+    ), 28, 95);
+
+    const impressionScore = clamp(round(
+      compositionScore * 0.21 +
+      brightnessScore * 0.16 +
+      focusScore * 0.17 +
+      expressionScore * 0.15 +
+      backgroundScore * 0.14 +
+      cleanlinessScore * 0.17
+    ), 18, 98);
+
+    const totalScore = clamp(round(
+      compositionScore * 0.16 +
+      brightnessScore * 0.15 +
+      focusScore * 0.17 +
+      expressionScore * 0.13 +
+      backgroundScore * 0.13 +
+      cleanlinessScore * 0.11 +
+      impressionScore * 0.15
+    ), 16, 98);
+
+    return {
+      sceneType,
+      compositionScore,
+      brightnessScore,
+      focusScore,
+      expressionScore,
+      backgroundScore,
+      cleanlinessScore,
+      impressionScore,
+      totalScore,
+    };
+  }
+
+  const colorScore = clamp(round(
+    scoreFromDeviation(metrics.saturationRatio, 0.18, 0.08, 0.2) * 0.34 +
+    scoreFromDeviation(metrics.contrast, 0.42, 0.14, 0.38) * 0.28 +
+    (1 - clamp(metrics.overexposedRatio / 0.11, 0, 1)) * 18 +
+    (1 - clamp(metrics.underexposedRatio / 0.14, 0, 1)) * 20
+  ), 18, 97);
+
+  const organizationScore = clamp(round(
+    (1 - metrics.backgroundClutter) * 40 +
+    (1 - normalize(metrics.edgeBands.peripheral / Math.max(1, metrics.edgeBands.total), 0.45, 0.9)) * 20 +
+    metrics.leftRightBalance * 16 +
+    metrics.topBottomBalance * 10 +
+    normalize(metrics.subjectConcentration, 0.03, 0.13) * 14
+  ), 18, 97);
+
+  const informationScore = clamp(round(
+    scoreFromDeviation(metrics.backgroundInformation, 0.46, 0.17, 0.42) * 0.48 +
+    scoreFromDeviation(metrics.entropy, 6.1, 0.9, 2.2) * 0.32 +
+    normalize(metrics.subjectConcentration, 0.03, 0.12) * 20
+  ), 18, 97);
+
+  const impressionScore = clamp(round(
+    compositionScore * 0.2 +
+    brightnessScore * 0.16 +
+    focusScore * 0.18 +
+    colorScore * 0.14 +
+    organizationScore * 0.16 +
+    informationScore * 0.16
+  ), 18, 98);
+
+  const totalScore = clamp(round(
+    compositionScore * 0.18 +
+    brightnessScore * 0.16 +
+    focusScore * 0.18 +
+    colorScore * 0.14 +
+    organizationScore * 0.13 +
+    informationScore * 0.08 +
+    impressionScore * 0.13
+  ), 16, 98);
 
   return {
-    reviewPhilosophy,
-    reviewPhilosophyLabel: REVIEW_PHILOSOPHY_LABELS[reviewPhilosophy] || REVIEW_PHILOSOPHY_LABELS.international,
-    genre,
-    genreLabel: GENRE_LABELS[genre] || GENRE_LABELS.other,
     sceneType,
-    weights,
     compositionScore,
-    lightScore,
+    brightnessScore,
+    focusScore,
     colorScore,
-    expressionScore,
-    technicalScore,
-    visualWeightScore,
-    originalityPenalty,
-    finishBonus,
-    raw120,
-    adjustedScore,
-    total120,
+    organizationScore,
+    informationScore,
+    impressionScore,
     totalScore,
-    convertedScore: totalScore,
-    genreDelta,
-    passEstimate,
-    rank,
-    philosophyReason: buildContestReason(reviewPhilosophy, genre, metrics, {
-      lightScore,
-      expressionScore,
-      visualWeightScore,
-      technicalScore,
-    }),
   };
 }
 
-function buildContestImprovementSignals(metrics, scores, genre) {
+function buildImprovementSignals(metrics, scores) {
+  const sceneType = scores.sceneType || detectSceneType(metrics);
   const signals = [];
-  if (metrics.overexposedRatio > 0.08) signals.push('白飛びが強く、階調保持が弱い');
-  if (metrics.underexposedRatio > 0.12) signals.push('黒つぶれが多く、暗部情報が不足');
-  if (metrics.noiseEstimate > 10.5) signals.push('高ISOノイズがディテールを圧迫');
-  if (metrics.thirdsAlignment > 0.72 && scores.originalityPenalty >= 10) signals.push('定番構図寄りで独創性減点が大きい');
-  if (genre !== 'portrait' && metrics.backgroundClutter > 0.58) signals.push('背景整理不足で視線誘導が分散');
-  if (genre === 'portrait' && scores.expressionScore < 65) signals.push('人物の存在感が弱く物語性が浅い');
-  if (scores.visualWeightScore < 65) signals.push('画面内で主題の勝ち方が弱い');
+  if (metrics.overexposedRatio > 0.08) signals.push('白飛びが目立ちます');
+  if (metrics.underexposedRatio > 0.12) signals.push('黒つぶれが多めです');
+  if (metrics.noiseEstimate > 10.5) signals.push('高ISO由来のノイズ感があります');
+  if (metrics.backgroundClutter > 0.58) signals.push(sceneType === 'portrait' ? '背景が過密です' : '背景整理が不足しています');
+  if (scores.focusScore < 60) signals.push('ピント不足です');
+  if (metrics.thirdsAlignment < 0.35) signals.push('主題配置が三分割構図から外れています');
+  if (sceneType === 'nonPortrait' && scores.colorScore < 60) signals.push('色再現が安定していません');
+  if (sceneType === 'nonPortrait' && scores.informationScore < 60) signals.push('情報量の整理が必要です');
+  if (sceneType === 'portrait' && !metrics.faceDetectionSupported) signals.push('FaceDetector非対応環境です');
   return signals;
 }
 
-function buildMetricReasons(scores, metrics, genre) {
-  return {
-    compositionScore: `三分割整合 ${round(metrics.thirdsAlignment, 2)}、左右バランス ${round(metrics.leftRightBalance, 2)}、主題集中 ${round(metrics.subjectConcentration, 3)} を反映`,
-    lightScore: `平均輝度 ${round(metrics.brightnessMean)}、白飛び ${round(metrics.overexposedRatio * 100, 1)}%、黒つぶれ ${round(metrics.underexposedRatio * 100, 1)}%、コントラスト ${round(metrics.contrast, 2)} を評価`,
-    colorScore: `彩度比 ${round(metrics.saturationRatio, 2)}、階調情報量 ${round(metrics.entropy, 2)}、色の破綻の少なさを評価`,
-    expressionScore: genre === 'portrait'
-      ? `顔面積比 ${round(metrics.faceMetrics.faceAreaRatio * 100, 1)}%、主題集中、視線停止力から人物の伝達力を推定`
-      : `主題集中、情報量、背景整理、画面の緊張感から物語性を推定`,
-    technicalScore: `シャープネス ${round(metrics.sharpnessRaw, 1)}、エッジ量 ${round(metrics.meanEdge, 1)}、ノイズ ${round(metrics.noiseEstimate, 1)} を評価`,
-    visualWeightScore: `主題の密度、周辺エッジ比 ${round(metrics.edgeBands.peripheral / Math.max(1, metrics.edgeBands.total), 2)}、視線誘導の強さを評価`,
-  };
-}
+function generateCommentsFromAnalysis(scores, metrics, improvementSignals) {
+  const sceneType = scores.sceneType || detectSceneType(metrics);
+  const activeItems = SCORE_ITEMS_BY_MODE[sceneType] || SCORE_ITEMS_BY_MODE.portrait;
+  const activeKeys = activeItems.map(item => item.key);
+  const ranked = Object.entries(scores)
+    .filter(([key]) => activeKeys.includes(key))
+    .sort((a, b) => b[1] - a[1]);
+  const bestKey = ranked[0][0];
+  const worstKey = ranked[ranked.length - 1][0];
+  const seed = Math.round(metrics.brightnessMean + metrics.sharpnessRaw * 9 + metrics.entropy * 7);
+  const strengthsComment = pick(ITEM_COMMENT_MAP[bestKey][getTier(scores[bestKey])], seed + 3);
 
-function pickContestReferences(reviewPhilosophy, genre) {
-  return (CONTEST_REFERENCE_LIBRARY[reviewPhilosophy] || [])
-    .filter(item => item.tags.includes(genre))
-    .slice(0, 5);
-}
+  const concreteIssues = [];
+  if (metrics.overexposedRatio > 0.08) concreteIssues.push(`白飛び率${round(metrics.overexposedRatio * 100)}%が出ています`);
+  if (metrics.underexposedRatio > 0.12) concreteIssues.push(`黒つぶれ率${round(metrics.underexposedRatio * 100)}%が高めです`);
+  if (metrics.backgroundClutter > 0.58) concreteIssues.push(sceneType === 'portrait' ? '背景の散らかりが主題を弱めています' : '背景の散らかりが画面整理を崩しています');
+  if (scores.focusScore < 60) concreteIssues.push(`シャープネス指標${round(metrics.sharpnessRaw, 1)}で輪郭が弱めです`);
+  if (metrics.noiseEstimate > 10.5) concreteIssues.push(`ノイズ推定値${round(metrics.noiseEstimate, 1)}でざらつきがあります`);
+  if (sceneType === 'nonPortrait' && scores.colorScore < 60) concreteIssues.push(`彩度比${round(metrics.saturationRatio, 2)}とコントラスト${round(metrics.contrast, 2)}のバランスが弱めです`);
+  if (sceneType === 'nonPortrait' && scores.informationScore < 60) concreteIssues.push(`背景情報量${round(metrics.backgroundInformation, 2)}が適正域から外れています`);
+  if (sceneType === 'portrait' && scores.expressionScore < 60) concreteIssues.push(`顔面積比${round(metrics.faceMetrics.faceAreaRatio * 100, 1)}%で人物主題の訴求が弱めです`);
 
-function getCommentVariantSeed(metrics, scores, genre, reviewPhilosophy) {
-  return Math.abs(Math.round(
-    metrics.brightnessMean * 3 +
-    metrics.subjectXRatio * 100 +
-    metrics.subjectYRatio * 120 +
-    metrics.thirdsAlignment * 90 +
-    metrics.sharpnessRaw * 11 +
-    scores.totalScore * 7 +
-    genre.length * 13 +
-    reviewPhilosophy.length * 17
-  ));
-}
+  const weakestBase = pick(ITEM_COMMENT_MAP[worstKey][getTier(scores[worstKey])], seed + 11);
+  const improvementComment = [
+    weakestBase,
+    concreteIssues.slice(0, 2).join('。'),
+    improvementSignals.slice(0, 2).length ? `主な課題は ${improvementSignals.slice(0, 2).join('・')} です。` : '',
+  ].filter(Boolean).join(' ');
 
-function chooseVariant(list, seed, offset = 0) {
-  if (!list.length) return '';
-  return list[(seed + offset) % list.length];
-}
-
-function buildCompositionNarrative(metrics, scores, seed) {
-  const subjectPosX = metrics.subjectXRatio < 0.38 ? '左寄り' : metrics.subjectXRatio > 0.62 ? '右寄り' : '中央寄り';
-  const subjectPosY = metrics.subjectYRatio < 0.38 ? '上寄り' : metrics.subjectYRatio > 0.62 ? '下寄り' : '中段';
-  const balanceText = metrics.leftRightBalance > 0.88 && metrics.topBottomBalance > 0.84
-    ? '左右・上下の釣り合いがかなり安定しています'
-    : metrics.leftRightBalance < 0.7 || metrics.topBottomBalance < 0.68
-      ? 'フレーム内の荷重バランスに偏りがあります'
-      : 'バランスは大きく崩れていません';
-  const thirdsText = metrics.thirdsAlignment > 0.72
-    ? '三分割寄りの配置が強く出ています'
-    : metrics.thirdsAlignment < 0.36
-      ? '定番の三分割から外した置き方が見られます'
-      : '三分割寄りと中央配置の中間にあります';
-  const concentrationText = metrics.subjectConcentration > 0.12
-    ? '主題が強く凝縮され、視線の着地点が明快です'
-    : metrics.subjectConcentration < 0.06
-      ? '視線の集約が弱く、主役がやや拡散しています'
-      : '主題集中は中庸で、読み取りに少し余白があります';
-  return chooseVariant([
-    `${subjectPosX}・${subjectPosY}に主題があり、${balanceText}。${thirdsText}一方で、${concentrationText}。`,
-    `主題位置は${subjectPosX}かつ${subjectPosY}で、${thirdsText}。${balanceText}ため、画面骨格の読み取りは比較的速いです。`,
-    `${balanceText}。主題は${subjectPosX}・${subjectPosY}にあり、${concentrationText}ことが構図印象を左右しています。`,
-  ], seed, 1);
-}
-
-function buildLightNarrative(metrics, seed) {
-  const exposureText = metrics.brightnessMean > 154
-    ? '全体がやや高めの露出域にあります'
-    : metrics.brightnessMean < 112
-      ? '全体は低めの露出域で、暗部が主張しやすい状態です'
-      : '平均輝度は極端ではなく、ベース露出は大きく崩れていません';
-  const clipText = metrics.overexposedRatio > 0.09
-    ? `白飛びが ${round(metrics.overexposedRatio * 100, 1)}% とやや多く`
-    : metrics.underexposedRatio > 0.13
-      ? `黒つぶれが ${round(metrics.underexposedRatio * 100, 1)}% と多めで`
-      : '白飛び・黒つぶれの両端は比較的抑えられており';
-  const contrastText = metrics.contrast > 0.52
-    ? 'コントラストは強めで第一印象は出しやすいです'
-    : metrics.contrast < 0.28
-      ? 'コントラストが浅く、面の分離が弱く見えやすいです'
-      : 'コントラストは中間域で、階調のつながりは保たれています';
-  return chooseVariant([
-    `${exposureText}。${clipText}、${contrastText}。`,
-    `${clipText}、平均輝度 ${round(metrics.brightnessMean)} とコントラスト ${round(metrics.contrast, 2)} の関係から、光の設計が評価を左右しています。`,
-    `${contrastText}。平均輝度 ${round(metrics.brightnessMean)} に対して、${clipText}ことが光の完成度に直結しています。`,
-  ], seed, 2);
-}
-
-function buildColorNarrative(metrics, seed) {
-  const saturationText = metrics.saturationRatio > 0.24
-    ? '彩度の立ち上がりが強く、色面が先に見えるタイプです'
-    : metrics.saturationRatio < 0.1
-      ? '彩度は控えめで、色よりもトーン設計が前に出る状態です'
-      : '彩度は中庸で、色と階調のバランス型です';
-  const entropyText = metrics.entropy > 6.8
-    ? '情報量が多く、色の分離も豊富です'
-    : metrics.entropy < 5.6
-      ? '色数や階調の種類は比較的絞られています'
-      : '情報量は平均域で、整理次第で見え方が変わる素材です';
-  return chooseVariant([
-    `${saturationText}。${entropyText}ため、色を足すより整理するかどうかが鍵になります。`,
-    `${entropyText}。彩度比 ${round(metrics.saturationRatio, 2)} なので、色の強さよりも配色関係の整理が効く写真です。`,
-    `彩度比 ${round(metrics.saturationRatio, 2)} から見ると、${saturationText}。${entropyText}。`,
-  ], seed, 3);
-}
-
-function buildTechnicalNarrative(metrics, seed) {
-  const sharpText = metrics.sharpnessRaw > 22
-    ? '輪郭の立ち上がりは十分で'
-    : metrics.sharpnessRaw < 10
-      ? '輪郭の芯が弱く'
-      : 'シャープネスは中間域で';
-  const noiseText = metrics.noiseEstimate > 12
-    ? `ノイズ推定 ${round(metrics.noiseEstimate, 1)} が高めです`
-    : metrics.noiseEstimate < 6
-      ? `ノイズ推定 ${round(metrics.noiseEstimate, 1)} で比較的安定しています`
-      : `ノイズ推定 ${round(metrics.noiseEstimate, 1)} で許容範囲です`;
-  return chooseVariant([
-    `${sharpText}、${noiseText}。技術評価はシャープネス ${round(metrics.sharpnessRaw, 1)} とエッジ量 ${round(metrics.meanEdge, 1)} のバランスで決まっています。`,
-    `${noiseText}。シャープネス ${round(metrics.sharpnessRaw, 1)}、エッジ量 ${round(metrics.meanEdge, 1)} のため、技術面は素材の良さがまだ残っています。`,
-    `技術的には ${sharpText}、${noiseText}。特にピント感とざらつきのどちらが先に見えるかが評価差になります。`,
-  ], seed, 4);
-}
-
-function buildVisualNarrative(metrics, seed) {
-  const weightText = metrics.subjectConcentration > 0.11
-    ? '主題の比重が画面内で強く勝っています'
-    : metrics.subjectConcentration < 0.055
-      ? '主題の比重が弱く、視線が散りやすいです'
-      : '主題の比重は中庸です';
-  const backgroundText = metrics.backgroundClutter > 0.6
-    ? '背景の散らかりが視線を引き戻します'
-    : metrics.backgroundClutter < 0.35
-      ? '背景整理が効き、主題に視線が戻りやすいです'
-      : '背景情報は多すぎず少なすぎずです';
-  return chooseVariant([
-    `${weightText}。${backgroundText}ため、ビジュアルウエイトの読みは比較的明快です。`,
-    `${backgroundText}。主題集中 ${round(metrics.subjectConcentration, 3)} に対して、視線の停止位置は ${metrics.subjectXRatio < 0.5 ? '左側' : '右側'}に寄っています。`,
-    `ビジュアルウエイトでは、${weightText}一方で、${backgroundText}。`,
-  ], seed, 5);
-}
-
-function buildPortraitExpressionNarrative(metrics, seed) {
-  const faceArea = round(metrics.faceMetrics.faceAreaRatio * 100, 1);
-  const faceText = metrics.faceMetrics.faceAreaRatio > 0.09
-    ? `顔面積比 ${faceArea}% と存在感が十分です`
-    : metrics.faceMetrics.faceAreaRatio < 0.03
-      ? `顔面積比 ${faceArea}% で人物の主役性は弱めです`
-      : `顔面積比 ${faceArea}% で人物の比重は中庸です`;
-  const centerText = metrics.faceMetrics.faceCenteredness > 0.76
-    ? '顔の置き方は安定寄りです'
-    : metrics.faceMetrics.faceCenteredness < 0.5
-      ? '顔位置に少し不安定さがあり、視線が泳ぎやすいです'
-      : '顔位置は大きくは崩れていません';
-  return chooseVariant([
-    `${faceText}。${centerText}ため、表現力は人物の見せ方に強く依存しています。`,
-    `${centerText}。${faceText}ので、人物写真としての引力は距離設計の巧拙で決まっています。`,
-    `ポートレートでは ${faceText}。${centerText}。感情の読み取りより先に、人物の存在感が届くかが鍵です。`,
-  ], seed, 6);
-}
-
-function buildNonPortraitExpressionNarrative(metrics, seed) {
-  const infoText = metrics.backgroundInformation > 0.62
-    ? '背景情報量が多く、読み取り要素が豊富です'
-    : metrics.backgroundInformation < 0.34
-      ? '背景情報はかなり絞られており、主題が先に立ちます'
-      : '背景情報量は中庸です';
-  const clutterText = metrics.backgroundClutter > 0.58
-    ? 'ただし散らかりが強く、物語より先にノイズが見えやすい状態です'
-    : '背景整理は比較的効いており、主題の意味を追いやすい状態です';
-  return chooseVariant([
-    `${infoText}。${clutterText}`,
-    `${clutterText}。背景情報量 ${round(metrics.backgroundInformation, 2)} と主題集中 ${round(metrics.subjectConcentration, 3)} の関係が表現力を決めています。`,
-    `nonPortrait としては ${infoText}。${clutterText}`,
-  ], seed, 7);
-}
-
-function buildDevelopmentAdvice(metrics, scores, genre, seed) {
-  const advice = [];
-  advice.push('ヒストグラムは両端の張り付き量と中間調の密度を見ながら、露光量より先に白レベル・黒レベルの支点を決めると調整が安定します。');
-  advice.push(metrics.overexposedRatio > 0.08
-    ? 'ハイライト側は飽和が近いので、白レベルとハイライトを弱めに戻し、トーンジャンプが出ない範囲で階調をつなぎ直す方向が安全です。'
-    : 'ハイライト側にはまだ余裕があります。明部を持ち上げる場合も色域飽和より先に階調のつながりが切れないかを確認してください。');
-  advice.push(metrics.underexposedRatio > 0.12
-    ? '暗部は持ち上げすぎると濁りや色ノイズが出やすいので、シャドウを強く上げるより黒レベルと中間調の橋渡しで整える方が破綻しにくいです。'
-    : '暗部は比較的保てています。黒を締める場合は情報が消える直前で止め、立体感だけを残す方向が向いています。');
-  advice.push(scores.colorScore < 68
-    ? '彩度は全体一括で足さず、主役色だけを軽く持ち上げて背景色を抑える方が色域保持に有利です。'
-    : '色は十分乗っています。彩度よりも色相分離や輝度差で主役色を立てると、印象を保ったまま破綻を防げます。');
-  if (genre === 'portrait') {
-    advice.push('肌や顔周辺は局所コントラストを上げすぎず、目元だけを少し締める方向で人物の存在感を出すと不自然さが出にくいです。');
+  let overallComment = `総合${scores.totalScore}点。`;
+  if (scores.totalScore >= 85) {
+    overallComment += sceneType === 'portrait'
+      ? '露出・構図・主題性のバランスが良く、完成度の高い人物写真です。'
+      : '構図・色・情報整理のバランスが良く、完成度の高い写真です。';
+  } else if (scores.totalScore >= 70) {
+    overallComment += sceneType === 'portrait'
+      ? '全体水準は良好ですが、人物訴求の弱い項目を整えるとさらに伸びます。'
+      : '全体水準は良好ですが、色と情報整理を詰めるとさらに見栄えが上がります。';
+  } else if (scores.totalScore >= 50) {
+    overallComment += sceneType === 'portrait'
+      ? '基本は成立していますが、露出や背景整理に改善余地があります。'
+      : '基本は成立していますが、構図や情報量の整理に改善余地があります。';
   } else {
-    advice.push('主題以外の局所コントラストを少し抑え、主題周辺だけを残す方向にすると、非人物写真でも視線誘導が整いやすくなります。');
+    overallComment += sceneType === 'portrait'
+      ? '人物写真としての訴求が弱いため、主題の見せ方から再設計した方が早い状態です。'
+      : '技術的な不足が目立つため、構図と整理感を意識した再撮影が有効です。';
   }
-  return advice.slice(0, 4 + (seed % 2));
-}
-
-function buildNextDirection(scores, genre, reviewPhilosophy, metrics) {
-  const philosophyDirection = REVIEW_PHILOSOPHY_CONFIG[reviewPhilosophy]?.nextDirection || REVIEW_PHILOSOPHY_CONFIG.international.nextDirection;
-  const genreHint = genre === 'portrait'
-    ? '次は「人物の存在感」と「背景との関係」を一段はっきりさせ、感情だけでなく距離感でも物語を作る方向が伸びしろです。'
-    : metrics.subjectConcentration < 0.07
-      ? '次は主題の勝ち方をもう一段強くし、何を見せる写真なのかが一目で伝わる整理を試すと差が出ます。'
-      : '次は主題の強さを維持したまま、視点や高さを変えて固有の見え方を足す方向が有効です。';
-  return `${philosophyDirection} ${genreHint}`;
-}
-
-function generateCommentsFromAnalysis(scores, metrics, context = {}) {
-  const genre = context.genre || scores.genre || 'other';
-  const reviewPhilosophy = context.reviewPhilosophy || scores.reviewPhilosophy || 'international';
-  const sceneType = genre === 'portrait' ? 'portrait' : 'nonPortrait';
-  const seed = getCommentVariantSeed(metrics, scores, genre, reviewPhilosophy);
-  const metricReasons = buildMetricReasons(scores, metrics, genre);
-  const strengths = [];
-  const improvements = {};
-  const improvementSignals = buildContestImprovementSignals(metrics, scores, genre);
-
-  const compositionNarrative = buildCompositionNarrative(metrics, scores, seed);
-  const lightNarrative = buildLightNarrative(metrics, seed);
-  const colorNarrative = buildColorNarrative(metrics, seed);
-  const technicalNarrative = buildTechnicalNarrative(metrics, seed);
-  const visualNarrative = buildVisualNarrative(metrics, seed);
-  const expressionNarrative = sceneType === 'portrait'
-    ? buildPortraitExpressionNarrative(metrics, seed)
-    : buildNonPortraitExpressionNarrative(metrics, seed);
-
-  if (scores.compositionScore >= 74) strengths.push(`構図では、${compositionNarrative}`);
-  if (scores.lightScore >= 72) strengths.push(`光では、${lightNarrative}`);
-  if (scores.colorScore >= 72) strengths.push(`色では、${colorNarrative}`);
-  if (scores.expressionScore >= 72) strengths.push(`表現力では、${expressionNarrative}`);
-  if (scores.technicalScore >= 72) strengths.push(`技術では、${technicalNarrative}`);
-  if (scores.visualWeightScore >= 72) strengths.push(`ビジュアルウエイトでは、${visualNarrative}`);
-
-  if (strengths.length < 3) {
-    [
-      `構図の現状は、${compositionNarrative}`,
-      `光の現状は、${lightNarrative}`,
-      `色の現状は、${colorNarrative}`,
-      `表現力の現状は、${expressionNarrative}`,
-      `技術の現状は、${technicalNarrative}`,
-      `ビジュアルウエイトの現状は、${visualNarrative}`,
-    ].forEach(line => {
-      if (strengths.length < 4 && !strengths.includes(line)) strengths.push(line);
-    });
+  overallComment += ` 平均輝度${round(metrics.brightnessMean)}、コントラスト${round(metrics.contrast, 2)}、背景散らかり度${round(metrics.backgroundClutter, 2)}。`;
+  if (sceneType === 'portrait') {
+    overallComment += ` 顔検出${metrics.faceMetrics.faceCount}件、顔面積比${round(metrics.faceMetrics.faceAreaRatio * 100, 1)}%。`;
+  } else {
+    overallComment += ` 色再現${scores.colorScore}点、情報量${scores.informationScore}点です。`;
   }
 
-  improvements.compositionScore = metrics.thirdsAlignment > 0.72 && scores.originalityPenalty >= 10
-    ? `三分割の気配が強く既視感に触れやすいので、主題位置を少し外すか、撮影高さを変えて主題配置の固有性を足すと改善します。現在は ${round(metrics.subjectXRatio, 2)} / ${round(metrics.subjectYRatio, 2)} 付近に重心があります。`
-    : metrics.leftRightBalance < 0.72 || metrics.topBottomBalance < 0.7
-      ? `左右 ${round(metrics.leftRightBalance, 2)} / 上下 ${round(metrics.topBottomBalance, 2)} のバランス差が見えるため、不要な余白を切るか、主題を少し戻して荷重を整えると安定します。`
-      : `構図は崩れていません。次は主題集中 ${round(metrics.subjectConcentration, 3)} を保ちながら、より意外性のある主題位置へ一段ずらす挑戦が有効です。`;
-
-  improvements.lightScore = metrics.overexposedRatio > 0.08
-    ? `白飛び ${round(metrics.overexposedRatio * 100, 1)}% が先に見えるため、露出を下げるよりもハイライト側の回復と中間調の再配置で整えると光が保ちやすいです。`
-    : metrics.underexposedRatio > 0.12
-      ? `黒つぶれ ${round(metrics.underexposedRatio * 100, 1)}% が多く、暗部情報が痩せています。暗部を少し起こしつつ、黒レベルを締めすぎない方向が向いています。`
-      : `平均輝度 ${round(metrics.brightnessMean)} とコントラスト ${round(metrics.contrast, 2)} は大崩れしていません。時間帯や光の入射角を変え、光自体の固有性を強めるとさらに伸びます。`;
-
-  improvements.colorScore = metrics.saturationRatio > 0.25
-    ? `彩度比 ${round(metrics.saturationRatio, 2)} で色が前に出やすいので、全体をさらに盛るより主役色を残して周辺色を少し引く方が品位が出ます。`
-    : metrics.saturationRatio < 0.1
-      ? `彩度比 ${round(metrics.saturationRatio, 2)} と低めなので、色を足すなら全体一括ではなく、主題に関係する色だけを選択的に強める方が効果的です。`
-      : `色は中庸です。背景情報量 ${round(metrics.backgroundInformation, 2)} に対して色数が増えすぎないよう、配色の役割分担を明確にすると安定します。`;
-
-  improvements.expressionScore = sceneType === 'portrait'
-    ? (metrics.faceMetrics.faceAreaRatio < 0.035
-      ? `顔面積比 ${round(metrics.faceMetrics.faceAreaRatio * 100, 1)}% で人物の主役性が弱めです。被写体との距離を少し詰めるか、背景の情報量を減らして感情の読み取りを優先すると改善します。`
-      : `顔位置の安定度 ${round(metrics.faceMetrics.faceCenteredness, 2)} を踏まえると人物の置き方は成立しています。次は表情だけでなく、身体の向きや背景との関係で物語性を深める方向が有効です。`)
-    : (metrics.backgroundInformation > 0.62 && metrics.backgroundClutter > 0.56
-      ? `背景情報量 ${round(metrics.backgroundInformation, 2)} に対して散らかり ${round(metrics.backgroundClutter, 2)} が高く、意味よりノイズが先に見えやすいです。見せたい要素を一段減らすと表現意図が立ちます。`
-      : `nonPortrait としては主題の意味は読み取れます。次は「なぜこの瞬間か」が強まる位置関係や前景処理を足すと、記録から作品へ寄りやすいです。`);
-
-  improvements.technicalScore = metrics.sharpnessRaw < 10
-    ? `シャープネス ${round(metrics.sharpnessRaw, 1)} で輪郭の芯が弱いので、まずはシャッター速度かピント面の確保を優先した方が改善幅が大きいです。`
-    : metrics.noiseEstimate > 11
-      ? `ノイズ推定 ${round(metrics.noiseEstimate, 1)} が高めで、ディテールよりざらつきが先に見えます。ISOか持ち上げ量を見直し、ノイズを出さない露出設計へ寄せると安定します。`
-      : `技術基盤は大きく崩れていません。今後は基礎を保ったまま、意図的なブレや甘さを演出として成立させる余地があります。`;
-
-  improvements.visualWeightScore = metrics.subjectConcentration < 0.06
-    ? `主題集中 ${round(metrics.subjectConcentration, 3)} と低めで、視線の着地点が弱いです。主題の占有率を上げるか、周辺要素を減らして一目の強さを作ると改善します。`
-    : metrics.backgroundClutter > 0.58
-      ? `背景の散らかり ${round(metrics.backgroundClutter, 2)} が主題の勝ち方を弱めています。周辺の高コントラスト要素を減らす方向が有効です。`
-      : `ビジュアルウエイトは成立しています。次はトリミングや前景の扱いで、視線の停止位置をさらに明確にすると強くなります。`;
-
-  const developmentAdvice = buildDevelopmentAdvice(metrics, scores, genre, seed);
-  const nextDirection = buildNextDirection(scores, genre, reviewPhilosophy, metrics);
-  const contestReferences = pickContestReferences(reviewPhilosophy, genre);
-  const overallComment = `${scores.reviewPhilosophyLabel}・${scores.genreLabel}として換算 ${scores.totalScore} 点。平均との差 ${scores.genreDelta >= 0 ? '+' : ''}${scores.genreDelta} 点で、一次審査は上位 ${scores.passEstimate}% 相当の想定です。${improvementSignals.length ? ` 現状の論点は ${improvementSignals.slice(0, 3).join('、')} です。` : ''}`;
-
-  return {
-    metricReasons,
-    strengths: [...new Set(strengths)].slice(0, 5),
-    improvements,
-    improvementSignals,
-    developmentAdvice,
-    overallComment,
-    nextDirection,
-    contestReferences,
-    strengthsComment: [...new Set(strengths)].slice(0, 3).join(' '),
-    improvementComment: CONTEST_SCORE_ITEMS.map(item => `${item.label}: ${improvements[item.key]}`).join(' '),
-  };
+  return { strengthsComment, improvementComment, overallComment };
 }
 
 async function analyzeImageFile(file, preferredSource = '') {
@@ -2126,12 +1927,107 @@ async function analyzeImageFile(file, preferredSource = '') {
     faceDetectionSupported: faceDetection.supported,
   };
 
-  const reviewPhilosophy = getSelectedReviewPhilosophy();
-  const genre = getSelectedGenre();
-  const scores = deriveContestScores(metrics, reviewPhilosophy, genre);
-  const comments = generateCommentsFromAnalysis(scores, metrics, { genre, reviewPhilosophy });
+  const scores = deriveScoresFromMetrics(metrics);
+  const improvementSignals = buildImprovementSignals(metrics, scores);
+  const comments = generateCommentsFromAnalysis(scores, metrics, improvementSignals);
 
-  return { scores, metrics, improvementSignals: comments.improvementSignals, comments };
+  return { scores, metrics, improvementSignals, comments };
+}
+
+function buildFeatureVector(metrics, scores) {
+  return {
+    sceneType: scores.sceneType,
+    width: metrics.width,
+    height: metrics.height,
+    brightnessMean: metrics.brightnessMean,
+    brightnessVariance: metrics.brightnessVariance,
+    brightnessStd: metrics.brightnessStd,
+    overexposedRatio: metrics.overexposedRatio,
+    underexposedRatio: metrics.underexposedRatio,
+    contrast: metrics.contrast,
+    entropy: metrics.entropy,
+    saturationRatio: metrics.saturationRatio,
+    meanEdge: metrics.meanEdge,
+    dominantEdge: metrics.dominantEdge,
+    sharpnessRaw: metrics.sharpnessRaw,
+    noiseEstimate: metrics.noiseEstimate,
+    leftRightBalance: metrics.leftRightBalance,
+    topBottomBalance: metrics.topBottomBalance,
+    thirdsAlignment: metrics.thirdsAlignment,
+    subjectConcentration: metrics.subjectConcentration,
+    backgroundInformation: metrics.backgroundInformation,
+    backgroundClutter: metrics.backgroundClutter,
+    subjectXRatio: metrics.subjectXRatio,
+    subjectYRatio: metrics.subjectYRatio,
+    faceCount: metrics.faceMetrics.faceCount,
+    faceAreaRatio: metrics.faceMetrics.faceAreaRatio,
+    faceCenteredness: metrics.faceMetrics.faceCenteredness,
+    faceStability: metrics.faceMetrics.faceStability,
+    compositionScore: scores.compositionScore || 0,
+    brightnessScore: scores.brightnessScore || 0,
+    focusScore: scores.focusScore || 0,
+    expressionScore: scores.expressionScore || 0,
+    backgroundScore: scores.backgroundScore || 0,
+    cleanlinessScore: scores.cleanlinessScore || 0,
+    colorScore: scores.colorScore || 0,
+    organizationScore: scores.organizationScore || 0,
+    informationScore: scores.informationScore || 0,
+    impressionScore: scores.impressionScore || 0,
+    ruleTotalScore: scores.totalScore || 0,
+  };
+}
+
+function buildImageMetadata(file, metrics, scores) {
+  return {
+    fileName: file.name,
+    fileSize: file.size,
+    mimeType: file.type || '',
+    width: metrics.width,
+    height: metrics.height,
+    sceneType: scores.sceneType,
+  };
+}
+
+function applyMlScoreToComment(text, totalScore) {
+  return String(text || '').replace(/総合\d+点。/, `総合${totalScore}点。`);
+}
+
+async function requestMlPrediction(featureVector, ruleBasedScores) {
+  try {
+    const response = await apiRequest('/api/ml/predict', {
+      method: 'POST',
+      body: {
+        features: featureVector,
+        predicted_scores: ruleBasedScores,
+      },
+    });
+    setMlRuntimeState({
+      mode: response.mode || 'Rule-based',
+      modelVersion: response.modelVersion || '',
+      available: Boolean(response.usedModel),
+      sampleCount: Number(response.sampleCount || 0),
+      minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 12),
+      reason: response.fallbackReason || '',
+    });
+    return response;
+  } catch (error) {
+    console.warn('ML prediction unavailable', error);
+    setMlRuntimeState({
+      mode: 'Rule-based',
+      available: false,
+      reason: 'ML推論API未接続',
+    });
+    return {
+      mode: 'Rule-based',
+      modelVersion: '',
+      usedModel: false,
+      predictedTotalScore: ruleBasedScores.totalScore,
+      residualApplied: 0,
+      fallbackReason: 'ML推論API未接続',
+      sampleCount: 0,
+      minimumMlSamples: mlRuntimeState.minimumMlSamples || 12,
+    };
+  }
 }
 
 function buildDeliveryPayload(record, imageBase64, settings) {
@@ -2145,36 +2041,18 @@ function buildDeliveryPayload(record, imageBase64, settings) {
     imageContentType: 'image/jpeg',
     evaluation: {
       compositionScore: record.compositionScore,
-      brightnessScore: record.lightScore,
-      focusScore: record.technicalScore,
+      brightnessScore: record.brightnessScore,
+      focusScore: record.focusScore,
       expressionScore: record.expressionScore,
-      backgroundScore: record.visualWeightScore,
-      cleanlinessScore: record.finishBonus,
-      impressionScore: record.adjustedScore,
+      backgroundScore: record.backgroundScore,
+      cleanlinessScore: record.cleanlinessScore,
+      impressionScore: record.impressionScore,
       totalScore: record.totalScore,
       strengthsComment: record.strengthsComment,
       improvementComment: record.improvementComment,
       overallComment: record.overallComment,
       analysisMeta: record.analysisMeta,
       improvementSignals: record.improvementSignals || [],
-      contestEvaluation: {
-        reviewPhilosophy: record.reviewPhilosophy,
-        reviewPhilosophyLabel: record.reviewPhilosophyLabel,
-        genre: record.genre,
-        genreLabel: record.genreLabel,
-        lightScore: record.lightScore,
-        colorScore: record.colorScore,
-        technicalScore: record.technicalScore,
-        visualWeightScore: record.visualWeightScore,
-        originalityPenalty: record.originalityPenalty,
-        finishBonus: record.finishBonus,
-        adjustedScore: record.adjustedScore,
-        total120: record.total120,
-        convertedScore: record.convertedScore,
-        genreDelta: record.genreDelta,
-        passEstimate: record.passEstimate,
-        rank: record.rank,
-      },
     },
   };
 }
@@ -2255,10 +2133,6 @@ async function sendRecordToWebhook(record) {
 function buildAnalysisMeta(metrics, scores) {
   return {
     sceneType: scores.sceneType,
-    reviewPhilosophy: scores.reviewPhilosophy,
-    reviewPhilosophyLabel: scores.reviewPhilosophyLabel,
-    genre: scores.genre,
-    genreLabel: scores.genreLabel,
     brightnessMean: round(metrics.brightnessMean),
     brightnessVariance: round(metrics.brightnessVariance, 1),
     whiteClipRatio: round(metrics.overexposedRatio * 100, 1),
@@ -2278,10 +2152,6 @@ function buildAnalysisMeta(metrics, scores) {
     faceAreaRatio: round(metrics.faceMetrics.faceAreaRatio * 100, 1),
     faceCenteredness: round(metrics.faceMetrics.faceCenteredness, 2),
     faceDetectionSupported: metrics.faceDetectionSupported,
-    originalityPenalty: scores.originalityPenalty,
-    finishBonus: scores.finishBonus,
-    adjustedScore: scores.adjustedScore,
-    total120: scores.total120,
     totalScore: scores.totalScore,
   };
 }
@@ -2302,10 +2172,10 @@ async function runEvaluation() {
   hideError();
 
   const loadingLabels = [
-    '階調・白飛び・黒つぶれを解析中...',
-    '構図・主題集中度・ビジュアルウエイトを推定中...',
-    '審査思想とジャンル別の相対スコアを算出中...',
-    '帰納的コメントと送信データを組み立てています...',
+    '平均輝度・白飛び・黒つぶれを解析中...',
+    'エッジ量・シャープネス・ノイズを推定中...',
+    '構図・主題集中度・背景散らかり度を計算中...',
+    'コメントと送信データを組み立てています...',
   ];
   let index = 0;
   loadingLabel.textContent = loadingLabels[0];
@@ -2317,21 +2187,39 @@ async function runEvaluation() {
   try {
     const imageData = currentFileDataUrl || await readFileAsDataURL(currentFile);
     const analysis = await analyzeImageFile(currentFile, imageData);
+    const ruleBasedScores = { ...analysis.scores };
+    const featureVector = buildFeatureVector(analysis.metrics, ruleBasedScores);
+    const imageMeta = buildImageMetadata(currentFile, analysis.metrics, ruleBasedScores);
+    const mlPrediction = await requestMlPrediction(featureVector, ruleBasedScores);
+    const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
     const record = {
       id: Date.now(),
       fileName: currentFile.name,
       imageSrc: imageData,
       createdAt: new Date().toISOString(),
       ...analysis.scores,
+      totalScore: finalTotalScore,
       ...analysis.comments,
+      overallComment: applyMlScoreToComment(analysis.comments.overallComment, finalTotalScore),
       improvementSignals: analysis.improvementSignals,
-      metricReasons: analysis.comments.metricReasons,
-      strengthsList: analysis.comments.strengths,
-      improvementByItem: analysis.comments.improvements,
-      developmentAdvice: analysis.comments.developmentAdvice,
-      nextDirection: analysis.comments.nextDirection,
-      contestReferences: analysis.comments.contestReferences,
       analysisMeta: buildAnalysisMeta(analysis.metrics, analysis.scores),
+      featureVector,
+      imageMeta,
+      ruleBasedScores,
+      evaluationMode: mlPrediction.usedModel ? 'ML-assisted' : 'Rule-based',
+      modelVersion: mlPrediction.modelVersion || '',
+      mlScore: mlPrediction.usedModel ? Number(mlPrediction.predictedTotalScore || finalTotalScore) : null,
+      scoreGap: round(Math.abs(finalTotalScore - Number(ruleBasedScores.totalScore || 0)), 2),
+      feedback: {
+        fairness: '',
+        commentUsefulness: '',
+        correctedScore: '',
+        note: '',
+        genre: '',
+        reviewMode: 'sns',
+        savedAt: '',
+        status: '',
+      },
       delivery: {
         status: 'pending',
         target: collectDeliverySettings().target,
@@ -2370,41 +2258,17 @@ function renderScoreBars(scope = document) {
   });
 }
 
-function renderBulletList(items) {
-  return `<ul class="bullet-list">${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
-}
-
-function renderMetricRows(record) {
-  return CONTEST_SCORE_ITEMS.map(item => `
-    <div class="metric-row">
-      <span class="metric-name">・${item.label}</span>
-      <span class="metric-score">${escapeHtml(String(record[item.key] ?? '—'))}点</span>
-      <span class="metric-reason">（根拠：${escapeHtml(record.metricReasons?.[item.key] || '')}）</span>
-    </div>
-  `).join('');
-}
-
-function renderReferenceList(items) {
-  return `
-    <div class="reference-list">
-      ${items.map(item => `
-        <div>
-          <div class="summary-line">${escapeHtml(item.name)}</div>
-          <a class="reference-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.url)}</a>
-        </div>
-      `).join('')}
-    </div>
-  `;
-}
-
 function buildMetaLine(record) {
+  const meta = record.analysisMeta || {};
   return [
-    `審査思想 ${record.reviewPhilosophyLabel || '未設定'}`,
-    `ジャンル ${record.genreLabel || '未設定'}`,
-    Number.isFinite(record.genreDelta) ? `平均との差 ${record.genreDelta >= 0 ? '+' : ''}${record.genreDelta}` : '',
-    Number.isFinite(record.passEstimate) ? `一次審査想定 上位${record.passEstimate}%` : '',
-    `評価ランク ${record.rank || '-'}`,
-  ].join(' ／ ');
+    `判定モード ${SCENE_TYPE_LABELS[record.sceneType || meta.sceneType || 'portrait'] || SCENE_TYPE_LABELS.portrait}`,
+    Number.isFinite(meta.brightnessMean) ? `平均輝度 ${meta.brightnessMean}` : '',
+    Number.isFinite(meta.whiteClipRatio) ? `白飛び ${meta.whiteClipRatio}%` : '',
+    Number.isFinite(meta.blackClipRatio) ? `黒つぶれ ${meta.blackClipRatio}%` : '',
+    Number.isFinite(meta.sharpnessRaw) ? `シャープネス ${meta.sharpnessRaw}` : '',
+    Number.isFinite(meta.noiseEstimate) ? `ノイズ ${meta.noiseEstimate}` : '',
+    meta.faceDetectionSupported ? (meta.faceDetected ? `顔検出 ${meta.faceCount}件` : '顔検出 0件') : 'FaceDetector 非対応',
+  ].filter(Boolean).join(' ／ ');
 }
 
 function buildDeliveryHtml(record) {
@@ -2412,13 +2276,117 @@ function buildDeliveryHtml(record) {
   return '';
 }
 
-function buildResultHTML(record) {
+function buildMlSummaryHtml(record) {
+  const evaluationMode = record.evaluationMode || 'Rule-based';
+  const usesMl = evaluationMode === 'ML-assisted';
+  const modelVersion = record.modelVersion || '未学習';
+  const ruleScore = record.ruleBasedScores?.totalScore ?? record.totalScore;
+  const scoreGap = Number.isFinite(record.scoreGap) ? record.scoreGap : 0;
+
+  return `
+    <div class="ml-summary-card">
+      <div class="section-head">
+        <p class="section-title">評価モード</p>
+        <span class="status-pill ${usesMl ? 'ml' : 'rule'}">${escapeHtml(evaluationMode)}</span>
+      </div>
+      <div class="ml-summary-grid">
+        <div class="ml-summary-item">
+          <span class="summary-label">現在の評価方式</span>
+          <span class="summary-value">${escapeHtml(evaluationMode)}</span>
+        </div>
+        <div class="ml-summary-item">
+          <span class="summary-label">モデルバージョン</span>
+          <span class="summary-value">${escapeHtml(modelVersion)}</span>
+        </div>
+        <div class="ml-summary-item">
+          <span class="summary-label">ルールベース総合点</span>
+          <span class="summary-value">${escapeHtml(String(ruleScore))}</span>
+        </div>
+        <div class="ml-summary-item">
+          <span class="summary-label">モデル補正幅</span>
+          <span class="summary-value">${escapeHtml(`${scoreGap}点`)}</span>
+        </div>
+      </div>
+      <p class="feedback-note">モデル未学習またはAPI未接続時は自動で Rule-based にフォールバックします。コメント生成は当面ルールベースを維持しています。</p>
+    </div>
+  `;
+}
+
+function buildFeedbackSectionHtml(record) {
+  const feedback = record.feedback || {};
+  return `
+    <div class="feedback-card">
+      <div class="section-head">
+        <p class="section-title">フィードバック収集</p>
+        <span class="status-pill rule">使うほど学習用データが蓄積</span>
+      </div>
+      <div class="feedback-grid">
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-fairness">この評価は妥当ですか</label>
+          <select id="feedback-fairness">
+            <option value="">選択してください</option>
+            <option value="valid" ${feedback.fairness === 'valid' ? 'selected' : ''}>妥当</option>
+            <option value="too_high" ${feedback.fairness === 'too_high' ? 'selected' : ''}>高すぎる</option>
+            <option value="too_low" ${feedback.fairness === 'too_low' ? 'selected' : ''}>低すぎる</option>
+          </select>
+        </div>
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-comment-usefulness">コメントの参考度</label>
+          <select id="feedback-comment-usefulness">
+            <option value="">選択してください</option>
+            <option value="helpful" ${feedback.commentUsefulness === 'helpful' ? 'selected' : ''}>参考になった</option>
+            <option value="not_helpful" ${feedback.commentUsefulness === 'not_helpful' ? 'selected' : ''}>参考にならなかった</option>
+          </select>
+        </div>
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-corrected-score">手動補正点数</label>
+          <input id="feedback-corrected-score" type="number" min="0" max="100" step="1" value="${escapeHtml(feedback.correctedScore || '')}" placeholder="例: 78">
+        </div>
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-genre">ジャンル</label>
+          <select id="feedback-genre">
+            <option value="">選択してください</option>
+            <option value="portrait" ${feedback.genre === 'portrait' ? 'selected' : ''}>人物</option>
+            <option value="landscape" ${feedback.genre === 'landscape' ? 'selected' : ''}>風景</option>
+            <option value="architecture" ${feedback.genre === 'architecture' ? 'selected' : ''}>建物</option>
+            <option value="food" ${feedback.genre === 'food' ? 'selected' : ''}>料理</option>
+            <option value="product" ${feedback.genre === 'product' ? 'selected' : ''}>商品</option>
+            <option value="other" ${feedback.genre === 'other' ? 'selected' : ''}>その他</option>
+          </select>
+        </div>
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-review-mode">審査思想</label>
+          <select id="feedback-review-mode">
+            <option value="sns" ${feedback.reviewMode === 'sns' ? 'selected' : ''}>SNS</option>
+            <option value="domestic" ${feedback.reviewMode === 'domestic' ? 'selected' : ''}>国内</option>
+            <option value="international" ${feedback.reviewMode === 'international' ? 'selected' : ''}>国際</option>
+          </select>
+        </div>
+        <div class="feedback-field full">
+          <label class="field-label" for="feedback-note">任意メモ</label>
+          <textarea id="feedback-note" placeholder="審査視点や補足メモを残せます">${escapeHtml(feedback.note || '')}</textarea>
+        </div>
+      </div>
+      <div class="feedback-actions">
+        <button class="btn-feedback" onclick="saveFeedbackForLatest()">フィードバックを保存</button>
+        <span class="feedback-status" id="feedback-status">${escapeHtml(feedback.status || '')}</span>
+      </div>
+      <p class="feedback-note">保存内容には画像特徴量、ルールベース評価、補正点、ジャンル、審査思想が含まれます。画像本体は学習データに含めません。</p>
+    </div>
+  `;
+}
+
+function buildResultHTML(record, options = {}) {
   const totalColor = getScoreColor(record.totalScore);
+  const sceneType = record.sceneType || record.analysisMeta?.sceneType || 'portrait';
+  const scoreItems = SCORE_ITEMS_BY_MODE[sceneType] || SCORE_ITEMS_BY_MODE.portrait;
+  const includeFeedback = Boolean(options.includeFeedback);
   const badgeBackground = record.totalScore >= 85 ? 'var(--green-dim)'
     : record.totalScore >= 70 ? 'var(--blue-dim)'
       : record.totalScore >= 50 ? 'var(--amber-dim)'
         : 'var(--red-dim)';
-  const scoreCardsHtml = CONTEST_SCORE_ITEMS.map(item => {
+
+  const scoreCardsHtml = scoreItems.map(item => {
     const score = record[item.key];
     const color = getScoreColor(score);
     return `
@@ -2436,76 +2404,44 @@ function buildResultHTML(record) {
 
   return `
     <div class="total-card">
-      <p class="total-label">INDUCTIVE CONTEST SCORE</p>
+      <p class="total-label">TOTAL SCORE</p>
       <div>
         <span class="total-number ${totalColor.badge}" style="color:${totalColor.text}">${record.totalScore}</span>
         <span class="total-unit">/100</span>
       </div>
       <span class="total-badge" style="color:${totalColor.text};background:${badgeBackground}">${totalColor.label}</span>
-      <p style="margin-top:14px;font-size:0.82rem;color:var(--text);font-weight:700">受賞傾向ベースの帰納的評価</p>
+      <p style="margin-top:14px;font-size:0.82rem;color:var(--text);font-weight:700">判定モード: ${SCENE_TYPE_LABELS[sceneType] || SCENE_TYPE_LABELS.portrait}</p>
       <p style="margin-top:14px;font-size:0.74rem;color:var(--text-muted)">${escapeHtml(buildMetaLine(record))}</p>
-    </div>
-
-    <div class="comments-section">
-      <div class="section-card">
-        <p class="section-title">審査思想</p>
-        <p class="summary-line">【審査思想】：${escapeHtml(record.reviewPhilosophyLabel)}寄り（理由：${escapeHtml(record.philosophyReason)}）</p>
-      </div>
-      <div class="section-card">
-        <p class="section-title">ジャンル</p>
-        <p class="summary-line">【ジャンル】：${escapeHtml(record.genreLabel)}</p>
-      </div>
     </div>
 
     <div class="scores-grid">${scoreCardsHtml}</div>
 
     <div class="comments-section">
-      <div class="section-card">
-        <p class="section-title">総合スコア</p>
-        <div class="metric-list">${renderMetricRows(record)}</div>
-        <div class="mini-grid" style="margin-top:16px">
-          <div class="mini-item"><span class="mini-label">独創性減点</span><span class="mini-value">-${record.originalityPenalty}点</span></div>
-          <div class="mini-item"><span class="mini-label">完成度加点</span><span class="mini-value">+${record.finishBonus}点</span></div>
-          <div class="mini-item"><span class="mini-label">補正後スコア</span><span class="mini-value">${record.adjustedScore}点</span></div>
-          <div class="mini-item"><span class="mini-label">合計</span><span class="mini-value">${record.total120}点 / 120点</span></div>
-          <div class="mini-item"><span class="mini-label">換算スコア</span><span class="mini-value">${record.totalScore}点 / 100点</span></div>
-          <div class="mini-item"><span class="mini-label">同ジャンル平均との差</span><span class="mini-value">${record.genreDelta >= 0 ? '+' : ''}${record.genreDelta}点</span></div>
-          <div class="mini-item"><span class="mini-label">一次審査通過率想定</span><span class="mini-value">上位${record.passEstimate}%相当</span></div>
-          <div class="mini-item"><span class="mini-label">評価ランク</span><span class="mini-value">${escapeHtml(record.rank)}</span></div>
+      <div class="comment-card">
+        <span class="comment-icon">✅</span>
+        <div>
+          <p class="comment-label label-good">強み・良かった点</p>
+          <p class="comment-text">${escapeHtml(record.strengthsComment)}</p>
         </div>
       </div>
-
-      <div class="section-card">
-        <p class="section-title">良い点</p>
-        ${renderBulletList(record.strengthsList || [])}
+      <div class="comment-card">
+        <span class="comment-icon">💡</span>
+        <div>
+          <p class="comment-label label-imp">改善のヒント</p>
+          <p class="comment-text">${escapeHtml(record.improvementComment)}</p>
+        </div>
       </div>
-
-      <div class="section-card">
-        <p class="section-title">改善点（項目別アドバイス）</p>
-        ${renderBulletList(CONTEST_SCORE_ITEMS.map(item => `${item.label}：${record.improvementByItem?.[item.key] || ''}`))}
-      </div>
-
-      <div class="section-card">
-        <p class="section-title">改善点（現像時）</p>
-        ${renderBulletList(record.developmentAdvice || [])}
-      </div>
-
-      <div class="section-card">
-        <p class="section-title">次に挑戦すべき方向性</p>
-        <p class="comment-text">${escapeHtml(record.nextDirection || '')}</p>
-      </div>
-
-      <div class="section-card">
-        <p class="section-title">参考フォトコンテスト</p>
-        ${renderReferenceList(record.contestReferences || [])}
-      </div>
-
-      <div class="section-card">
-        <p class="section-title">総評</p>
-        <p class="comment-text">${escapeHtml(record.overallComment)}</p>
+      <div class="comment-card">
+        <span class="comment-icon">📝</span>
+        <div>
+          <p class="comment-label label-all">総合コメント</p>
+          <p class="comment-text">${escapeHtml(record.overallComment)}</p>
+        </div>
       </div>
     </div>
 
+    ${buildMlSummaryHtml(record)}
+    ${includeFeedback ? buildFeedbackSectionHtml(record) : ''}
     ${buildDeliveryHtml(record)}
   `;
 }
@@ -2513,7 +2449,7 @@ function buildResultHTML(record) {
 function renderCurrentRecord(record) {
   latestResultRecord = record;
   document.getElementById('result-section').style.display = 'block';
-  document.getElementById('result-inner').innerHTML = buildResultHTML(record);
+  document.getElementById('result-inner').innerHTML = buildResultHTML(record, { includeFeedback: true });
   updateActionLinks(record);
   renderScoreBars(document.getElementById('result-section'));
 }
@@ -2526,6 +2462,122 @@ function renderModalRecord(record) {
   document.getElementById('modal-overlay').classList.add('active');
   updateActionLinks(record);
   renderScoreBars(document.getElementById('modal-body'));
+}
+
+function collectFeedbackFormValues() {
+  return {
+    fairness: document.getElementById('feedback-fairness')?.value || '',
+    commentUsefulness: document.getElementById('feedback-comment-usefulness')?.value || '',
+    correctedScore: document.getElementById('feedback-corrected-score')?.value || '',
+    note: document.getElementById('feedback-note')?.value.trim() || '',
+    genre: document.getElementById('feedback-genre')?.value || '',
+    reviewMode: document.getElementById('feedback-review-mode')?.value || 'sns',
+  };
+}
+
+function setFeedbackStatus(message, kind = '') {
+  const element = document.getElementById('feedback-status');
+  if (!element) return;
+  element.textContent = message;
+  element.className = kind ? `feedback-status ${kind}` : 'feedback-status';
+}
+
+async function saveFeedbackForLatest() {
+  if (!latestResultRecord) {
+    showError('先に評価を実行してください');
+    return;
+  }
+
+  const feedback = collectFeedbackFormValues();
+  if (!feedback.fairness && !feedback.commentUsefulness && !feedback.correctedScore && !feedback.note && !feedback.genre) {
+    setFeedbackStatus('1項目以上入力してください', 'error');
+    return;
+  }
+
+  if (feedback.correctedScore !== '') {
+    const numeric = Number(feedback.correctedScore);
+    if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
+      setFeedbackStatus('補正点数は0〜100で入力してください', 'error');
+      return;
+    }
+  }
+
+  setFeedbackStatus('保存中...');
+
+  try {
+    const payload = {
+      imageId: String(latestResultRecord.id),
+      createdAt: latestResultRecord.createdAt,
+      image_metadata: latestResultRecord.imageMeta || {},
+      features: latestResultRecord.featureVector || {},
+      predicted_scores: latestResultRecord.ruleBasedScores || {
+        totalScore: latestResultRecord.totalScore,
+      },
+      displayed_scores: {
+        totalScore: latestResultRecord.totalScore,
+        compositionScore: latestResultRecord.compositionScore,
+        brightnessScore: latestResultRecord.brightnessScore,
+        focusScore: latestResultRecord.focusScore,
+        expressionScore: latestResultRecord.expressionScore,
+        backgroundScore: latestResultRecord.backgroundScore,
+        cleanlinessScore: latestResultRecord.cleanlinessScore,
+        colorScore: latestResultRecord.colorScore,
+        organizationScore: latestResultRecord.organizationScore,
+        informationScore: latestResultRecord.informationScore,
+        impressionScore: latestResultRecord.impressionScore,
+        sceneType: latestResultRecord.sceneType,
+      },
+      comments: {
+        strengthsComment: latestResultRecord.strengthsComment,
+        improvementComment: latestResultRecord.improvementComment,
+        overallComment: latestResultRecord.overallComment,
+      },
+      feedback,
+      evaluationMode: latestResultRecord.evaluationMode || 'Rule-based',
+      modelVersion: latestResultRecord.modelVersion || '',
+      mlScore: latestResultRecord.mlScore,
+      scoreGap: latestResultRecord.scoreGap,
+    };
+
+    const response = await apiRequest('/api/ml/feedback', {
+      method: 'POST',
+      body: payload,
+    });
+
+    const updatedRecord = {
+      ...latestResultRecord,
+      feedback: {
+        ...feedback,
+        savedAt: response.savedAt || new Date().toISOString(),
+        status: '保存済み',
+      },
+    };
+    await refreshRecordViews(updatedRecord);
+    setFeedbackStatus('フィードバックを保存しました', 'success');
+  } catch (error) {
+    console.error(error);
+    setFeedbackStatus(error.message || '保存に失敗しました', 'error');
+    showError(error.message || 'フィードバックの保存に失敗しました');
+  }
+}
+
+async function exportLearningData(format) {
+  try {
+    const blob = await apiRequest(`/api/ml/export?format=${encodeURIComponent(format)}`, {
+      responseType: 'blob',
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `photo-eval-dataset.${format}`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    showError(error.message || '学習データのエクスポートに失敗しました');
+  }
 }
 
 async function saveToHistory(record) {
@@ -2634,9 +2686,8 @@ function buildHistoryCard(record, index) {
           <span class="history-score-big" style="color:${totalColor.text}">${record.totalScore}<span style="font-size:0.7em;color:var(--text-dim)">/100</span></span>
           <span class="history-date">${escapeHtml(formatDate(record.createdAt))}</span>
         </div>
-        <p class="history-comment">${escapeHtml(record.reviewPhilosophyLabel || REVIEW_PHILOSOPHY_LABELS.international)} / ${escapeHtml(record.genreLabel || GENRE_LABELS.other)}</p>
         <p class="history-comment">${escapeHtml(record.overallComment)}</p>
-        <p class="history-comment" style="margin-bottom:8px;color:var(--text-dim)">送信: ${escapeHtml(status.label)} / drive / ランク ${escapeHtml(record.rank || '-')}</p>
+        <p class="history-comment" style="margin-bottom:8px;color:var(--text-dim)">送信: ${escapeHtml(status.label)} / drive</p>
         <div class="history-card-footer">
           <button class="btn-detail" onclick="openModal(${record.id});event.stopPropagation()">詳細</button>
           <button class="btn-delete" onclick="deleteRecord(${record.id}, event)">削除</button>
@@ -2788,6 +2839,7 @@ async function sendLatestRecord() {
 applyDeliverySettings();
 updateLaunchWarning();
 updateActionLinks();
+void refreshMlStatus();
 void renderHistory();
 
 if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
