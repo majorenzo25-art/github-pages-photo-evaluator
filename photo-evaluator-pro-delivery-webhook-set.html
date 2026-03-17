@@ -1489,6 +1489,7 @@ const STORE_NAME = 'history';
 const MAX_HISTORY_ITEMS = 100;
 const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 const DELIVERY_MAX_SIDE = 1920;
+const BROWSER_ML_MODEL_PATH = './photo_eval_model.json';
 
 let currentFile = null;
 let currentFileUrl = '';
@@ -1496,6 +1497,7 @@ let currentFileDataUrl = '';
 let latestResultRecord = null;
 let sendingRecordId = null;
 let modalRecordId = null;
+let browserMlModelPromise = null;
 let mlRuntimeState = {
   mode: 'Rule-based',
   modelVersion: '',
@@ -1662,6 +1664,16 @@ function getPublicFeedbackCollectorUrl() {
   return DEFAULT_PUBLIC_FEEDBACK_COLLECTOR_URL;
 }
 
+function shouldUseMlApi() {
+  try {
+    if (localStorage.getItem(STORAGE_KEYS.mlApiBase)) return true;
+  } catch {}
+  const protocol = window.location.protocol;
+  const host = window.location.hostname;
+  if (protocol === 'file:') return true;
+  return protocol === 'http:' && (host === '127.0.0.1' || host === 'localhost');
+}
+
 async function apiRequest(path, options = {}) {
   const responseType = options.responseType || 'json';
   const response = await fetch(`${getMlApiBase()}${path}`, {
@@ -1697,7 +1709,127 @@ function setMlRuntimeState(nextState = {}) {
   };
 }
 
+async function loadBrowserMlModel() {
+  if (!browserMlModelPromise) {
+    browserMlModelPromise = fetch(BROWSER_ML_MODEL_PATH, { cache: 'no-store' })
+      .then(async response => {
+        if (!response.ok) throw new Error(`モデル取得エラー: HTTP ${response.status}`);
+        const model = await response.json();
+        if (!Array.isArray(model?.feature_names) || !Array.isArray(model?.weights)) {
+          throw new Error('モデル形式が不正です');
+        }
+        return model;
+      })
+      .catch(error => {
+        browserMlModelPromise = null;
+        throw error;
+      });
+  }
+  return browserMlModelPromise;
+}
+
+function buildMlStatusFromModel(model) {
+  const sampleCount = Number(model?.sample_count || 0);
+  const minimumMlSamples = Number(model?.minimum_ml_samples || 12);
+  const available = sampleCount >= minimumMlSamples;
+  return {
+    mode: available ? 'ML-assisted' : 'Rule-based',
+    modelVersion: model?.model_version || '',
+    available,
+    sampleCount,
+    minimumMlSamples,
+    reason: available ? '' : '学習データ数が閾値に達していません',
+  };
+}
+
+function normalizeFeatureVectorForModel(featureVector, predictedScores, featureNames) {
+  const sceneType = String(featureVector?.sceneType || predictedScores?.sceneType || 'nonPortrait');
+  const merged = {
+    ...featureVector,
+    ...predictedScores,
+    ruleTotalScore: predictedScores?.totalScore ?? 0,
+    sceneIsPortrait: sceneType === 'portrait' ? 1 : 0,
+    sceneIsNonPortrait: sceneType === 'nonPortrait' ? 1 : 0,
+  };
+  const normalized = {};
+  for (const name of featureNames) {
+    normalized[name] = Number(merged[name] ?? 0) || 0;
+  }
+  return normalized;
+}
+
+async function getBrowserMlStatus() {
+  const model = await loadBrowserMlModel();
+  return buildMlStatusFromModel(model);
+}
+
+async function predictWithBrowserModel(featureVector, ruleBasedScores) {
+  const model = await loadBrowserMlModel();
+  const status = buildMlStatusFromModel(model);
+  const ruleScore = Number(ruleBasedScores?.totalScore || 0);
+
+  if (!status.available) {
+    return {
+      mode: 'Rule-based',
+      modelVersion: status.modelVersion,
+      usedModel: false,
+      predictedTotalScore: ruleScore,
+      residualApplied: 0,
+      fallbackReason: status.reason,
+      sampleCount: status.sampleCount,
+      minimumMlSamples: status.minimumMlSamples,
+    };
+  }
+
+  const featureNames = Array.isArray(model.feature_names) ? model.feature_names : [];
+  const means = Array.isArray(model.means) ? model.means : [];
+  const scales = Array.isArray(model.scales) ? model.scales : [];
+  const weights = Array.isArray(model.weights) ? model.weights : [];
+  const bias = Number(model.bias || 0);
+  const normalizedFeatures = normalizeFeatureVectorForModel(featureVector, ruleBasedScores, featureNames);
+
+  let residual = bias;
+  for (let index = 0; index < featureNames.length; index += 1) {
+    const name = featureNames[index];
+    const scale = Number(scales[index] || 1) || 1;
+    const mean = Number(means[index] || 0);
+    const value = Number(normalizedFeatures[name] || 0);
+    residual += Number(weights[index] || 0) * ((value - mean) / scale);
+  }
+
+  residual = clamp(residual, -25, 25);
+  const predictedTotalScore = clamp(ruleScore + residual, 0, 100);
+  return {
+    mode: 'ML-assisted',
+    modelVersion: model.model_version || '',
+    usedModel: true,
+    predictedTotalScore: round(predictedTotalScore, 2),
+    residualApplied: round(residual, 2),
+    fallbackReason: '',
+    sampleCount: Number(model.sample_count || 0),
+    minimumMlSamples: Number(model.minimum_ml_samples || 12),
+  };
+}
+
 async function refreshMlStatus() {
+  if (!shouldUseMlApi()) {
+    try {
+      const status = await getBrowserMlStatus();
+      setMlRuntimeState(status);
+    } catch (error) {
+      console.warn('Browser ML status unavailable', error);
+      setMlRuntimeState({
+        mode: 'Rule-based',
+        modelVersion: '',
+        available: false,
+        sampleCount: 0,
+        minimumMlSamples: 12,
+        reason: '学習済みモデルを読み込めません',
+      });
+    }
+    return;
+  }
+
   try {
     const status = await apiRequest('/api/ml/status');
     setMlRuntimeState({
@@ -2348,6 +2480,23 @@ function applyMlScoreToComment(text, totalScore) {
 }
 
 async function requestMlPrediction(featureVector, ruleBasedScores) {
+  if (!shouldUseMlApi()) {
+    try {
+      const response = await predictWithBrowserModel(featureVector, ruleBasedScores);
+      setMlRuntimeState({
+        mode: response.mode || 'Rule-based',
+        modelVersion: response.modelVersion || '',
+        available: Boolean(response.usedModel),
+        sampleCount: Number(response.sampleCount || 0),
+        minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 12),
+        reason: response.fallbackReason || '',
+      });
+      return response;
+    } catch (error) {
+      console.warn('Browser ML prediction unavailable', error);
+    }
+  }
+
   try {
     const response = await apiRequest('/api/ml/predict', {
       method: 'POST',
