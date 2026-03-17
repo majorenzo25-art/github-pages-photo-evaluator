@@ -1503,7 +1503,7 @@ let mlRuntimeState = {
   modelVersion: '',
   available: false,
   sampleCount: 0,
-  minimumMlSamples: 12,
+  minimumMlSamples: 30,
   reason: 'AI補正は利用できません',
 };
 
@@ -1730,7 +1730,7 @@ async function loadBrowserMlModel() {
 
 function buildMlStatusFromModel(model) {
   const sampleCount = Number(model?.sample_count || 0);
-  const minimumMlSamples = Number(model?.minimum_ml_samples || 12);
+  const minimumMlSamples = Number(model?.minimum_ml_samples || 30);
   const available = sampleCount >= minimumMlSamples;
   return {
     mode: available ? 'ML-assisted' : 'Rule-based',
@@ -1738,18 +1738,16 @@ function buildMlStatusFromModel(model) {
     available,
     sampleCount,
     minimumMlSamples,
-    reason: available ? '' : '学習データ数が閾値に達していません',
+    reason: available ? '' : `学習データ数が${minimumMlSamples}件に達していないため Rule-based にフォールバックしています`,
   };
 }
 
 function normalizeFeatureVectorForModel(featureVector, predictedScores, featureNames) {
-  const sceneType = String(featureVector?.sceneType || predictedScores?.sceneType || 'nonPortrait');
   const merged = {
     ...featureVector,
     ...predictedScores,
     ruleTotalScore: predictedScores?.totalScore ?? 0,
-    sceneIsPortrait: sceneType === 'portrait' ? 1 : 0,
-    sceneIsNonPortrait: sceneType === 'nonPortrait' ? 1 : 0,
+    impactScore: predictedScores?.impactScore ?? predictedScores?.impressionScore ?? featureVector?.impactScore ?? 0,
   };
   const normalized = {};
   for (const name of featureNames) {
@@ -1774,6 +1772,7 @@ async function predictWithBrowserModel(featureVector, ruleBasedScores) {
       modelVersion: status.modelVersion,
       usedModel: false,
       predictedTotalScore: ruleScore,
+      predictedDelta: 0,
       residualApplied: 0,
       fallbackReason: status.reason,
       sampleCount: status.sampleCount,
@@ -1804,10 +1803,11 @@ async function predictWithBrowserModel(featureVector, ruleBasedScores) {
     modelVersion: model.model_version || '',
     usedModel: true,
     predictedTotalScore: round(predictedTotalScore, 2),
+    predictedDelta: round(residual, 2),
     residualApplied: round(residual, 2),
     fallbackReason: '',
     sampleCount: Number(model.sample_count || 0),
-    minimumMlSamples: Number(model.minimum_ml_samples || 12),
+    minimumMlSamples: Number(model.minimum_ml_samples || 30),
   };
 }
 
@@ -1823,7 +1823,7 @@ async function refreshMlStatus() {
         modelVersion: '',
         available: false,
         sampleCount: 0,
-        minimumMlSamples: 12,
+        minimumMlSamples: 30,
         reason: '学習済みモデルを読み込めません',
       });
     }
@@ -1837,7 +1837,7 @@ async function refreshMlStatus() {
       modelVersion: status.modelVersion || '',
       available: Boolean(status.available),
       sampleCount: Number(status.sampleCount || 0),
-      minimumMlSamples: Number(status.minimumMlSamples || 12),
+      minimumMlSamples: Number(status.minimumMlSamples || 30),
       reason: status.reason || '',
     });
   } catch (error) {
@@ -1847,7 +1847,7 @@ async function refreshMlStatus() {
       modelVersion: '',
       available: false,
       sampleCount: 0,
-      minimumMlSamples: 12,
+      minimumMlSamples: 30,
       reason: 'AI補正は利用できません',
     });
   }
@@ -2198,6 +2198,11 @@ function analyzeSpatialFeatures(gray, width, height, stats) {
     subjectConcentration,
     backgroundInformation,
     backgroundClutter: clutterScore,
+    subjectCenterSupport: 1 - clamp(
+      Math.hypot(subjectX / width - 0.5, subjectY / height - 0.5) / 0.72,
+      0,
+      1
+    ),
     subjectXRatio: subjectX / width,
     subjectYRatio: subjectY / height,
     edgeBands: bands,
@@ -2310,6 +2315,7 @@ function deriveScoresFromMetrics(metrics) {
     organizationScore,
     informationScore,
     impressionScore,
+    impactScore: impressionScore,
     totalScore,
   };
 }
@@ -2396,6 +2402,7 @@ async function analyzeImageFile(file, preferredSource = '') {
     subjectConcentration: spatial.subjectConcentration,
     backgroundInformation: spatial.backgroundInformation,
     backgroundClutter: spatial.backgroundClutter,
+    subjectCenterSupport: spatial.subjectCenterSupport,
     subjectXRatio: spatial.subjectXRatio,
     subjectYRatio: spatial.subjectYRatio,
     edgeBands: spatial.edgeBands,
@@ -2420,11 +2427,7 @@ async function analyzeImageFile(file, preferredSource = '') {
 
 function buildFeatureVector(metrics, scores) {
   return {
-    sceneType: scores.sceneType,
-    width: metrics.width,
-    height: metrics.height,
     brightnessMean: metrics.brightnessMean,
-    brightnessVariance: metrics.brightnessVariance,
     brightnessStd: metrics.brightnessStd,
     overexposedRatio: metrics.overexposedRatio,
     underexposedRatio: metrics.underexposedRatio,
@@ -2439,27 +2442,17 @@ function buildFeatureVector(metrics, scores) {
     topBottomBalance: metrics.topBottomBalance,
     thirdsAlignment: metrics.thirdsAlignment,
     subjectConcentration: metrics.subjectConcentration,
+    subjectCenterSupport: metrics.subjectCenterSupport,
     backgroundInformation: metrics.backgroundInformation,
     backgroundClutter: metrics.backgroundClutter,
     subjectXRatio: metrics.subjectXRatio,
     subjectYRatio: metrics.subjectYRatio,
-    faceCount: metrics.faceMetrics.faceCount,
-    faceAreaRatio: metrics.faceMetrics.faceAreaRatio,
-    faceCenteredness: metrics.faceMetrics.faceCenteredness,
-    faceStability: metrics.faceMetrics.faceStability,
     compositionScore: scores.compositionScore || 0,
     lightScore: scores.lightScore || scores.brightnessScore || 0,
+    colorScore: scores.colorScore || 0,
     technicalScore: scores.technicalScore || scores.focusScore || 0,
     subjectScore: scores.subjectScore || 0,
-    brightnessScore: scores.brightnessScore || 0,
-    focusScore: scores.focusScore || 0,
-    expressionScore: scores.expressionScore || 0,
-    backgroundScore: scores.backgroundScore || 0,
-    cleanlinessScore: scores.cleanlinessScore || 0,
-    colorScore: scores.colorScore || 0,
-    organizationScore: scores.organizationScore || 0,
-    informationScore: scores.informationScore || 0,
-    impressionScore: scores.impressionScore || 0,
+    impactScore: scores.impactScore || scores.impressionScore || 0,
     ruleTotalScore: scores.totalScore || 0,
   };
 }
@@ -2488,7 +2481,7 @@ async function requestMlPrediction(featureVector, ruleBasedScores) {
         modelVersion: response.modelVersion || '',
         available: Boolean(response.usedModel),
         sampleCount: Number(response.sampleCount || 0),
-        minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 12),
+        minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 30),
         reason: response.fallbackReason || '',
       });
       return response;
@@ -2510,7 +2503,7 @@ async function requestMlPrediction(featureVector, ruleBasedScores) {
       modelVersion: response.modelVersion || '',
       available: Boolean(response.usedModel),
       sampleCount: Number(response.sampleCount || 0),
-      minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 12),
+      minimumMlSamples: Number(response.minimumMlSamples || mlRuntimeState.minimumMlSamples || 30),
       reason: response.fallbackReason || '',
     });
     return response;
@@ -2526,10 +2519,11 @@ async function requestMlPrediction(featureVector, ruleBasedScores) {
       modelVersion: '',
       usedModel: false,
       predictedTotalScore: ruleBasedScores.totalScore,
+      predictedDelta: 0,
       residualApplied: 0,
       fallbackReason: 'ML推論API未接続',
       sampleCount: 0,
-      minimumMlSamples: mlRuntimeState.minimumMlSamples || 12,
+      minimumMlSamples: mlRuntimeState.minimumMlSamples || 30,
     };
   }
 }
