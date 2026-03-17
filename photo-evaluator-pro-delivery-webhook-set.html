@@ -2840,18 +2840,6 @@ function buildFeedbackSectionHtml(record) {
           </select>
         </div>
         <div class="feedback-field">
-          <label class="field-label" for="feedback-comment-usefulness">コメントは参考になりましたか</label>
-          <select id="feedback-comment-usefulness">
-            <option value="">選択してください</option>
-            <option value="helpful" ${feedback.commentUsefulness === 'helpful' ? 'selected' : ''}>参考になった</option>
-            <option value="not_helpful" ${feedback.commentUsefulness === 'not_helpful' ? 'selected' : ''}>参考にならなかった</option>
-          </select>
-        </div>
-        <div class="feedback-field">
-          <label class="field-label" for="feedback-corrected-score">あなたなら何点にしますか</label>
-          <input id="feedback-corrected-score" type="number" min="0" max="100" step="1" value="${escapeHtml(feedback.correctedScore || '')}" placeholder="例: 78">
-        </div>
-        <div class="feedback-field">
           <label class="field-label" for="feedback-genre">写真の種類</label>
           <select id="feedback-genre">
             <option value="">選択してください</option>
@@ -2862,10 +2850,6 @@ function buildFeedbackSectionHtml(record) {
             <option value="product" ${feedback.genre === 'product' ? 'selected' : ''}>商品</option>
             <option value="other" ${feedback.genre === 'other' ? 'selected' : ''}>その他</option>
           </select>
-        </div>
-        <div class="feedback-field full">
-          <label class="field-label" for="feedback-note">ひとことメモ</label>
-          <textarea id="feedback-note" placeholder="気づいたことや補足があれば自由に書けます">${escapeHtml(feedback.note || '')}</textarea>
         </div>
       </div>
       <div class="feedback-actions">
@@ -3031,17 +3015,9 @@ async function saveFeedbackForLatest() {
   }
 
   const feedback = collectFeedbackFormValues();
-  if (!feedback.fairness && !feedback.commentUsefulness && !feedback.correctedScore && !feedback.note && !feedback.genre) {
+  if (!feedback.fairness && !feedback.genre) {
     setFeedbackStatus('どれか1つ以上入力してください', 'error');
     return;
-  }
-
-  if (feedback.correctedScore !== '') {
-    const numeric = Number(feedback.correctedScore);
-    if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
-      setFeedbackStatus('点数は0〜100で入力してください', 'error');
-      return;
-    }
   }
 
   setFeedbackStatus('保存中...');
