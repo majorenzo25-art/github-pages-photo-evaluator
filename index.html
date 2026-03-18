@@ -730,7 +730,7 @@
 
   #history-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 14px;
   }
   .history-card {
@@ -739,7 +739,7 @@
     border-radius: var(--radius);
     overflow: hidden;
     display: grid;
-    grid-template-columns: 64px minmax(0, 1fr) 120px;
+    grid-template-columns: 72px minmax(0, 1fr) 112px;
     align-items: center;
     column-gap: 14px;
     padding: 12px;
@@ -752,7 +752,7 @@
   }
   .history-card:hover { border-color: var(--accent-border); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.22); }
   .history-thumb {
-    width: 64px;
+    width: 72px;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     background: var(--surface2);
@@ -778,18 +778,14 @@
   .history-info {
     padding: 0;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4px;
+    align-items: center;
     min-width: 0;
   }
   .history-info-top {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 3px;
-    min-width: 0;
+    gap: 4px;
   }
   .history-score-big {
     font-family: 'DM Mono', monospace;
@@ -812,9 +808,8 @@
     flex-direction: column;
     gap: 6px;
     flex-shrink: 0;
-    width: 120px;
-    min-width: 120px;
-    justify-self: end;
+    width: 112px;
+    min-width: 112px;
   }
   .btn-detail, .btn-delete {
     width: 100%;
@@ -829,8 +824,6 @@
     transition: background-color 0.15s, color 0.15s;
     min-height: 36px;
     white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
   }
   .btn-detail { background: var(--surface2); color: var(--text-muted); }
   .btn-detail:hover { background: var(--accent); color: #0f0f11; }
@@ -922,10 +915,8 @@
     .history-card-footer {
       grid-column: 1 / -1;
       width: 100%;
-      min-width: 0;
       flex-direction: row;
       flex-wrap: wrap;
-      justify-self: stretch;
     }
     .btn-detail,
     .btn-delete {
@@ -943,8 +934,7 @@
       display: none;
     }
     nav {
-      background: rgba(255,255,255,0.96);
-      box-shadow: none;
+      background: rgba(15,15,17,0.96);
     }
     #modal-overlay {
       backdrop-filter: none;
@@ -1594,6 +1584,28 @@ const STORAGE_KEYS = {
   deliverySettings: 'photo_eval_delivery_settings',
   mlApiBase: 'photo_eval_ml_api_base',
   publicFeedbackCollectorUrl: 'photo_eval_public_feedback_collector_url',
+};
+const FEEDBACK_GENRE_OPTIONS = [
+  { code: 'portrait', label: '人物' },
+  { code: 'landscape', label: '風景' },
+  { code: 'animal', label: '動物' },
+  { code: 'flora', label: '花・植物' },
+  { code: 'food', label: '食べ物' },
+  { code: 'other', label: 'その他' },
+];
+const FEEDBACK_GENRE_ALIAS = {
+  portrait: 'portrait',
+  landscape: 'landscape',
+  animal: 'animal',
+  flora: 'flora',
+  food: 'food',
+  other: 'other',
+  人物: 'portrait',
+  風景: 'landscape',
+  動物: 'animal',
+  '花・植物': 'flora',
+  食べ物: 'food',
+  その他: 'other',
 };
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec';
 const DEFAULT_ML_API_BASE = 'http://127.0.0.1:8787';
@@ -2932,8 +2944,50 @@ function buildMlSummaryHtml(record) {
   `;
 }
 
+function normalizeFeedbackGenreValues(rawValue = '') {
+  return String(rawValue || '')
+    .split('|')
+    .map(value => FEEDBACK_GENRE_ALIAS[value] || value)
+    .filter(value => FEEDBACK_GENRE_OPTIONS.some(option => option.code === value))
+    .filter((value, index, array) => array.indexOf(value) === index);
+}
+
+function syncFeedbackGenreButtons() {
+  const input = document.getElementById('feedback-genre');
+  const selected = new Set(normalizeFeedbackGenreValues(input?.value || ''));
+  document.querySelectorAll('[data-genre-option]').forEach(button => {
+    const active = selected.has(button.dataset.genreOption);
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+}
+
+function toggleFeedbackGenre(value) {
+  const input = document.getElementById('feedback-genre');
+  if (!input) return;
+
+  let selected = normalizeFeedbackGenreValues(input.value);
+  if (value === 'other') {
+    selected = selected.includes('other') ? [] : ['other'];
+  } else if (selected.includes(value)) {
+    selected = selected.filter(item => item !== value);
+  } else {
+    selected = selected.filter(item => item !== 'other');
+    if (selected.length >= 2) {
+      setFeedbackStatus('写真の種類は2項目まで選べます', 'error');
+      syncFeedbackGenreButtons();
+      return;
+    }
+    selected.push(value);
+  }
+
+  input.value = selected.join('|');
+  syncFeedbackGenreButtons();
+}
+
 function buildFeedbackSectionHtml(record) {
   const feedback = record.feedback || {};
+  const selectedGenres = normalizeFeedbackGenreValues(feedback.genre);
   return `
     <div class="feedback-card">
       <div class="section-head">
@@ -2957,15 +3011,19 @@ function buildFeedbackSectionHtml(record) {
         </div>
         <div class="feedback-field">
           <label class="field-label" for="feedback-genre">写真の種類</label>
-          <select id="feedback-genre">
-            <option value="">選択してください</option>
-            <option value="portrait" ${feedback.genre === 'portrait' ? 'selected' : ''}>人物</option>
-            <option value="landscape" ${feedback.genre === 'landscape' ? 'selected' : ''}>風景</option>
-            <option value="architecture" ${feedback.genre === 'architecture' ? 'selected' : ''}>建物</option>
-            <option value="food" ${feedback.genre === 'food' ? 'selected' : ''}>料理</option>
-            <option value="product" ${feedback.genre === 'product' ? 'selected' : ''}>商品</option>
-            <option value="other" ${feedback.genre === 'other' ? 'selected' : ''}>その他</option>
-          </select>
+          <input id="feedback-genre" type="hidden" value="${escapeHtml(selectedGenres.join('|'))}">
+          <div class="segmented-control" role="group" aria-label="写真の種類を選択">
+            ${FEEDBACK_GENRE_OPTIONS.map(option => `
+              <button
+                type="button"
+                class="segmented-btn ${selectedGenres.includes(option.code) ? 'active' : ''}"
+                data-genre-option="${escapeHtml(option.code)}"
+                aria-pressed="${selectedGenres.includes(option.code) ? 'true' : 'false'}"
+                onclick="toggleFeedbackGenre('${escapeHtml(option.code)}')"
+              >${escapeHtml(option.label)}</button>
+            `).join('')}
+          </div>
+          <p class="feedback-note">「その他」を除いて2項目まで選べます。「その他」は単独選択です。保存時は内部コードで記録されます。</p>
         </div>
       </div>
       <div class="feedback-actions">
@@ -3323,10 +3381,10 @@ function buildHistoryCard(record, index) {
           <span class="history-score-big" style="color:${totalColor.text}">${record.totalScore}<span style="font-size:0.7em;color:var(--text-dim)">/100</span></span>
           <span class="history-date">${escapeHtml(formatDate(record.createdAt))}</span>
         </div>
-      </div>
-      <div class="history-card-footer">
-        <button class="btn-detail" onclick="openModal(${record.id});event.stopPropagation()">詳細</button>
-        <button class="btn-delete" onclick="deleteRecord(${record.id}, event)">削除</button>
+        <div class="history-card-footer">
+          <button class="btn-detail" onclick="openModal(${record.id});event.stopPropagation()">詳細</button>
+          <button class="btn-delete" onclick="deleteRecord(${record.id}, event)">削除</button>
+        </div>
       </div>
     </div>
   `;

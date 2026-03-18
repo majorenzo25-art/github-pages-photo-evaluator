@@ -1,31 +1,38 @@
-# GitHub Pages Deploy Set
+# GitHub Pages Photo Evaluator
 
-このフォルダをそのままGitHubリポジトリに入れると、GitHub Pagesで公開しやすい構成です。
+このフォルダは公開向け GitHub Pages 用の静的配信セットです。
 
-## 含まれるファイル
+## 含まれるもの
 
 - `index.html`
-  - 公開時の入口ページ
 - `photo-evaluator-pro-delivery-webhook-set.html`
-  - 正式な起動対象の元ファイル名版
-- `manifest.webmanifest`
+- `photo_eval_model.json`
 - `service-worker.js`
-- `.nojekyll`
+- `manifest.webmanifest`
 
-## 公開手順
+## 学習モデルについて
 
-1. GitHubに新しいリポジトリを作る
-2. このフォルダの中身をリポジトリ直下へアップロードする
-3. GitHub Pages を `Deploy from a branch` / `main` / `/root` で有効化する
-4. 発行された `https://...github.io/.../` を開く
+公開版は `photo_eval_model.json` を読み込んで補正モデルを使います。  
+ただし、モデル件数が `minimum_ml_samples = 30` 未満の間は `Rule-based` にフォールバックします。
 
-## iPhoneで使う場合
+## カテゴリ仕様
 
-1. SafariでGitHub PagesのURLを開く
-2. `起動モード: Hosted Web App (iPhone対応)` を確認する
-3. 必要なら「ホーム画面に追加」する
+UI 表示は日本語ですが、保存や送信では次の内部コードを使います。
 
-## 補足
+| UI表示 | 内部コード |
+| --- | --- |
+| 人物 | `portrait` |
+| 風景 | `landscape` |
+| 動物 | `animal` |
+| 花・植物 | `flora` |
+| 食べ物 | `food` |
+| その他 | `other` |
 
-- Webhook URLはHTMLに初期設定済みです
-- `file://` 直開きではなく、必ずGitHub PagesのHTTPS URLから開いてください
+複数選択は `|` 区切りです。例: `landscape|animal`
+
+## 注意
+
+- 旧学習データは使いません
+- 新仕様で収集したデータだけを学習対象にします
+- 学習自体は GitHub Pages 上では行いません
+- 学習済み `photo_eval_model.json` を別環境で更新して、このフォルダへ反映します
