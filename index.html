@@ -3060,6 +3060,9 @@ async function runEvaluation() {
     activeUpload.status = 'evaluated';
     renderUploadQueue();
     renderCurrentRecord(record);
+    clearInterval(interval);
+    loading.style.display = 'none';
+    evalButton.disabled = false;
     if (collectDeliverySettings().autoSend) {
       await sendRecordById(record.id);
     }
@@ -3271,6 +3274,7 @@ function buildResultHTML(record, options = {}) {
 
 function renderCurrentRecord(record) {
   latestResultRecord = record;
+  document.getElementById('loading').style.display = 'none';
   document.getElementById('result-section').style.display = 'block';
   document.getElementById('result-inner').innerHTML = buildResultHTML(record, { includeFeedback: true });
   syncFeedbackGenreButtons();
