@@ -109,7 +109,21 @@
   /* ── レイアウト ── */
   .page { display: none; position: relative; z-index: 1; }
   .page.active { display: block; }
-  .container { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+  .container { max-width: 1320px; margin: 0 auto; padding: 28px 20px 48px; }
+  .lab-workspace {
+    display: grid;
+    grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+  .lab-left,
+  .lab-right {
+    min-width: 0;
+  }
+  .lab-right {
+    position: sticky;
+    top: 76px;
+  }
 
   /* ── タイポ ── */
   .page-title {
@@ -188,7 +202,7 @@
   }
   #preview-img {
     width: 100%;
-    max-height: 320px;
+    max-height: 220px;
     object-fit: contain;
     display: block;
     background: #000;
@@ -221,6 +235,103 @@
     text-decoration: none;
   }
   .preview-change:hover, .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
+  .training-intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .training-intro h2 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .training-intro p {
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    margin-bottom: 8px;
+  }
+  .training-list {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .queue-panel {
+    display: none;
+    margin-top: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .queue-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .queue-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .queue-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .queue-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    max-height: 220px;
+    overflow: auto;
+  }
+  .queue-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    background: var(--surface2);
+    cursor: pointer;
+  }
+  .queue-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-dim);
+  }
+  .queue-card.saved {
+    border-color: rgba(74,222,128,0.35);
+  }
+  .queue-card.evaluated {
+    border-color: rgba(96,165,250,0.35);
+  }
+  .queue-file {
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+  .queue-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .queue-status {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .queue-status.pending { background: rgba(251,191,36,0.15); color: var(--amber); }
+  .queue-status.evaluated { background: rgba(96,165,250,0.14); color: var(--blue); }
+  .queue-status.saved { background: rgba(74,222,128,0.16); color: var(--green); }
+  .queue-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
 
   /* ── ボタン ── */
   .btn-primary {
@@ -286,7 +397,7 @@
   }
 
   /* ── 結果エリア ── */
-  #result-section { display: none; margin-top: 32px; }
+  #result-section { display: none; margin-top: 0; }
 
   .result-header {
     display: flex;
@@ -360,7 +471,7 @@
   /* 項目スコアグリッド */
   .scores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     margin-bottom: 20px;
     animation: fadeUp 0.4s ease-out 0.1s both;
@@ -988,6 +1099,25 @@
     font-size: 0.84rem;
     line-height: 1.7;
   }
+  .mini-info-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .mini-info-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(219,230,244,0.95);
+    border-radius: 999px;
+    color: #5f7390;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
   .launch-warning {
     background: #fff4f6;
     border-color: #f5c8d0;
@@ -1237,6 +1367,12 @@
   }
 
   @media (max-width: 760px) {
+    .lab-workspace {
+      grid-template-columns: 1fr;
+    }
+    .lab-right {
+      position: static;
+    }
     .nav-inner {
       height: auto;
       padding: 14px 0;
@@ -1260,6 +1396,9 @@
     .container {
       padding: 24px 16px 72px;
     }
+    .scores-grid {
+      grid-template-columns: 1fr;
+    }
     .page-title {
       font-size: 2rem;
     }
@@ -1274,10 +1413,10 @@
 <!-- ナビ -->
 <nav>
   <div class="nav-inner">
-    <div class="nav-logo">📸 <span>PHOTO</span>EVAL</div>
+    <div class="nav-logo">🧪 <span>PHOTO</span>TRAINING</div>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="showPage('evaluate')">写真をみる</button>
-      <button class="tab-btn" onclick="showPage('history')">履歴</button>
+      <button class="tab-btn active" onclick="showPage('evaluate')">学習入力</button>
+      <button class="tab-btn" onclick="showPage('history')">保存履歴</button>
     </div>
   </div>
 </nav>
@@ -1285,82 +1424,92 @@
 <!-- 評価ページ -->
 <div id="page-evaluate" class="page active">
   <div class="container">
-    <h1 class="page-title">写真チェックアプリ</h1>
-    <p class="page-sub">写真を選ぶだけで、構図・光・色・技術・主題性・印象を分かりやすくチェックできます。</p>
-    <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応しています。HEIFはお使いのブラウザによっては表示や確認ができない場合があります。</p>
+    <h1 class="page-title">開発者向け 学習データ作成ラボ</h1>
+    <p class="page-sub">公開版とは分離した、学習用データ作成専用の写真評価アプリです。複数写真をキューに積み、補正点付きで順番に保存できます。</p>
+    <p class="page-sub note">ローカルMLサーバー接続前提です。JPG・JPEG・PNG・WebP・HEIFに対応しています。</p>
 
     <div id="launch-warning" class="launch-warning"></div>
 
     <input id="webhook-url" type="hidden" value="https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec">
 
-    <section class="welcome-panel">
-      <div class="step-grid">
-        <article class="step-card">
-          <span class="step-num">1</span>
-          <h3>画像を選ぶ</h3>
-          <p>スマホやパソコンにある写真を1枚選ぶだけです。対応形式ならそのままプレビューできます。</p>
-        </article>
-        <article class="step-card">
-          <span class="step-num">2</span>
-          <h3>チェックする</h3>
-          <p>構図や光のバランスなどを自動で確認して、総合点と項目ごとの見やすい結果を表示します。</p>
-        </article>
-        <article class="step-card">
-          <span class="step-num">3</span>
-          <h3>結果を見る</h3>
-          <p>結果を見て、気になる点を確認できます。</p>
-        </article>
-      </div>
+    <section class="training-intro">
+      <h2>このラボの役割</h2>
+      <p>大量の写真を開発者が投入し、補正点と種別を付けて学習データを作るための専用画面です。</p>
+      <ul class="training-list">
+        <li>複数画像を一度に読み込み、キューで順番に処理します。</li>
+        <li>公開向けの簡易フィードバックではなく、学習に使う補正点を直接保存します。</li>
+        <li>保存先はローカルの `photo_eval_ml.sqlite3` で、公開 collector には送りません。</li>
+      </ul>
     </section>
 
-    <!-- ドロップゾーン -->
-    <div id="dropzone" onclick="document.getElementById('file-input').click()">
-      <input type="file" id="file-input" accept="image/jpeg,image/jpg,image/png,image/webp,image/heif,image/heic,.jpg,.jpeg,.png,.webp,.heif,.heic">
-      <span class="drop-icon">📷</span>
-      <p class="drop-title">ここをタップして写真を選ぶ</p>
-      <p class="drop-sub">ドラッグ＆ドロップにも対応しています ／ JPG・JPEG・PNG・WebP・HEIF ／ 最大25MB</p>
-    </div>
+    <div class="lab-workspace">
+      <div class="lab-left">
+        <!-- ドロップゾーン -->
+        <div id="dropzone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" multiple accept="image/jpeg,image/jpg,image/png,image/webp,image/heif,image/heic,.jpg,.jpeg,.png,.webp,.heif,.heic">
+          <span class="drop-icon">📷</span>
+          <p class="drop-title">ここをタップして学習用写真を追加</p>
+          <p class="drop-sub">複数選択・ドラッグ＆ドロップ対応 ／ JPG・JPEG・PNG・WebP・HEIF ／ 1枚最大25MB</p>
+        </div>
 
-    <!-- プレビュー -->
-    <div id="preview-wrap">
-      <img id="preview-img" src="" alt="プレビュー">
-      <div class="preview-bar">
-        <span class="preview-name" id="preview-name">—</span>
-        <div class="preview-actions">
-          <a class="btn-secondary" id="download-current-photo" href="#" download>写真を保存</a>
-          <button class="preview-change" onclick="resetFile()">選び直す</button>
+        <!-- プレビュー -->
+        <div id="preview-wrap">
+          <img id="preview-img" src="" alt="プレビュー">
+          <div class="preview-bar">
+            <span class="preview-name" id="preview-name">—</span>
+            <div class="preview-actions">
+              <a class="btn-secondary" id="download-current-photo" href="#" download>写真を保存</a>
+              <button class="preview-change" onclick="removeCurrentFromQueue()">この写真を外す</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="queue-panel" class="queue-panel">
+          <div class="queue-head">
+            <div>
+              <p class="queue-title">投入キュー</p>
+              <p class="queue-sub" id="queue-summary">0枚</p>
+            </div>
+            <div class="queue-actions">
+              <button class="btn-secondary" onclick="document.getElementById('file-input').click()">追加する</button>
+              <button class="btn-secondary" onclick="clearTrainingQueue()">キューを空にする</button>
+            </div>
+          </div>
+          <div id="queue-list" class="queue-list"></div>
+        </div>
+
+        <div id="side-ml-summary"></div>
+
+        <div id="error-box"></div>
+
+        <button class="btn-primary" id="eval-btn" disabled onclick="runEvaluation()">
+          ✦ 現在の写真を採点する
+        </button>
+
+        <div id="loading">
+          <div class="loader"></div>
+          <p class="loading-label" id="loading-label">写真を確認しています...</p>
+          <div class="loading-steps">
+            <div class="loading-step"></div>
+            <div class="loading-step"></div>
+            <div class="loading-step"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="error-box"></div>
-
-    <!-- 評価ボタン -->
-    <button class="btn-primary" id="eval-btn" disabled onclick="runEvaluation()">
-      ✦ 写真をチェックする
-    </button>
-
-    <!-- ローディング -->
-    <div id="loading">
-      <div class="loader"></div>
-      <p class="loading-label" id="loading-label">写真を確認しています...</p>
-      <div class="loading-steps">
-        <div class="loading-step"></div>
-        <div class="loading-step"></div>
-        <div class="loading-step"></div>
-      </div>
-    </div>
-
-    <!-- 結果 -->
-    <div id="result-section">
-      <div class="result-header">
-        <p class="result-title">✦ チェック結果</p>
-        <div class="result-actions">
-          <a class="btn-secondary" id="download-result-photo" href="#" download>画像を保存</a>
-          <button class="btn-reset" onclick="resetAll()">別の写真をみる</button>
+      <div class="lab-right">
+        <!-- 結果 -->
+        <div id="result-section">
+          <div class="result-header">
+            <p class="result-title">✦ 学習用チェック結果</p>
+            <div class="result-actions">
+              <a class="btn-secondary" id="download-result-photo" href="#" download>画像を保存</a>
+              <button class="btn-reset" onclick="goToNextQueueItem()">次の写真へ</button>
+            </div>
+          </div>
+          <div id="result-inner"></div>
         </div>
       </div>
-      <div id="result-inner"></div>
     </div>
   </div>
 </div>
@@ -1368,8 +1517,8 @@
 <!-- 履歴ページ -->
 <div id="page-history" class="page">
   <div class="container">
-    <h1 class="page-title">チェック履歴</h1>
-    <p class="page-sub">これまでにチェックした写真を、点数や日時とあわせて一覧で確認できます。</p>
+    <h1 class="page-title">学習保存履歴</h1>
+    <p class="page-sub">ローカルに保存した学習用レコードを、点数や日時とあわせて一覧で確認できます。</p>
 
     <div class="history-toolbar">
       <span class="history-count" id="history-count">0件</span>
@@ -1459,7 +1608,6 @@ const STORAGE_KEYS = {
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec';
 const DEFAULT_ML_API_BASE = 'http://127.0.0.1:8787';
 const DEFAULT_PUBLIC_FEEDBACK_COLLECTOR_URL = 'https://script.google.com/macros/s/AKfycbyT_-5dbbSbPeWu7nKDG7JWN-lzx_PgXbY-7NWy0GlelRRDrec3WUWcF49_txNrqR9B/exec';
-const DEFAULT_REVIEW_MODE = 'general';
 
 const DB_NAME = 'photo_eval_db';
 const DB_VERSION = 1;
@@ -1475,6 +1623,8 @@ let currentFileDataUrl = '';
 let latestResultRecord = null;
 let sendingRecordId = null;
 let modalRecordId = null;
+let trainingQueue = [];
+let currentQueueIndex = -1;
 let browserMlModelPromise = null;
 let mlRuntimeState = {
   mode: 'Rule-based',
@@ -1838,16 +1988,15 @@ function updateLaunchWarning() {
   const host = window.location.hostname;
   const isFile = protocol === 'file:';
   const isLocalServer = protocol === 'http:' && (host === '127.0.0.1' || host === 'localhost');
-  const isHostedHttps = protocol === 'https:';
 
   if (isFile) {
     warningEl.classList.add('active');
-    warningEl.textContent = 'このページはファイルを直接開かず、公開URLまたは起動用の方法から使ってください。PCはローカル起動、iPhoneは公開URLから開くと安心です。';
+    warningEl.textContent = 'このラボは file:// 直開きではなく、ローカルMLサーバーから起動してください。';
     return;
   }
-  if (!isLocalServer && !isHostedHttps) {
+  if (!isLocalServer) {
     warningEl.classList.add('active');
-    warningEl.textContent = 'このページは、PCではローカル起動、iPhoneでは公開URLから開いてください。公開URLは https ではじまるアドレスです。';
+    warningEl.textContent = 'このラボは開発者向けのため、http://127.0.0.1:8787/ などローカルサーバー上でのみ利用してください。';
     return;
   }
   warningEl.classList.remove('active');
@@ -1858,6 +2007,138 @@ function revokeCurrentFileUrl() {
   if (currentFileUrl) {
     URL.revokeObjectURL(currentFileUrl);
     currentFileUrl = '';
+  }
+}
+
+function getQueueStatusLabel(status) {
+  if (status === 'saved') return '学習保存済み';
+  if (status === 'evaluated') return '採点済み';
+  return '未処理';
+}
+
+function renderQueue() {
+  const panel = document.getElementById('queue-panel');
+  const list = document.getElementById('queue-list');
+  const summary = document.getElementById('queue-summary');
+  if (!panel || !list || !summary) return;
+
+  if (!trainingQueue.length) {
+    panel.style.display = 'none';
+    list.innerHTML = '';
+    summary.textContent = '0枚';
+    return;
+  }
+
+  panel.style.display = 'block';
+  const savedCount = trainingQueue.filter(item => item.status === 'saved').length;
+  const evaluatedCount = trainingQueue.filter(item => item.status === 'evaluated').length;
+  summary.textContent = `${trainingQueue.length}枚 / 採点済み ${evaluatedCount} / 保存済み ${savedCount}`;
+  list.innerHTML = trainingQueue.map((item, index) => `
+    <article class="queue-card ${index === currentQueueIndex ? 'active' : ''} ${item.status}" onclick="selectQueueItem(${index})">
+      <div class="queue-file">${escapeHtml(item.file.name)}</div>
+      <div class="queue-meta">${Math.round(item.file.size / 1024)}KB</div>
+      <span class="queue-status ${item.status}">${escapeHtml(getQueueStatusLabel(item.status))}</span>
+    </article>
+  `).join('');
+}
+
+async function syncCurrentFileView() {
+  const item = trainingQueue[currentQueueIndex];
+  if (!item) {
+    currentFile = null;
+    currentFileDataUrl = '';
+    latestResultRecord = null;
+    revokeCurrentFileUrl();
+    document.getElementById('preview-img').src = '';
+    document.getElementById('preview-name').textContent = '—';
+    document.getElementById('dropzone').style.display = '';
+    document.getElementById('preview-wrap').style.display = 'none';
+    document.getElementById('eval-btn').disabled = true;
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('side-ml-summary').innerHTML = '';
+    updateActionLinks();
+    renderQueue();
+    return;
+  }
+
+  currentFile = item.file;
+  currentFileDataUrl = item.dataUrl;
+  latestResultRecord = null;
+  revokeCurrentFileUrl();
+  currentFileUrl = URL.createObjectURL(item.file);
+  document.getElementById('preview-img').src = item.dataUrl;
+  document.getElementById('preview-name').textContent = item.file.name;
+  document.getElementById('dropzone').style.display = 'none';
+  document.getElementById('preview-wrap').style.display = 'block';
+  document.getElementById('eval-btn').disabled = false;
+  updateActionLinks();
+
+  if (item.recordId) {
+    const record = await getRecordById(item.recordId);
+    if (record) {
+      renderCurrentRecord(record);
+    } else {
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('side-ml-summary').innerHTML = '';
+    }
+  } else {
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('side-ml-summary').innerHTML = '';
+  }
+  renderQueue();
+}
+
+async function selectQueueItem(index) {
+  currentQueueIndex = index;
+  await syncCurrentFileView();
+}
+
+async function autoEvaluateCurrentQueueItem() {
+  const item = trainingQueue[currentQueueIndex];
+  if (!item || item.status !== 'pending' || !currentFile) return;
+  await runEvaluation();
+}
+
+async function addFilesToQueue(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heif', 'image/heic'];
+  const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'heif', 'heic'];
+  const accepted = [];
+
+  for (const file of files) {
+    const extension = getFileExtension(file.name);
+    if (!allowedTypes.includes(file.type) && !allowedExts.includes(extension)) continue;
+    if (file.size > MAX_UPLOAD_BYTES) continue;
+    try {
+      const dataUrl = await readFileAsDataURL(file);
+      accepted.push({
+        id: Date.now() + Math.random(),
+        file,
+        dataUrl,
+        status: 'pending',
+        recordId: null,
+      });
+    } catch (error) {
+      console.warn('Failed to read file', file.name, error);
+    }
+  }
+
+  if (!accepted.length) {
+    showError('追加できる画像がありませんでした。対応形式とサイズを確認してください');
+    return;
+  }
+
+  trainingQueue = trainingQueue.concat(accepted);
+  hideError();
+  const shouldAutoEvaluateFirst = currentQueueIndex < 0;
+  if (currentQueueIndex < 0) {
+    currentQueueIndex = 0;
+  }
+  await syncCurrentFileView();
+  if (shouldAutoEvaluateFirst) {
+    await autoEvaluateCurrentQueueItem();
   }
 }
 
@@ -1895,8 +2176,7 @@ function showPage(name) {
 }
 
 document.getElementById('file-input').addEventListener('change', event => {
-  const file = event.target.files[0];
-  if (file) void setFile(file);
+  if (event.target.files?.length) void addFilesToQueue(event.target.files);
   event.target.value = '';
 });
 
@@ -1914,8 +2194,7 @@ dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-ove
 dropzone.addEventListener('drop', event => {
   event.preventDefault();
   dropzone.classList.remove('drag-over');
-  const file = event.dataTransfer.files[0];
-  if (file) void setFile(file);
+  if (event.dataTransfer.files?.length) void addFilesToQueue(event.dataTransfer.files);
 });
 
 async function setFile(file) {
@@ -1957,22 +2236,37 @@ async function setFile(file) {
 }
 
 function resetFile() {
-  currentFile = null;
-  currentFileDataUrl = '';
-  latestResultRecord = null;
-  revokeCurrentFileUrl();
-  document.getElementById('preview-img').src = '';
-  document.getElementById('preview-name').textContent = '—';
-  document.getElementById('dropzone').style.display = '';
-  document.getElementById('preview-wrap').style.display = 'none';
-  document.getElementById('eval-btn').disabled = true;
-  document.getElementById('result-section').style.display = 'none';
-  updateActionLinks();
+  if (currentQueueIndex >= 0 && currentQueueIndex < trainingQueue.length) {
+    trainingQueue.splice(currentQueueIndex, 1);
+    if (currentQueueIndex >= trainingQueue.length) currentQueueIndex = trainingQueue.length - 1;
+  }
+  void syncCurrentFileView();
   hideError();
 }
 
 function resetAll() {
+  clearTrainingQueue();
+}
+
+function clearTrainingQueue() {
+  trainingQueue = [];
+  currentQueueIndex = -1;
+  void syncCurrentFileView();
+}
+
+function removeCurrentFromQueue() {
   resetFile();
+}
+
+async function goToNextQueueItem() {
+  if (!trainingQueue.length) return;
+  if (currentQueueIndex < trainingQueue.length - 1) {
+    currentQueueIndex += 1;
+    await syncCurrentFileView();
+    await autoEvaluateCurrentQueueItem();
+    return;
+  }
+  setFeedbackStatus('最後の写真まで確認しました', 'success');
 }
 
 function readFileAsDataURL(file) {
@@ -2657,7 +2951,7 @@ async function runEvaluation() {
     '明るさや白飛びを確認しています...',
     'ピントや細かい写りを確認しています...',
     '構図や背景のまとまりを確認しています...',
-    'チェック結果をまとめています...',
+    '結果と保存データをまとめています...',
   ];
   let index = 0;
   loadingLabel.textContent = loadingLabels[0];
@@ -2698,7 +2992,7 @@ async function runEvaluation() {
         correctedScore: '',
         note: '',
         genre: '',
-        reviewMode: DEFAULT_REVIEW_MODE,
+        reviewMode: 'developer-training',
         savedAt: '',
         status: '',
       },
@@ -2718,9 +3012,14 @@ async function runEvaluation() {
     };
 
     await saveToHistory(record);
+    if (currentQueueIndex >= 0 && trainingQueue[currentQueueIndex]) {
+      trainingQueue[currentQueueIndex].status = 'evaluated';
+      trainingQueue[currentQueueIndex].recordId = record.id;
+      renderQueue();
+    }
     renderCurrentRecord(record);
     if (collectDeliverySettings().autoSend) {
-      await sendRecordById(record.id);
+      // Developer lab does not auto-send to Drive or public collectors.
     }
   } catch (error) {
     console.error(error);
@@ -2798,18 +3097,22 @@ function buildFeedbackSectionHtml(record) {
   return `
     <div class="feedback-card">
       <div class="section-head">
-        <p class="section-title">ご意見・感想</p>
-        <span class="status-pill rule">使うほど精度改善に役立ちます</span>
+        <p class="section-title">学習用ラベル入力</p>
+        <span class="status-pill ml">開発者専用</span>
       </div>
       <div class="feedback-grid">
         <div class="feedback-field">
-          <label class="field-label" for="feedback-fairness">この結果はイメージに近いですか</label>
+          <label class="field-label" for="feedback-fairness">この結果は妥当ですか</label>
           <select id="feedback-fairness">
             <option value="">選択してください</option>
             <option value="valid" ${feedback.fairness === 'valid' ? 'selected' : ''}>妥当</option>
             <option value="too_high" ${feedback.fairness === 'too_high' ? 'selected' : ''}>高すぎる</option>
             <option value="too_low" ${feedback.fairness === 'too_low' ? 'selected' : ''}>低すぎる</option>
           </select>
+        </div>
+        <div class="feedback-field">
+          <label class="field-label" for="feedback-corrected-score">開発者補正点</label>
+          <input id="feedback-corrected-score" type="number" min="0" max="100" step="1" value="${escapeHtml(feedback.correctedScore || '')}" placeholder="例: 78">
         </div>
         <div class="feedback-field">
           <label class="field-label" for="feedback-genre">写真の種類</label>
@@ -2823,12 +3126,17 @@ function buildFeedbackSectionHtml(record) {
             <option value="other" ${feedback.genre === 'other' ? 'selected' : ''}>その他</option>
           </select>
         </div>
+        <div class="feedback-field full">
+          <label class="field-label" for="feedback-note">判定メモ</label>
+          <textarea id="feedback-note" placeholder="補正理由や見直しポイントを残せます">${escapeHtml(feedback.note || '')}</textarea>
+        </div>
       </div>
       <div class="feedback-actions">
-        <button class="btn-feedback" onclick="saveFeedbackForLatest()">感想を保存する</button>
+        <button class="btn-feedback" onclick="saveFeedbackForLatest()">この写真を学習保存</button>
+        <button class="btn-secondary" onclick="saveFeedbackForLatest(true)">保存して次へ</button>
         <span class="feedback-status" id="feedback-status">${escapeHtml(feedback.status || '')}</span>
       </div>
-      <p class="feedback-note">保存されるのは点数や特徴量、補正点、写真の種類などです。画像そのものは精度改善用データに含まれません。</p>
+      <p class="feedback-note">この画面ではローカルの学習DBへ保存します。公開 collector には送信しません。</p>
     </div>
   `;
 }
@@ -2837,6 +3145,7 @@ function buildResultHTML(record, options = {}) {
   const totalColor = getScoreColor(record.totalScore);
   const scoreItems = SCORE_ITEMS;
   const includeFeedback = Boolean(options.includeFeedback);
+  const includeMlSummary = options.includeMlSummary !== false;
   const badgeBackground = record.totalScore >= 85 ? 'var(--green-dim)'
     : record.totalScore >= 70 ? 'var(--blue-dim)'
       : record.totalScore >= 50 ? 'var(--amber-dim)'
@@ -2871,7 +3180,7 @@ function buildResultHTML(record, options = {}) {
 
     <div class="scores-grid">${scoreCardsHtml}</div>
 
-    ${buildMlSummaryHtml(record)}
+    ${includeMlSummary ? buildMlSummaryHtml(record) : ''}
     ${includeFeedback ? buildFeedbackSectionHtml(record) : ''}
     ${buildDeliveryHtml(record)}
   `;
@@ -2880,8 +3189,10 @@ function buildResultHTML(record, options = {}) {
 function renderCurrentRecord(record) {
   latestResultRecord = record;
   document.getElementById('result-section').style.display = 'block';
-  document.getElementById('result-inner').innerHTML = buildResultHTML(record, { includeFeedback: true });
+  document.getElementById('side-ml-summary').innerHTML = buildMlSummaryHtml(record);
+  document.getElementById('result-inner').innerHTML = buildResultHTML(record, { includeFeedback: true, includeMlSummary: false });
   updateActionLinks(record);
+  renderScoreBars(document.getElementById('side-ml-summary'));
   renderScoreBars(document.getElementById('result-section'));
 }
 
@@ -2898,11 +3209,11 @@ function renderModalRecord(record) {
 function collectFeedbackFormValues() {
   return {
     fairness: document.getElementById('feedback-fairness')?.value || '',
-    commentUsefulness: document.getElementById('feedback-comment-usefulness')?.value || '',
     correctedScore: document.getElementById('feedback-corrected-score')?.value || '',
     note: document.getElementById('feedback-note')?.value.trim() || '',
     genre: document.getElementById('feedback-genre')?.value || '',
-    reviewMode: DEFAULT_REVIEW_MODE,
+    commentUsefulness: '',
+    reviewMode: 'developer-training',
   };
 }
 
@@ -2949,7 +3260,7 @@ function buildLearningFeedbackPayload(record, feedback) {
     modelVersion: record.modelVersion || '',
     mlScore: record.mlScore,
     scoreGap: record.scoreGap,
-    source: window.location.hostname.includes('github.io') ? 'public-pages' : 'local-app',
+    source: 'developer-training-lab',
   };
 }
 
@@ -2980,67 +3291,57 @@ async function saveFeedbackToPublicCollector(payload) {
   return data;
 }
 
-async function saveFeedbackForLatest() {
+async function saveFeedbackForLatest(moveNext = false) {
   if (!latestResultRecord) {
     showError('先に写真をチェックしてください');
     return;
   }
 
   const feedback = collectFeedbackFormValues();
-  if (!feedback.fairness && !feedback.genre) {
-    setFeedbackStatus('どれか1つ以上入力してください', 'error');
+  if (!feedback.fairness && feedback.correctedScore === '' && !feedback.genre && !feedback.note) {
+    setFeedbackStatus('学習用ラベルを1つ以上入力してください', 'error');
     return;
+  }
+
+  if (feedback.correctedScore !== '') {
+    const numeric = Number(feedback.correctedScore);
+    if (!Number.isFinite(numeric) || numeric < 0 || numeric > 100) {
+      setFeedbackStatus('補正点は0〜100で入力してください', 'error');
+      return;
+    }
   }
 
   setFeedbackStatus('保存中...');
 
   try {
     const payload = buildLearningFeedbackPayload(latestResultRecord, feedback);
-    let localResponse = null;
-    let publicResponse = null;
-    let lastError = null;
-
-    try {
-      localResponse = await apiRequest('/api/ml/feedback', {
-        method: 'POST',
-        body: payload,
-      });
-    } catch (error) {
-      lastError = error;
-      console.warn('Local feedback save failed', error);
-    }
-
-    try {
-      publicResponse = await saveFeedbackToPublicCollector(payload);
-    } catch (error) {
-      lastError = error;
-      console.warn('Public feedback collector save failed', error);
-    }
-
-    if (!localResponse && !publicResponse) {
-      throw lastError || new Error('感想の保存先へ接続できませんでした');
-    }
+    const localResponse = await apiRequest('/api/ml/feedback', {
+      method: 'POST',
+      body: payload,
+    });
 
     const updatedRecord = {
       ...latestResultRecord,
       feedback: {
         ...feedback,
-        savedAt: localResponse?.savedAt || publicResponse?.savedAt || new Date().toISOString(),
-        status: publicResponse && !localResponse ? '精度改善用として保存済み' : '保存済み',
+        savedAt: localResponse?.savedAt || new Date().toISOString(),
+        status: '学習保存済み',
       },
     };
     await refreshRecordViews(updatedRecord);
-    if (localResponse && publicResponse) {
-      setFeedbackStatus('端末内と精度改善用の両方に保存しました', 'success');
-    } else if (localResponse) {
-      setFeedbackStatus('この端末に保存しました', 'success');
-    } else {
-      setFeedbackStatus('精度改善用として保存しました', 'success');
+    if (currentQueueIndex >= 0 && trainingQueue[currentQueueIndex]) {
+      trainingQueue[currentQueueIndex].status = 'saved';
+      trainingQueue[currentQueueIndex].recordId = updatedRecord.id;
+      renderQueue();
+    }
+    setFeedbackStatus('ローカル学習DBへ保存しました', 'success');
+    if (moveNext) {
+      await goToNextQueueItem();
     }
   } catch (error) {
     console.error(error);
     setFeedbackStatus(error.message || '保存に失敗しました', 'error');
-    showError(error.message || '感想の保存に失敗しました');
+    showError(error.message || '学習データの保存に失敗しました');
   }
 }
 
