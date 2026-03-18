@@ -1459,6 +1459,7 @@ const STORAGE_KEYS = {
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec';
 const DEFAULT_ML_API_BASE = 'http://127.0.0.1:8787';
 const DEFAULT_PUBLIC_FEEDBACK_COLLECTOR_URL = 'https://script.google.com/macros/s/AKfycbyT_-5dbbSbPeWu7nKDG7JWN-lzx_PgXbY-7NWy0GlelRRDrec3WUWcF49_txNrqR9B/exec';
+const DEFAULT_REVIEW_MODE = 'general';
 
 const DB_NAME = 'photo_eval_db';
 const DB_VERSION = 1;
@@ -2697,7 +2698,7 @@ async function runEvaluation() {
         correctedScore: '',
         note: '',
         genre: '',
-        reviewMode: 'general',
+        reviewMode: DEFAULT_REVIEW_MODE,
         savedAt: '',
         status: '',
       },
@@ -2901,7 +2902,7 @@ function collectFeedbackFormValues() {
     correctedScore: document.getElementById('feedback-corrected-score')?.value || '',
     note: document.getElementById('feedback-note')?.value.trim() || '',
     genre: document.getElementById('feedback-genre')?.value || '',
-    reviewMode: 'general',
+    reviewMode: DEFAULT_REVIEW_MODE,
   };
 }
 
