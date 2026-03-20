@@ -157,6 +157,118 @@
     display: block;
   }
 
+  .public-stats-panel {
+    margin-bottom: 24px;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .public-stats-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .public-stats-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .public-stats-note {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+  .public-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .public-chart-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+  }
+  .public-chart-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .public-bar-chart {
+    display: grid;
+    gap: 8px;
+  }
+  .public-bar-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 38px;
+    gap: 8px;
+    align-items: center;
+  }
+  .public-bar-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .public-bar-track {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .public-bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+  }
+  .public-bar-value {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+  }
+  .public-histogram {
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 8px;
+    align-items: end;
+    min-height: 176px;
+  }
+  .public-histogram-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .public-histogram-bar-wrap {
+    height: 112px;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+  .public-histogram-bar {
+    width: 100%;
+    min-height: 4px;
+    border-radius: 10px 10px 4px 4px;
+    background: linear-gradient(180deg, var(--accent), var(--blue));
+  }
+  .public-histogram-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+  }
+  .public-histogram-label {
+    font-size: 0.64rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+  .public-stats-empty {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+
   /* ── ドロップゾーン ── */
   #dropzone {
     border: 2px dashed var(--border);
@@ -984,6 +1096,9 @@
 
   /* レスポンシブ */
   @media (max-width: 600px) {
+    .public-stats-grid { grid-template-columns: 1fr; }
+    .public-bar-row { grid-template-columns: 64px 1fr 34px; }
+    .public-histogram { gap: 6px; }
     .scores-grid { grid-template-columns: 1fr 1fr; }
     #history-grid { grid-template-columns: 1fr 1fr; }
     .container { padding: 24px 16px 60px; }
@@ -1508,6 +1623,29 @@
 
     <div id="launch-warning" class="launch-warning"></div>
 
+    <section class="public-stats-panel" id="public-stats-panel">
+      <div class="public-stats-head">
+        <div>
+          <p class="public-stats-title">学習データの傾向</p>
+          <p class="public-stats-note" id="public-stats-note">公開用に集計した学習データの分布です。</p>
+        </div>
+      </div>
+      <div class="public-stats-grid">
+        <article class="public-chart-card">
+          <h2 class="public-chart-title">総合点ヒストグラム</h2>
+          <div id="public-score-histogram" class="public-histogram"></div>
+        </article>
+        <article class="public-chart-card">
+          <h2 class="public-chart-title">カテゴリ分布</h2>
+          <div id="public-genre-chart" class="public-bar-chart"></div>
+        </article>
+        <article class="public-chart-card">
+          <h2 class="public-chart-title">項目別平均</h2>
+          <div id="public-item-averages" class="public-bar-chart"></div>
+        </article>
+      </div>
+    </section>
+
     <input id="webhook-url" type="hidden" value="https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec">
 
     <section class="welcome-panel">
@@ -1683,6 +1821,7 @@ const STORAGE_KEYS = {
   mlApiBase: 'photo_eval_ml_api_base',
   publicFeedbackCollectorUrl: 'photo_eval_public_feedback_collector_url',
 };
+const PUBLIC_STATS_PATH = './photo_eval_public_stats.json';
 const FEEDBACK_GENRE_OPTIONS = [
   { code: 'portrait', label: '人物' },
   { code: 'landscape', label: '風景' },
@@ -1803,6 +1942,28 @@ function escapeHtml(value = '') {
     .replaceAll("'", '&#39;');
 }
 
+function getPublicGenreLabel(code) {
+  return {
+    portrait: '人物',
+    landscape: '風景',
+    animal: '動物',
+    flora: '花・植物',
+    food: '食べ物',
+    other: 'その他',
+  }[code] || String(code || '');
+}
+
+function getPublicItemLabel(code) {
+  return {
+    composition: '構図',
+    light: '光',
+    color: '色',
+    technical: '技術',
+    subject: '主題性',
+    impact: '印象',
+  }[code] || String(code || '');
+}
+
 function formatDate(iso) {
   const date = new Date(iso);
   return date.toLocaleDateString('ja-JP', {
@@ -1811,6 +1972,88 @@ function formatDate(iso) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function renderPublicBarChart(containerId, rows, options = {}) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (!Array.isArray(rows) || !rows.length) {
+    container.innerHTML = '<p class="public-stats-empty">表示できるデータがありません。</p>';
+    return;
+  }
+  const labelFormatter = options.labelFormatter || (value => String(value));
+  const valueFormatter = options.valueFormatter || (value => String(value));
+  const maxValue = options.maxValue || Math.max(...rows.map(row => Number(row.count ?? row.value ?? 0)), 1);
+  container.innerHTML = rows.map(row => {
+    const rawValue = Number(row.count ?? row.value ?? 0);
+    const width = Math.max(2, (rawValue / maxValue) * 100);
+    return `
+      <div class="public-bar-row">
+        <div class="public-bar-label">${escapeHtml(labelFormatter(row.label))}</div>
+        <div class="public-bar-track"><div class="public-bar-fill" style="width:${width}%"></div></div>
+        <div class="public-bar-value">${escapeHtml(valueFormatter(rawValue))}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPublicHistogram(containerId, histogram = {}) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const buckets = Array.isArray(histogram.buckets) ? histogram.buckets : [];
+  const maxCount = Number(histogram.maxCount || 0) || 1;
+  if (!buckets.length) {
+    container.innerHTML = '<p class="public-stats-empty">表示できるデータがありません。</p>';
+    return;
+  }
+  container.innerHTML = buckets.map(bucket => {
+    const height = Math.max(4, (Number(bucket.count || 0) / maxCount) * 100);
+    return `
+      <div class="public-histogram-col">
+        <div class="public-histogram-bar-wrap">
+          <div class="public-histogram-bar" style="height:${height}%"></div>
+        </div>
+        <div class="public-histogram-value">${escapeHtml(String(bucket.count || 0))}</div>
+        <div class="public-histogram-label">${escapeHtml(bucket.label || '')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPublicStats(stats = {}) {
+  renderPublicHistogram('public-score-histogram', stats.scoreHistogram || {});
+  renderPublicBarChart('public-genre-chart', stats.genreCounts || [], {
+    labelFormatter: getPublicGenreLabel,
+  });
+  renderPublicBarChart('public-item-averages', stats.itemAverages || [], {
+    labelFormatter: getPublicItemLabel,
+    valueFormatter: value => round(Number(value || 0), 1).toFixed(1),
+    maxValue: 100,
+  });
+
+  const note = document.getElementById('public-stats-note');
+  const totalRecords = Number(stats.summary?.totalRecords || 0);
+  const average = round(Number(stats.summary?.averageTotalScore || 0), 1).toFixed(1);
+  const sampleCount = Number(stats.sampleCount || 0);
+  const modelVersion = stats.modelVersion || '';
+  note.textContent = totalRecords
+    ? `${totalRecords}件の学習レコードを集計しています。平均総合点 ${average} / モデル反映 ${sampleCount}件${modelVersion ? ` / ${modelVersion}` : ''}`
+    : '公開用に集計した学習データの分布です。';
+}
+
+async function loadPublicStats() {
+  try {
+    const response = await fetch(PUBLIC_STATS_PATH, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const stats = await response.json();
+    renderPublicStats(stats || {});
+  } catch (error) {
+    console.error(error);
+    const message = '<p class="public-stats-empty">統計データを読み込めませんでした。</p>';
+    document.getElementById('public-score-histogram').innerHTML = message;
+    document.getElementById('public-genre-chart').innerHTML = message;
+    document.getElementById('public-item-averages').innerHTML = message;
+  }
 }
 
 function getFileExtension(name = '') {
@@ -4011,6 +4254,7 @@ updateLaunchWarning();
 document.body.classList.toggle('mobile-lite', isMobileLikeDevice());
 setupPullToRefreshGuard();
 updateActionLinks();
+void loadPublicStats();
 void refreshMlStatus();
 void renderHistory();
 

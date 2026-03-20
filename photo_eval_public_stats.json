@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-03-20T14:06:26.261733+00:00",
+  "modelVersion": "linear-v2-20260320230626",
+  "sampleCount": 173,
+  "summary": {
+    "totalRecords": 173,
+    "averageTotalScore": 64.52
+  },
+  "scoreHistogram": {
+    "maxCount": 91,
+    "buckets": [
+      {
+        "label": "0-9",
+        "min": 0,
+        "max": 9,
+        "count": 0
+      },
+      {
+        "label": "10-19",
+        "min": 10,
+        "max": 19,
+        "count": 0
+      },
+      {
+        "label": "20-29",
+        "min": 20,
+        "max": 29,
+        "count": 0
+      },
+      {
+        "label": "30-39",
+        "min": 30,
+        "max": 39,
+        "count": 2
+      },
+      {
+        "label": "40-49",
+        "min": 40,
+        "max": 49,
+        "count": 9
+      },
+      {
+        "label": "50-59",
+        "min": 50,
+        "max": 59,
+        "count": 26
+      },
+      {
+        "label": "60-69",
+        "min": 60,
+        "max": 69,
+        "count": 91
+      },
+      {
+        "label": "70-79",
+        "min": 70,
+        "max": 79,
+        "count": 45
+      },
+      {
+        "label": "80-89",
+        "min": 80,
+        "max": 89,
+        "count": 0
+      },
+      {
+        "label": "90-99",
+        "min": 90,
+        "max": 99,
+        "count": 0
+      }
+    ]
+  },
+  "genreCounts": [
+    {
+      "label": "portrait",
+      "count": 23
+    },
+    {
+      "label": "landscape",
+      "count": 41
+    },
+    {
+      "label": "animal",
+      "count": 30
+    },
+    {
+      "label": "flora",
+      "count": 29
+    },
+    {
+      "label": "food",
+      "count": 50
+    },
+    {
+      "label": "other",
+      "count": 23
+    }
+  ],
+  "itemAverages": [
+    {
+      "label": "composition",
+      "value": 63.87
+    },
+    {
+      "label": "light",
+      "value": 74.34
+    },
+    {
+      "label": "color",
+      "value": 70.16
+    },
+    {
+      "label": "technical",
+      "value": 67.75
+    },
+    {
+      "label": "subject",
+      "value": 61.09
+    },
+    {
+      "label": "impact",
+      "value": 67.61
+    }
+  ]
+}
