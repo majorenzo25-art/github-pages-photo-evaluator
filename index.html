@@ -1315,6 +1315,7 @@
     color: #213451;
     margin-bottom: 4px;
     font-size: 0.95rem;
+    white-space: nowrap;
   }
   .step-card span {
     color: #69809c;
@@ -1620,7 +1621,6 @@
   <div class="container">
     <h1 class="page-title">写真チェックアプリ</h1>
     <p class="page-sub">写真を選ぶだけで、構図・光・色・技術・主題性・印象を分かりやすくチェックできます。</p>
-    <p class="page-sub note">JPG・JPEG・PNG・WebP・HEIFに対応しています。HEIFはお使いのブラウザによっては表示や確認ができない場合があります。</p>
 
     <div id="launch-warning" class="launch-warning"></div>
 
@@ -1878,6 +1878,7 @@ let modalRecordId = null;
 let uploadQueue = [];
 let currentUploadId = null;
 let currentBatchId = '';
+let queueAutoEvaluating = false;
 let browserMlModelPromise = null;
 let mlRuntimeState = {
   mode: 'Rule-based',
@@ -2446,6 +2447,24 @@ async function moveToNextUploadAfterFeedback() {
   return true;
 }
 
+async function processPendingUploads() {
+  if (queueAutoEvaluating || !uploadQueue.length) return;
+  queueAutoEvaluating = true;
+  const restoreUploadId = currentUploadId || uploadQueue[0]?.id || null;
+  try {
+    for (const item of uploadQueue) {
+      if (!item || item.status !== 'pending') continue;
+      await selectUploadItem(item.id);
+      await runEvaluation({ suppressIntermediateRender: true, loadingMessage: `写真を順番に確認しています...` });
+    }
+  } finally {
+    queueAutoEvaluating = false;
+    if (restoreUploadId) {
+      await selectUploadItem(restoreUploadId);
+    }
+  }
+}
+
 function renderUploadQueue() {
   const wrap = document.getElementById('upload-queue');
   const grid = document.getElementById('upload-queue-grid');
@@ -2460,7 +2479,7 @@ function renderUploadQueue() {
   }
 
   wrap.classList.add('active');
-  note.textContent = `${uploadQueue.length}枚まで保持できます。一覧から1枚選んで評価・保存します。`;
+  note.textContent = `${uploadQueue.length}枚まで保持できます。一覧から1枚選んで確認・保存します。`;
   grid.innerHTML = uploadQueue.map(item => `
     <button type="button" class="upload-queue-item ${item.id === currentUploadId ? 'active' : ''}" onclick="selectUploadItem('${escapeHtml(item.id)}')">
       <img class="upload-queue-thumb" src="${item.thumbUrl || item.previewUrl}" alt="${escapeHtml(item.file.name)}" loading="lazy" decoding="async">
@@ -2633,6 +2652,7 @@ async function setFiles(files) {
     }
   }
   await selectUploadItem(uploadQueue[0].id);
+  await processPendingUploads();
 }
 
 function resetFile() {
@@ -3479,12 +3499,15 @@ function buildAnalysisMeta(metrics, scores) {
   };
 }
 
-async function runEvaluation() {
+async function runEvaluation(options = {}) {
   const activeUpload = getActiveUpload();
   if (!currentFile || !activeUpload) {
     showError('先に写真を選んでください');
     return;
   }
+
+  const suppressIntermediateRender = Boolean(options.suppressIntermediateRender);
+  const loadingMessage = options.loadingMessage || '写真を確認しています...';
 
   const evalButton = document.getElementById('eval-btn');
   const loading = document.getElementById('loading');
@@ -3496,7 +3519,7 @@ async function runEvaluation() {
   hideError();
   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-  loadingLabel.textContent = '写真を確認しています...';
+  loadingLabel.textContent = loadingMessage;
 
   try {
     const imageData = currentFileDataUrl || await readFileAsDataURL(currentFile);
@@ -3562,7 +3585,11 @@ async function runEvaluation() {
     activeUpload.feedbackDraft = { ...record.feedback };
     activeUpload.status = 'evaluated';
     renderUploadQueue();
-    renderCurrentRecord(record);
+    if (!suppressIntermediateRender) {
+      renderCurrentRecord(record);
+    } else {
+      latestResultRecord = record;
+    }
     loading.style.display = 'none';
     evalButton.disabled = false;
     if (collectDeliverySettings().autoSend) {
