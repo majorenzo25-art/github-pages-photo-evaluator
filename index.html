@@ -2454,7 +2454,7 @@ async function processPendingUploads() {
   try {
     for (const item of uploadQueue) {
       if (!item || item.status !== 'pending') continue;
-      await selectUploadItem(item.id);
+      await selectUploadItem(item.id, { silent: true });
       await runEvaluation({ suppressIntermediateRender: true, loadingMessage: `写真を順番に確認しています...` });
     }
   } finally {
@@ -2503,8 +2503,9 @@ function persistCurrentFeedbackDraft() {
   activeUpload.feedbackDraft = collectFeedbackFormValues();
 }
 
-async function selectUploadItem(uploadId) {
-  persistCurrentFeedbackDraft();
+async function selectUploadItem(uploadId, options = {}) {
+  const silent = Boolean(options.silent);
+  if (!silent) persistCurrentFeedbackDraft();
   const upload = uploadQueue.find(item => item.id === uploadId);
   if (!upload) return;
 
@@ -2518,7 +2519,9 @@ async function selectUploadItem(uploadId) {
   document.getElementById('preview-wrap').style.display = 'none';
   document.getElementById('eval-btn').disabled = false;
 
-  if (upload.evaluationResult) {
+  if (silent) {
+    latestResultRecord = upload.evaluationResult || null;
+  } else if (upload.evaluationResult) {
     latestResultRecord = upload.evaluationResult;
     renderCurrentRecord(upload.evaluationResult);
     if (upload.feedbackDraft) applyFeedbackDraftToForm(upload.feedbackDraft);
@@ -2527,9 +2530,11 @@ async function selectUploadItem(uploadId) {
     document.getElementById('result-section').style.display = 'none';
   }
 
-  renderUploadQueue();
-  updateActionLinks(upload.evaluationResult || null);
-  hideError();
+  if (!silent) {
+    renderUploadQueue();
+    updateActionLinks(upload.evaluationResult || null);
+    hideError();
+  }
 }
 
 function updateActionLinks(record = null) {
