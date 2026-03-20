@@ -1878,7 +1878,6 @@ let modalRecordId = null;
 let uploadQueue = [];
 let currentUploadId = null;
 let currentBatchId = '';
-let queueAutoEvaluating = false;
 let browserMlModelPromise = null;
 let mlRuntimeState = {
   mode: 'Rule-based',
@@ -2447,24 +2446,6 @@ async function moveToNextUploadAfterFeedback() {
   return true;
 }
 
-async function processPendingUploads() {
-  if (queueAutoEvaluating || !uploadQueue.length) return;
-  queueAutoEvaluating = true;
-  const restoreUploadId = currentUploadId || uploadQueue[0]?.id || null;
-  try {
-    for (const item of uploadQueue) {
-      if (!item || item.status !== 'pending') continue;
-      await selectUploadItem(item.id, { silent: true });
-      await runEvaluation({ suppressIntermediateRender: true, loadingMessage: `写真を順番に確認しています...` });
-    }
-  } finally {
-    queueAutoEvaluating = false;
-    if (restoreUploadId) {
-      await selectUploadItem(restoreUploadId);
-    }
-  }
-}
-
 function renderUploadQueue() {
   const wrap = document.getElementById('upload-queue');
   const grid = document.getElementById('upload-queue-grid');
@@ -2479,7 +2460,7 @@ function renderUploadQueue() {
   }
 
   wrap.classList.add('active');
-  note.textContent = `${uploadQueue.length}枚まで保持できます。一覧から1枚選んで確認・保存します。`;
+  note.textContent = `${uploadQueue.length}枚まで保持できます。一覧から1枚選んで評価・保存します。`;
   grid.innerHTML = uploadQueue.map(item => `
     <button type="button" class="upload-queue-item ${item.id === currentUploadId ? 'active' : ''}" onclick="selectUploadItem('${escapeHtml(item.id)}')">
       <img class="upload-queue-thumb" src="${item.thumbUrl || item.previewUrl}" alt="${escapeHtml(item.file.name)}" loading="lazy" decoding="async">
@@ -2503,9 +2484,8 @@ function persistCurrentFeedbackDraft() {
   activeUpload.feedbackDraft = collectFeedbackFormValues();
 }
 
-async function selectUploadItem(uploadId, options = {}) {
-  const silent = Boolean(options.silent);
-  if (!silent) persistCurrentFeedbackDraft();
+async function selectUploadItem(uploadId) {
+  persistCurrentFeedbackDraft();
   const upload = uploadQueue.find(item => item.id === uploadId);
   if (!upload) return;
 
@@ -2519,9 +2499,7 @@ async function selectUploadItem(uploadId, options = {}) {
   document.getElementById('preview-wrap').style.display = 'none';
   document.getElementById('eval-btn').disabled = false;
 
-  if (silent) {
-    latestResultRecord = upload.evaluationResult || null;
-  } else if (upload.evaluationResult) {
+  if (upload.evaluationResult) {
     latestResultRecord = upload.evaluationResult;
     renderCurrentRecord(upload.evaluationResult);
     if (upload.feedbackDraft) applyFeedbackDraftToForm(upload.feedbackDraft);
@@ -2530,11 +2508,9 @@ async function selectUploadItem(uploadId, options = {}) {
     document.getElementById('result-section').style.display = 'none';
   }
 
-  if (!silent) {
-    renderUploadQueue();
-    updateActionLinks(upload.evaluationResult || null);
-    hideError();
-  }
+  renderUploadQueue();
+  updateActionLinks(upload.evaluationResult || null);
+  hideError();
 }
 
 function updateActionLinks(record = null) {
@@ -2657,7 +2633,6 @@ async function setFiles(files) {
     }
   }
   await selectUploadItem(uploadQueue[0].id);
-  await processPendingUploads();
 }
 
 function resetFile() {
@@ -4012,6 +3987,7 @@ async function saveFeedbackForLatest() {
     } else {
       setFeedbackStatus('精度改善用として保存しました', 'success');
     }
+    await moveToNextUploadAfterFeedback();
   } catch (error) {
     console.error(error);
     setFeedbackStatus(error.message || '保存に失敗しました', 'error');
