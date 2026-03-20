@@ -4012,7 +4012,6 @@ async function saveFeedbackForLatest() {
     } else {
       setFeedbackStatus('精度改善用として保存しました', 'success');
     }
-    await moveToNextUploadAfterFeedback();
   } catch (error) {
     console.error(error);
     setFeedbackStatus(error.message || '保存に失敗しました', 'error');
