@@ -2414,6 +2414,28 @@ function readFileAsArrayBuffer(file) {
   });
 }
 
+function readFileHeadAsBase64(file, maxBytes = 24 * 1024) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = event => {
+      const buffer = event.target?.result;
+      if (!(buffer instanceof ArrayBuffer)) {
+        resolve('');
+        return;
+      }
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const chunkSize = 0x8000;
+      for (let index = 0; index < bytes.length; index += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+      }
+      resolve(btoa(binary));
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file.slice(0, maxBytes));
+  });
+}
+
 function dataUrlToBase64(dataUrl) {
   return String(dataUrl).split(',')[1] || '';
 }
@@ -3224,6 +3246,7 @@ async function runEvaluation() {
     const featureVector = buildFeatureVector(analysis.metrics, ruleBasedScores);
     const exifMetadata = await extractExifMetadataFromFile(currentFile);
     const imageMeta = buildImageMetadata(currentFile, analysis.metrics, ruleBasedScores, exifMetadata);
+    const originalFileHeaderBase64 = await readFileHeadAsBase64(currentFile);
     const mlPrediction = await requestMlPrediction(featureVector, ruleBasedScores);
     const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
     const record = {
@@ -3241,6 +3264,7 @@ async function runEvaluation() {
       analysisMeta: buildAnalysisMeta(analysis.metrics, analysis.scores),
       featureVector,
       imageMeta,
+      originalFileHeaderBase64,
       ruleBasedScores,
       evaluationMode: mlPrediction.usedModel ? 'ML-assisted' : 'Rule-based',
       modelVersion: mlPrediction.modelVersion || '',
@@ -3595,6 +3619,12 @@ function buildLearningFeedbackPayload(record, feedback) {
     scoreGap: record.scoreGap,
     reviewAsset: buildReviewAsset(record),
     source: window.location.hostname.includes('github.io') ? 'public-pages' : 'local-app',
+    originalFileHeader: {
+      fileName: record.fileName || '',
+      mimeType: record.imageMeta?.mimeType || '',
+      size: Number(record.imageMeta?.fileSize || 0),
+      base64: record.originalFileHeaderBase64 || '',
+    },
   };
 }
 
