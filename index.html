@@ -1856,6 +1856,16 @@ const FEEDBACK_GENRE_ALIAS = {
   食べ物: 'food',
   その他: 'other',
 };
+const DEFAULT_DL_CATEGORY_API_BASE = 'https://photo-evaluator-dl-api.onrender.com';
+const DL_CATEGORY_SCORE_KEY_MAP = {
+  composition: 'compositionScore',
+  light: 'lightScore',
+  color: 'colorScore',
+  technical: 'technicalScore',
+  subject: 'subjectScore',
+  impact: 'impressionScore',
+  total: 'totalScore',
+};
 const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwJM6moHlemxgjr4yLo_HOu8fgT0sdSbgy-QUBemlmMPp297Ok9UrASZ8qzFUY-0AACGQ/exec';
 const DEFAULT_ML_API_BASE = 'http://127.0.0.1:8787';
 const DEFAULT_PUBLIC_FEEDBACK_COLLECTOR_URL = 'https://script.google.com/macros/s/AKfycbyT_-5dbbSbPeWu7nKDG7JWN-lzx_PgXbY-7NWy0GlelRRDrec3WUWcF49_txNrqR9B/exec';
@@ -1945,6 +1955,22 @@ function scoreFromDeviation(value, ideal, tolerance, hardLimit = tolerance * 1.8
   if (deviation <= tolerance) return 92 - (deviation / tolerance) * 12;
   if (deviation >= hardLimit) return 24;
   return 80 - ((deviation - tolerance) / (hardLimit - tolerance)) * 56;
+}
+
+function withTimeout(promise, ms, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      value => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      error => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
 }
 
 function escapeHtml(value = '') {
@@ -3312,6 +3338,56 @@ function estimateGenreFromMetrics(metrics, scores) {
   return 'other';
 }
 
+async function buildDlCategoryImageDataUrl(source) {
+  const image = await loadImageElement(source);
+  const longest = Math.max(image.naturalWidth || image.width, image.naturalHeight || image.height);
+  const scale = Math.min(1, 1280 / Math.max(1, longest));
+  const width = Math.max(48, Math.round((image.naturalWidth || image.width) * scale));
+  const height = Math.max(48, Math.round((image.naturalHeight || image.height) * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0, width, height);
+  return canvas.toDataURL('image/jpeg', 0.92);
+}
+
+function mapDlPredictedScoresToRuleShape(predictedScores = {}, fallbackScores = {}) {
+  const mapped = { ...fallbackScores };
+  Object.entries(DL_CATEGORY_SCORE_KEY_MAP).forEach(([sourceKey, targetKey]) => {
+    const value = predictedScores?.[sourceKey];
+    if (value !== undefined && value !== null && value !== '') {
+      mapped[targetKey] = round(Number(value), 1);
+    }
+  });
+  return mapped;
+}
+
+async function requestDlEstimatedGenre(imageSource, analysis) {
+  const dlImageDataUrl = await buildDlCategoryImageDataUrl(imageSource);
+  const response = await withTimeout(
+    fetch(`${DEFAULT_DL_CATEGORY_API_BASE}/api/dl/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageDataUrl: dlImageDataUrl,
+        ruleScore: Number(analysis?.scores?.totalScore || 0),
+      }),
+    }).then(async result => {
+      const data = await result.json().catch(() => null);
+      if (!result.ok || data?.success === false) {
+        throw new Error(data?.message || `DLカテゴリ連携エラー: HTTP ${result.status}`);
+      }
+      return data;
+    }),
+    5000,
+    'DLカテゴリ連携がタイムアウトしました'
+  );
+
+  const dlScores = mapDlPredictedScoresToRuleShape(response?.predictedScores, analysis.scores);
+  return estimateGenreFromMetrics(analysis.metrics, dlScores);
+}
+
 function applyMlScoreToComment(text, totalScore) {
   return String(text || '').replace(/総合\d+点。/, `総合${totalScore}点。`);
 }
@@ -3620,21 +3696,17 @@ async function runEvaluation(options = {}) {
         ]);
 
         const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
+        const estimatedGenre = await requestDlEstimatedGenre(imageData, analysis).catch(error => {
+          console.warn('DL genre prediction unavailable', error);
+          return record.estimatedGenre || estimateGenreFromMetrics(analysis.metrics, ruleBasedScores);
+        });
         const updatedRecord = {
           ...record,
           totalScore: finalTotalScore,
           overallComment: applyMlScoreToComment(analysis.comments.overallComment, finalTotalScore),
           imageMeta: buildImageMetadata(fileForEvaluation, analysis.metrics, ruleBasedScores, exifMetadata),
           originalFileHeaderBase64,
-          estimatedGenre: estimateGenreFromMetrics(analysis.metrics, {
-            compositionScore: record.compositionScore,
-            lightScore: record.lightScore,
-            colorScore: record.colorScore,
-            technicalScore: record.technicalScore,
-            subjectScore: record.subjectScore,
-            impressionScore: record.impressionScore,
-            totalScore: finalTotalScore,
-          }),
+          estimatedGenre,
           evaluationMode: mlPrediction.usedModel ? 'ML-assisted' : 'Rule-based',
           modelVersion: mlPrediction.modelVersion || '',
           mlScore: mlPrediction.usedModel ? Number(mlPrediction.predictedTotalScore || finalTotalScore) : null,
