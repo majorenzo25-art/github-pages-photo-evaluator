@@ -3501,38 +3501,34 @@ async function runEvaluation(options = {}) {
   loadingLabel.textContent = loadingMessage;
 
   try {
-    const imageData = currentFileDataUrl || await readFileAsDataURL(currentFile);
+    const fileForEvaluation = currentFile;
+    const imageData = currentFileDataUrl || await readFileAsDataURL(fileForEvaluation);
     activeUpload.dataUrl = imageData;
     currentFileDataUrl = imageData;
-    const analysis = await analyzeImageFile(currentFile, imageData);
+    const analysis = await analyzeImageFile(fileForEvaluation, imageData);
     const ruleBasedScores = { ...analysis.scores };
     const featureVector = buildFeatureVector(analysis.metrics, ruleBasedScores);
-    const exifMetadata = await extractExifMetadataFromFile(currentFile);
-    const imageMeta = buildImageMetadata(currentFile, analysis.metrics, ruleBasedScores, exifMetadata);
-    const originalFileHeaderBase64 = await readFileHeadAsBase64(currentFile);
-    const mlPrediction = await requestMlPrediction(featureVector, ruleBasedScores);
-    const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
     const record = {
       id: Date.now(),
       batchId: currentBatchId,
       uploadId: activeUpload.id,
-      fileName: currentFile.name,
+      fileName: fileForEvaluation.name,
       imageSrc: imageData,
       createdAt: new Date().toISOString(),
       ...analysis.scores,
-      totalScore: finalTotalScore,
+      totalScore: ruleBasedScores.totalScore,
       ...analysis.comments,
-      overallComment: applyMlScoreToComment(analysis.comments.overallComment, finalTotalScore),
+      overallComment: applyMlScoreToComment(analysis.comments.overallComment, ruleBasedScores.totalScore),
       improvementSignals: analysis.improvementSignals,
       analysisMeta: buildAnalysisMeta(analysis.metrics, analysis.scores),
       featureVector,
-      imageMeta,
-      originalFileHeaderBase64,
+      imageMeta: buildImageMetadata(fileForEvaluation, analysis.metrics, ruleBasedScores, {}),
+      originalFileHeaderBase64: '',
       ruleBasedScores,
-      evaluationMode: mlPrediction.usedModel ? 'ML-assisted' : 'Rule-based',
-      modelVersion: mlPrediction.modelVersion || '',
-      mlScore: mlPrediction.usedModel ? Number(mlPrediction.predictedTotalScore || finalTotalScore) : null,
-      scoreGap: round(Math.abs(finalTotalScore - Number(ruleBasedScores.totalScore || 0)), 2),
+      evaluationMode: 'Rule-based',
+      modelVersion: '',
+      mlScore: null,
+      scoreGap: 0,
       feedback: {
         fairness: '',
         commentUsefulness: '',
@@ -3558,7 +3554,6 @@ async function runEvaluation(options = {}) {
       },
     };
 
-    await saveToHistory(record);
     activeUpload.recordId = record.id;
     activeUpload.evaluationResult = record;
     activeUpload.feedbackDraft = { ...record.feedback };
@@ -3571,9 +3566,57 @@ async function runEvaluation(options = {}) {
     }
     loading.style.display = 'none';
     evalButton.disabled = false;
-    if (collectDeliverySettings().autoSend) {
-      await sendRecordById(record.id);
-    }
+    // Show the rule-based result first, then enrich it in the background.
+    void refreshRecordViews(record, { skipVisibleRender: true });
+
+    const finalizeRecord = async () => {
+      try {
+        const [exifMetadata, originalFileHeaderBase64, mlPrediction] = await Promise.all([
+          extractExifMetadataFromFile(fileForEvaluation).catch(error => {
+            console.warn('EXIF extraction skipped', error);
+            return {};
+          }),
+          readFileHeadAsBase64(fileForEvaluation).catch(error => {
+            console.warn('Header extraction skipped', error);
+            return '';
+          }),
+          requestMlPrediction(featureVector, ruleBasedScores).catch(error => {
+            console.warn('ML prediction unavailable', error);
+            return {
+              mode: 'Rule-based',
+              modelVersion: '',
+              usedModel: false,
+              predictedTotalScore: ruleBasedScores.totalScore,
+            };
+          }),
+        ]);
+
+        const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
+        const updatedRecord = {
+          ...record,
+          totalScore: finalTotalScore,
+          overallComment: applyMlScoreToComment(analysis.comments.overallComment, finalTotalScore),
+          imageMeta: buildImageMetadata(fileForEvaluation, analysis.metrics, ruleBasedScores, exifMetadata),
+          originalFileHeaderBase64,
+          evaluationMode: mlPrediction.usedModel ? 'ML-assisted' : 'Rule-based',
+          modelVersion: mlPrediction.modelVersion || '',
+          mlScore: mlPrediction.usedModel ? Number(mlPrediction.predictedTotalScore || finalTotalScore) : null,
+          scoreGap: round(Math.abs(finalTotalScore - Number(ruleBasedScores.totalScore || 0)), 2),
+        };
+
+        activeUpload.evaluationResult = updatedRecord;
+        latestResultRecord = updatedRecord;
+        await refreshRecordViews(updatedRecord);
+
+        if (collectDeliverySettings().autoSend) {
+          await sendRecordById(updatedRecord.id);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void finalizeRecord();
   } catch (error) {
     console.error(error);
     showError(error.message || '写真の確認に失敗しました');
