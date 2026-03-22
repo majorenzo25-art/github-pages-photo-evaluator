@@ -2735,6 +2735,10 @@ function dataUrlToBase64(dataUrl) {
   return String(dataUrl).split(',')[1] || '';
 }
 
+function canReadDataView(view, offset, size = 1) {
+  return Number.isFinite(offset) && Number.isFinite(size) && offset >= 0 && size >= 0 && offset + size <= view.byteLength;
+}
+
 function parseExifValue(view, tiffOffset, valueOffset, type, count, littleEndian) {
   const typeSizes = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 7: 1, 9: 4, 10: 8 };
   const unitSize = typeSizes[type];
@@ -2743,16 +2747,18 @@ function parseExifValue(view, tiffOffset, valueOffset, type, count, littleEndian
   const actualOffset = totalSize <= 4 ? valueOffset : tiffOffset + valueOffset;
 
   const readUnsigned = offset => {
-    if (type === 1 || type === 7) return view.getUint8(offset);
-    if (type === 3) return view.getUint16(offset, littleEndian);
-    if (type === 4) return view.getUint32(offset, littleEndian);
+    if (type === 1 || type === 7) return canReadDataView(view, offset, 1) ? view.getUint8(offset) : null;
+    if (type === 3) return canReadDataView(view, offset, 2) ? view.getUint16(offset, littleEndian) : null;
+    if (type === 4) return canReadDataView(view, offset, 4) ? view.getUint32(offset, littleEndian) : null;
     if (type === 5) {
+      if (!canReadDataView(view, offset, 8)) return null;
       const numerator = view.getUint32(offset, littleEndian);
       const denominator = view.getUint32(offset + 4, littleEndian);
       return denominator ? numerator / denominator : 0;
     }
-    if (type === 9) return view.getInt32(offset, littleEndian);
+    if (type === 9) return canReadDataView(view, offset, 4) ? view.getInt32(offset, littleEndian) : null;
     if (type === 10) {
+      if (!canReadDataView(view, offset, 8)) return null;
       const numerator = view.getInt32(offset, littleEndian);
       const denominator = view.getInt32(offset + 4, littleEndian);
       return denominator ? numerator / denominator : 0;
@@ -2763,6 +2769,7 @@ function parseExifValue(view, tiffOffset, valueOffset, type, count, littleEndian
   if (type === 2) {
     let text = '';
     for (let index = 0; index < count; index += 1) {
+      if (!canReadDataView(view, actualOffset + index, 1)) break;
       const charCode = view.getUint8(actualOffset + index);
       if (!charCode) break;
       text += String.fromCharCode(charCode);
@@ -2781,9 +2788,11 @@ function parseExifValue(view, tiffOffset, valueOffset, type, count, littleEndian
 
 function collectExifTags(view, tiffOffset, ifdOffset, littleEndian, map, output = {}) {
   if (!ifdOffset) return output;
+  if (!canReadDataView(view, tiffOffset + ifdOffset, 2)) return output;
   const entryCount = view.getUint16(tiffOffset + ifdOffset, littleEndian);
   for (let index = 0; index < entryCount; index += 1) {
     const entryOffset = tiffOffset + ifdOffset + 2 + index * 12;
+    if (!canReadDataView(view, entryOffset, 12)) break;
     const tag = view.getUint16(entryOffset, littleEndian);
     const type = view.getUint16(entryOffset + 2, littleEndian);
     const count = view.getUint32(entryOffset + 4, littleEndian);
@@ -2805,15 +2814,19 @@ async function extractExifMetadataFromFile(file) {
   try {
     const buffer = await readFileAsArrayBuffer(file);
     const view = new DataView(buffer);
+    if (!canReadDataView(view, 0, 2)) return {};
     if (view.getUint16(0) !== 0xffd8) return {};
     let offset = 2;
     while (offset + 4 < view.byteLength) {
+      if (!canReadDataView(view, offset, 4)) break;
       const marker = view.getUint16(offset);
       offset += 2;
       if (marker === 0xffda || marker === 0xffd9) break;
       const segmentLength = view.getUint16(offset);
+      if (segmentLength < 2 || !canReadDataView(view, offset, segmentLength)) break;
       if (marker === 0xffe1 && view.getUint32(offset + 2) === 0x45786966) {
         const tiffOffset = offset + 8;
+        if (!canReadDataView(view, tiffOffset, 8)) return {};
         const littleEndian = view.getUint16(tiffOffset) === 0x4949;
         const firstIfdOffset = view.getUint32(tiffOffset + 4, littleEndian);
         const baseTags = {
@@ -3385,7 +3398,10 @@ async function requestDlEstimatedGenre(imageSource, analysis) {
   );
 
   const dlScores = mapDlPredictedScoresToRuleShape(response?.predictedScores, analysis.scores);
-  return estimateGenreFromMetrics(analysis.metrics, dlScores);
+  return {
+    genre: estimateGenreFromMetrics(analysis.metrics, dlScores),
+    mode: 'DL基準',
+  };
 }
 
 function applyMlScoreToComment(text, totalScore) {
@@ -3697,11 +3713,15 @@ async function runEvaluation(options = {}) {
         ]);
 
         const finalTotalScore = Math.round(Number(mlPrediction.predictedTotalScore ?? ruleBasedScores.totalScore));
-        const estimatedGenre = await requestDlEstimatedGenre(imageData, analysis).catch(error => {
+        const dlGenreResult = await requestDlEstimatedGenre(imageData, analysis).catch(error => {
           console.warn('DL genre prediction unavailable', error);
-          return record.estimatedGenre || estimateGenreFromMetrics(analysis.metrics, ruleBasedScores);
+          return {
+            genre: record.estimatedGenre || estimateGenreFromMetrics(analysis.metrics, ruleBasedScores),
+            mode: '標準推定',
+          };
         });
-        const categoryEstimateMode = estimatedGenre === record.estimatedGenre ? '標準推定' : 'DL基準';
+        const estimatedGenre = dlGenreResult.genre;
+        const categoryEstimateMode = dlGenreResult.mode || '標準推定';
         const updatedRecord = {
           ...record,
           totalScore: finalTotalScore,
