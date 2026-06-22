@@ -2276,6 +2276,326 @@
       text-align: center;
     }
   }
+
+  .sf-symbol,
+  .tab-icon {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Noto Sans JP", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .history-filter-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 16px;
+    margin: -6px 0 12px;
+    scrollbar-width: none;
+  }
+  .history-filter-bar::-webkit-scrollbar { display: none; }
+  .history-filter-chip {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid rgba(193,213,244,0.8);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.58);
+    color: #516885;
+    font: 800 0.78rem/1.2 inherit;
+    box-shadow: var(--glass-shadow-soft);
+    cursor: pointer;
+  }
+  .history-filter-chip.active {
+    background: linear-gradient(180deg, rgba(148,188,255,0.94), rgba(66,116,238,0.9));
+    color: #fff;
+    border-color: rgba(255,255,255,0.5);
+  }
+  .btn-toolbar.primary {
+    background: linear-gradient(135deg, #4b87ff, #78b7ff);
+    border-color: rgba(75,135,255,0.24);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 900;
+    min-height: 42px;
+    padding: 9px 14px;
+  }
+  .feedback-badge {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 24px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(28,165,111,0.12);
+    color: #147a54;
+    font-size: 0.68rem;
+    font-weight: 900;
+  }
+  .feedback-badge.corrected {
+    background: rgba(217,150,23,0.16);
+    color: #98660d;
+  }
+  .learning-analysis-card { margin-bottom: 14px; }
+  .learning-metric-list,
+  .settings-mini-list {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px 16px;
+    align-items: center;
+  }
+  .learning-metric-list span,
+  .settings-mini-list span {
+    color: #60738d;
+    font-size: 0.84rem;
+  }
+  .learning-metric-list strong,
+  .settings-mini-list strong {
+    color: #1f3150;
+    font: 900 1rem/1.2 "DM Mono", monospace;
+  }
+  .misclassification-list {
+    display: grid;
+    gap: 10px;
+  }
+  .misclassification-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(190,209,239,0.48);
+    color: #1f3150;
+    font-weight: 800;
+  }
+  .misclassification-row:last-child { border-bottom: 0; }
+  .misclassification-row span:last-child {
+    color: #4b87ff;
+    font-family: "DM Mono", monospace;
+  }
+  .settings-card {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-fill-strong);
+    box-shadow: var(--glass-shadow-soft);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .settings-label {
+    color: #1f3150;
+    font-weight: 900;
+    font-size: 1rem;
+  }
+  .settings-note {
+    color: #60738d;
+    font-size: 0.8rem;
+    margin-top: 3px;
+  }
+  .settings-value {
+    color: #2f76ea;
+    font: 900 1.4rem/1 "DM Mono", monospace;
+    white-space: nowrap;
+  }
+  .settings-action {
+    min-height: 48px;
+    border: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2f76ea, #69b2ff);
+    color: #fff;
+    font: 900 0.94rem/1 inherit;
+    cursor: pointer;
+    box-shadow: 0 14px 28px rgba(75,135,255,0.2);
+  }
+  .settings-action.secondary {
+    background: rgba(255,255,255,0.56);
+    color: #2f76ea;
+    border: 1px solid rgba(193,213,244,0.76);
+    box-shadow: none;
+  }
+  .review-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    display: none;
+    grid-template-rows: 1fr auto;
+    background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+    color: #1f3150;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 0;
+    touch-action: pan-y;
+  }
+  .review-overlay.active { display: grid; }
+  .review-stage {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    justify-items: center;
+    gap: 12px;
+  }
+  .review-topbar {
+    width: min(100%, 520px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #60738d;
+    font-weight: 900;
+  }
+  .review-close {
+    border: 1px solid rgba(193,213,244,0.76);
+    background: rgba(255,255,255,0.7);
+    color: #2f76ea;
+    min-height: 38px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font: 900 0.82rem/1 inherit;
+  }
+  .review-image {
+    max-width: 100%;
+    max-height: 260px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 20px;
+    background: #111;
+    box-shadow: 0 24px 60px rgba(63,91,132,0.22);
+  }
+  .review-meta {
+    width: min(100%, 520px);
+    display: grid;
+    gap: 2px;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .review-meta strong { font-size: 1rem; }
+  .review-meta span {
+    color: #60738d;
+    font-size: 0.76rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .review-bottom-bar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px 0 calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(246,250,255,0.86);
+    border-top: 1px solid rgba(193,213,244,0.78);
+    backdrop-filter: blur(18px) saturate(170%);
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+  }
+  .review-bar-btn,
+  .review-bar-pill,
+  .review-genre-select {
+    min-height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(193,213,244,0.76);
+    font: 900 0.78rem/1 inherit;
+  }
+  .review-bar-pill {
+    background: rgba(255,255,255,0.54);
+    color: #60738d;
+  }
+  .review-bar-btn {
+    background: #fff;
+    color: #2f76ea;
+    cursor: pointer;
+  }
+  .review-bar-btn.correct {
+    background: linear-gradient(135deg, #1ca56f, #45c995);
+    color: #fff;
+    border-color: transparent;
+  }
+  .review-bar-btn.fix {
+    background: linear-gradient(135deg, #d99617, #f4bd48);
+    color: #fff;
+    border-color: transparent;
+  }
+  .review-genre-select {
+    grid-column: span 2;
+    min-width: 0;
+    padding: 0 10px;
+    background: #fff;
+    color: #1f3150;
+  }
+  .review-progress {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border-radius: 14px;
+    color: #60738d;
+    font: 900 0.8rem/1 "DM Mono", monospace;
+  }
+
+  @media (max-width: 760px) {
+    body {
+      padding-bottom: calc(86px + env(safe-area-inset-bottom, 0px));
+    }
+    nav {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 10px calc(8px + env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid rgba(193,213,244,0.72);
+      border-bottom: 0;
+      background: rgba(246,250,255,0.84);
+    }
+    .nav-inner {
+      height: 64px;
+      margin: 8px auto 0;
+      padding: 6px;
+      border-radius: 22px;
+      flex-direction: row;
+    }
+    .nav-logo { display: none; }
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4px;
+      width: 100%;
+    }
+    .tab-btn {
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 2px;
+      font-size: 0.7rem;
+      min-width: 0;
+    }
+    .tab-icon { font-size: 0.66rem; }
+    .container { padding-bottom: 24px; }
+    .public-stats-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .history-toolbar { align-items: stretch; }
+    .history-actions,
+    .btn-toolbar.primary,
+    .btn-clear-all {
+      width: 100%;
+    }
+    .review-bottom-bar {
+      position: sticky;
+      bottom: 0;
+    }
+  }
 </style>
 </head>
 <body>
@@ -2283,11 +2603,12 @@
 <!-- ナビ -->
 <nav>
   <div class="nav-inner">
-    <div class="nav-logo">📸 <span>PHOTO</span>EVAL</div>
+    <div class="nav-logo"><span class="sf-symbol">◎</span><span>PHOTO</span>EVAL</div>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="showPage('evaluate')">写真をみる</button>
-      <button class="tab-btn" onclick="showPage('stats')">統計</button>
-      <button class="tab-btn" onclick="showPage('history')">履歴</button>
+      <button class="tab-btn active" onclick="showPage('evaluate')"><span class="tab-icon">◉</span><span>評価</span></button>
+      <button class="tab-btn" onclick="showPage('history')"><span class="tab-icon">◷</span><span>履歴</span></button>
+      <button class="tab-btn" onclick="showPage('stats')"><span class="tab-icon">▥</span><span>統計</span></button>
+      <button class="tab-btn" onclick="showPage('settings')"><span class="tab-icon">⚙</span><span>設定</span></button>
     </div>
   </div>
 </nav>
@@ -2423,14 +2744,26 @@
           <div class="public-summary-value" id="local-stats-total-records">0件</div>
         </article>
         <article class="public-summary-card">
-          <div class="public-summary-label">平均総合点</div>
-          <div class="public-summary-value" id="local-stats-average-total">-</div>
+          <div class="public-summary-label">フィードバック数</div>
+          <div class="public-summary-value" id="local-stats-feedback-count">0件</div>
         </article>
         <article class="public-summary-card">
-          <div class="public-summary-label">カテゴリ正答率</div>
-          <div class="public-summary-value" id="local-stats-genre-accuracy">-</div>
+          <div class="public-summary-label">未フィードバック数</div>
+          <div class="public-summary-value" id="local-stats-unfeedback-count">0件</div>
+        </article>
+        <article class="public-summary-card">
+          <div class="public-summary-label">回収率</div>
+          <div class="public-summary-value" id="local-stats-collection-rate">-</div>
+        </article>
+        <article class="public-summary-card">
+          <div class="public-summary-label">修正率</div>
+          <div class="public-summary-value" id="local-stats-correction-rate">-</div>
         </article>
       </div>
+      <article class="public-chart-card learning-analysis-card">
+        <h2 class="public-chart-title">学習データ分析</h2>
+        <div class="learning-metric-list" id="local-learning-analysis"></div>
+      </article>
       <div class="public-stats-grid">
         <article class="public-chart-card">
           <h2 class="public-chart-title">自動判定カテゴリ</h2>
@@ -2443,6 +2776,10 @@
         <article class="public-chart-card">
           <h2 class="public-chart-title">カテゴリ別正答率</h2>
           <div id="local-genre-accuracy-chart" class="public-bar-chart"></div>
+        </article>
+        <article class="public-chart-card">
+          <h2 class="public-chart-title">AI誤判定ランキング</h2>
+          <div id="local-misclassification-ranking" class="misclassification-list"></div>
         </article>
       </div>
     </section>
@@ -2489,10 +2826,15 @@
     <div class="history-toolbar">
       <span class="history-count" id="history-count">0件</span>
       <div class="history-actions">
-        <button class="btn-toolbar" onclick="exportLearningData('json')">結果を書き出す(JSON)</button>
-        <button class="btn-toolbar" onclick="exportLearningData('csv')">結果を書き出す(CSV)</button>
+        <button class="btn-toolbar primary" onclick="startReviewMode()">未フィードバックをレビュー</button>
         <button class="btn-clear-all" onclick="clearAllHistory()">すべて削除</button>
       </div>
+    </div>
+    <div class="history-filter-bar" id="history-filter-bar">
+      <button class="history-filter-chip active" data-history-filter="all" onclick="setHistoryFilter('all')">すべて (0)</button>
+      <button class="history-filter-chip" data-history-filter="unreviewed" onclick="setHistoryFilter('unreviewed')">未フィードバック (0)</button>
+      <button class="history-filter-chip" data-history-filter="reviewed" onclick="setHistoryFilter('reviewed')">フィードバック済み (0)</button>
+      <button class="history-filter-chip" data-history-filter="corrected" onclick="setHistoryFilter('corrected')">修正済み (0)</button>
     </div>
 
     <div id="history-grid"></div>
@@ -2500,6 +2842,65 @@
       <div class="empty-icon">📭</div>
       <p class="empty-text">まだチェック結果がありません<br>写真をアップロードして最初のチェックをしてみましょう</p>
     </div>
+  </div>
+</div>
+
+<!-- 設定ページ -->
+<div id="page-settings" class="page">
+  <div class="container">
+    <h1 class="page-title">設定</h1>
+    <p class="page-sub">学習データと書き出し、端末内データの状態を確認できます。</p>
+
+    <section class="settings-card">
+      <div class="settings-row">
+        <div>
+          <p class="settings-label">学習データ件数</p>
+          <p class="settings-note">フィードバック済みの評価データ</p>
+        </div>
+        <strong class="settings-value" id="settings-learning-count">0件</strong>
+      </div>
+      <button class="settings-action" onclick="exportLearningDatasetCsv()">
+        <span class="sf-symbol">⇧</span>
+        CSVエクスポート
+      </button>
+      <button class="settings-action secondary" onclick="exportLearningData('json')">
+        <span class="sf-symbol">▤</span>
+        JSONエクスポート
+      </button>
+    </section>
+
+    <section class="settings-card">
+      <p class="settings-label">アプリ情報</p>
+      <div class="settings-mini-list">
+        <span>UI</span><strong id="settings-ui-version">PUBLIC_UI</strong>
+        <span>評価方式</span><strong>Rule Engine + ML補正</strong>
+        <span>データ保存</span><strong>IndexedDB</strong>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- レビューモード -->
+<div id="review-overlay" class="review-overlay" aria-hidden="true">
+  <div class="review-stage">
+    <div class="review-topbar">
+      <button class="review-close" onclick="closeReviewMode()">閉じる</button>
+      <span id="review-progress-top">0 / 0</span>
+    </div>
+    <img id="review-image" class="review-image" src="" alt="レビュー対象画像">
+    <div class="review-meta">
+      <strong id="review-ai-genre">AI判定 -</strong>
+      <span id="review-file-name">-</span>
+    </div>
+  </div>
+  <div class="review-bottom-bar">
+    <button class="review-bar-pill ai" disabled id="review-ai-label">AI判定</button>
+    <button class="review-bar-btn correct" onclick="saveReviewFeedback(null)">正しい</button>
+    <select class="review-genre-select" id="review-correction-genre" aria-label="修正ジャンル"></select>
+    <button class="review-bar-btn fix" onclick="saveReviewCorrection()">修正</button>
+    <button class="review-bar-btn nav" onclick="moveReviewPrevious()">前へ</button>
+    <button class="review-bar-btn nav" onclick="moveReviewNext()">次へ</button>
+    <span class="review-progress" id="review-progress">0 / 0</span>
   </div>
 </div>
 
@@ -2573,7 +2974,7 @@ const STORAGE_KEYS = {
   anonymousUserId: 'photo_eval_anonymous_user_id',
 };
 // Always bump this label for every public UI change on the same day: a, b, ... z, aa, ab ...
-const PUBLIC_UI_VERSION = 'PUBLIC_UI v2026-06-14-a';
+const PUBLIC_UI_VERSION = 'PUBLIC_UI v2026-06-22-a';
 const PUBLIC_STATS_PATH = './photo_eval_public_stats.json';
 const PUBLIC_STATS_CACHE_TTL_MS = 5 * 60 * 1000;
 const FEEDBACK_GENRE_OPTIONS = [
@@ -2649,6 +3050,11 @@ let historyRenderLimit = HISTORY_RENDER_PAGE_SIZE;
 let historyNeedsRender = true;
 let historyRecordCache = [];
 let historyListCache = null;
+let historyFilter = 'all';
+let reviewList = [];
+let reviewIndex = 0;
+let reviewTouchStartX = 0;
+let reviewTouchStartY = 0;
 let localStatsHistoryCache = null;
 let localStatsDateRange = {
   start: '',
@@ -2994,10 +3400,12 @@ function buildLocalHistoryStats(records = [], options = {}) {
     subject: [],
     impact: [],
   };
+  const misclassificationPairs = {};
   let totalSum = 0;
   let scoredCount = 0;
   let genreFeedbackCount = 0;
   let genreFeedbackCorrectCount = 0;
+  let correctedCount = 0;
   let latestCreatedAt = '';
 
   history.forEach(record => {
@@ -3009,32 +3417,44 @@ function buildLocalHistoryStats(records = [], options = {}) {
       scoredCount += 1;
     }
 
-    const genre = String(record?.estimatedGenre || '').trim();
+    const genre = normalizeGenreCode(record?.estimatedGenre || '');
     if (genreCounts[genre] !== undefined) {
       genreCounts[genre] += 1;
     } else if (genre) {
       genreCounts.other += 1;
     }
 
-    const selectedGenres = normalizeFeedbackGenreValues(record?.feedback?.genre || '');
-    selectedGenres.forEach(selectedGenre => {
-      if (feedbackGenreCounts[selectedGenre] !== undefined) {
-        feedbackGenreCounts[selectedGenre] += 1;
-      }
-    });
-    if (selectedGenres.length && genre) {
+    const provided = isGenreFeedbackProvided(record);
+    const correctedGenre = getFeedbackCorrectGenre(record);
+    const resolvedCorrectGenre = getResolvedCorrectGenre(record);
+    if (provided) {
       genreFeedbackCount += 1;
-      if (selectedGenres.includes(genre)) {
+      if (correctedGenre == null) {
         genreFeedbackCorrectCount += 1;
+      } else {
+        correctedCount += 1;
+      }
+      if (feedbackGenreCounts[resolvedCorrectGenre] !== undefined) {
+        feedbackGenreCounts[resolvedCorrectGenre] += 1;
+      } else if (resolvedCorrectGenre) {
+        feedbackGenreCounts.other += 1;
+      }
+      if (genre && genreAccuracyByLabel[genre]) {
+        genreAccuracyByLabel[genre].total += 1;
+        if (correctedGenre == null) {
+          genreAccuracyByLabel[genre].correct += 1;
+        }
+      }
+      if (correctedGenre != null && genre) {
+        const predictedLabel = getPublicGenreLabel(genre);
+        const correctLabel = getPublicGenreLabel(correctedGenre);
+        const key = `${predictedLabel} → ${correctLabel}`;
+        if (!misclassificationPairs[key]) {
+          misclassificationPairs[key] = { label: key, count: 0 };
+        }
+        misclassificationPairs[key].count += 1;
       }
     }
-    selectedGenres.forEach(selectedGenre => {
-      if (!genre || !genreAccuracyByLabel[selectedGenre]) return;
-      genreAccuracyByLabel[selectedGenre].total += 1;
-      if (selectedGenre === genre) {
-        genreAccuracyByLabel[selectedGenre].correct += 1;
-      }
-    });
 
     const createdAt = String(record?.createdAt || '');
     if (createdAt && (!latestCreatedAt || new Date(createdAt) > new Date(latestCreatedAt))) {
@@ -3067,7 +3487,11 @@ function buildLocalHistoryStats(records = [], options = {}) {
       averageTotalScore: scoredCount ? round(totalSum / scoredCount, 1) : 0,
       genreFeedbackCount,
       genreFeedbackCorrectCount,
+      noFeedbackCount: Math.max(0, history.length - genreFeedbackCount),
+      correctedCount,
       genreAccuracyRate: genreFeedbackCount ? round((genreFeedbackCorrectCount / genreFeedbackCount) * 100, 1) : 0,
+      feedbackCollectionRate: history.length ? round((genreFeedbackCount / history.length) * 100, 1) : 0,
+      correctionRate: genreFeedbackCount ? round((correctedCount / genreFeedbackCount) * 100, 1) : 0,
     },
     scoreHistogram: {
       maxCount: Math.max(...histogram.map(bucket => bucket.count), 0),
@@ -3088,6 +3512,9 @@ function buildLocalHistoryStats(records = [], options = {}) {
       }))
       .filter(item => item.totalCount > 0)
       .sort((left, right) => right.value - left.value),
+    misclassificationRanking: Object.values(misclassificationPairs)
+      .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, 'ja'))
+      .slice(0, 10),
     itemAverages: Object.entries(itemScores).map(([label, values]) => ({
       label,
       value: values.length ? round(values.reduce((sum, value) => sum + value, 0) / values.length, 1) : 0,
@@ -3108,17 +3535,24 @@ function renderLocalHistoryStats(stats = {}) {
     valueFormatter: value => `${round(Number(value || 0), 1).toFixed(1)}%`,
     maxValue: 100,
   });
+  renderMisclassificationRanking(stats.misclassificationRanking || []);
+  renderLearningAnalysis(stats.summary || {});
   const totalRecords = Number(stats.summary?.totalRecords || 0);
   const averageTotalScore = Number(stats.summary?.averageTotalScore || 0);
   const genreFeedbackCount = Number(stats.summary?.genreFeedbackCount || 0);
   const genreFeedbackCorrectCount = Number(stats.summary?.genreFeedbackCorrectCount || 0);
   const genreAccuracyRate = Number(stats.summary?.genreAccuracyRate || 0);
+  const noFeedbackCount = Number(stats.summary?.noFeedbackCount || 0);
+  const feedbackCollectionRate = Number(stats.summary?.feedbackCollectionRate || 0);
+  const correctionRate = Number(stats.summary?.correctionRate || 0);
   const generatedAt = formatStatsGeneratedAt(stats.generatedAt);
   const rangeLabel = formatLocalStatsRangeLabel(stats.range?.startDate || '', stats.range?.endDate || '');
   const note = document.getElementById('local-stats-note');
   const totalEl = document.getElementById('local-stats-total-records');
-  const averageEl = document.getElementById('local-stats-average-total');
-  const accuracyEl = document.getElementById('local-stats-genre-accuracy');
+  const feedbackEl = document.getElementById('local-stats-feedback-count');
+  const unfeedbackEl = document.getElementById('local-stats-unfeedback-count');
+  const collectionEl = document.getElementById('local-stats-collection-rate');
+  const correctionEl = document.getElementById('local-stats-correction-rate');
   const noteParts = [];
 
   if (generatedAt) noteParts.push(`最新評価 ${generatedAt}`);
@@ -3130,8 +3564,45 @@ function renderLocalHistoryStats(stats = {}) {
     note.textContent = totalRecords ? noteParts.join(' / ') : `集計期間 ${rangeLabel} のデータはありません。`;
   }
   if (totalEl) totalEl.textContent = `${totalRecords}件`;
-  if (averageEl) averageEl.textContent = totalRecords ? `${averageTotalScore.toFixed(1)}点` : '-';
-  if (accuracyEl) accuracyEl.textContent = genreFeedbackCount ? `${genreAccuracyRate.toFixed(1)}%` : '-';
+  if (feedbackEl) feedbackEl.textContent = `${genreFeedbackCount}件`;
+  if (unfeedbackEl) unfeedbackEl.textContent = `${noFeedbackCount}件`;
+  if (collectionEl) collectionEl.textContent = totalRecords ? `${feedbackCollectionRate.toFixed(1)}%` : '-';
+  if (correctionEl) correctionEl.textContent = genreFeedbackCount ? `${correctionRate.toFixed(1)}%` : '-';
+}
+
+function renderLearningAnalysis(summary = {}) {
+  const container = document.getElementById('local-learning-analysis');
+  if (!container) return;
+  const total = Number(summary.totalRecords || 0);
+  const feedback = Number(summary.genreFeedbackCount || 0);
+  const unfeedback = Number(summary.noFeedbackCount || 0);
+  const collectionRate = Number(summary.feedbackCollectionRate || 0);
+  const correctionRate = Number(summary.correctionRate || 0);
+  container.innerHTML = [
+    ['総評価数', `${total}件`],
+    ['フィードバック数', `${feedback}件`],
+    ['未フィードバック数', `${unfeedback}件`],
+    ['回収率', total ? `${collectionRate.toFixed(1)}%` : '-'],
+    ['修正率', feedback ? `${correctionRate.toFixed(1)}%` : '-'],
+  ].map(([label, value]) => `
+    <span>${escapeHtml(label)}</span>
+    <strong>${escapeHtml(value)}</strong>
+  `).join('');
+}
+
+function renderMisclassificationRanking(rows = []) {
+  const container = document.getElementById('local-misclassification-ranking');
+  if (!container) return;
+  if (!rows.length) {
+    container.innerHTML = '<p class="public-stats-empty">修正済みフィードバックがありません。</p>';
+    return;
+  }
+  container.innerHTML = rows.map(row => `
+    <div class="misclassification-row">
+      <span>${escapeHtml(row.label)}</span>
+      <span>${Number(row.count || 0)}件</span>
+    </div>
+  `).join('');
 }
 
 async function refreshLocalHistoryStats() {
@@ -4197,7 +4668,7 @@ function showPage(name) {
   document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(button => button.classList.remove('active'));
   document.getElementById(`page-${name}`).classList.add('active');
-  const tabIndexMap = { evaluate: 0, stats: 1, history: 2 };
+  const tabIndexMap = { evaluate: 0, history: 1, stats: 2, settings: 3 };
   document.querySelectorAll('.tab-btn')[tabIndexMap[name] ?? 0].classList.add('active');
   if (name === 'stats') {
     void loadPublicStats();
@@ -4210,6 +4681,22 @@ function showPage(name) {
     if (historyNeedsRender) {
       void renderHistory();
     }
+  }
+  if (name === 'settings') {
+    void refreshSettingsPage();
+  }
+}
+
+async function refreshSettingsPage() {
+  try {
+    const history = await loadHistory();
+    const learningCount = history.filter(record => isFeedbackProvided(record)).length;
+    const countEl = document.getElementById('settings-learning-count');
+    const versionEl = document.getElementById('settings-ui-version');
+    if (countEl) countEl.textContent = `${learningCount}件`;
+    if (versionEl) versionEl.textContent = PUBLIC_UI_VERSION;
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -5844,6 +6331,57 @@ function normalizeFeedbackGenreValues(rawValue = '') {
     .filter((value, index, array) => array.indexOf(value) === index);
 }
 
+function normalizeGenreCode(value = '') {
+  return FEEDBACK_GENRE_ALIAS[String(value || '').trim()] || String(value || '').trim();
+}
+
+function getFeedbackCorrectGenre(record = {}) {
+  if (Object.prototype.hasOwnProperty.call(record, 'feedbackCorrectGenre')) {
+    return record.feedbackCorrectGenre == null || record.feedbackCorrectGenre === ''
+      ? null
+      : normalizeGenreCode(record.feedbackCorrectGenre);
+  }
+  if (Object.prototype.hasOwnProperty.call(record?.feedback || {}, 'feedbackCorrectGenre')) {
+    const value = record.feedback.feedbackCorrectGenre;
+    return value == null || value === '' ? null : normalizeGenreCode(value);
+  }
+  const selectedGenres = normalizeFeedbackGenreValues(record?.feedback?.genre || '');
+  const predicted = normalizeGenreCode(record?.estimatedGenre || '');
+  if (!record?.feedback?.savedAt || !selectedGenres.length) return undefined;
+  return selectedGenres.includes(predicted) ? null : selectedGenres[0];
+}
+
+function isFeedbackProvided(record = {}) {
+  return Boolean(
+    record.feedbackProvided
+      || record.feedbackTimestamp
+      || record.feedback?.savedAt
+      || Object.prototype.hasOwnProperty.call(record, 'feedbackCorrectGenre')
+      || Object.prototype.hasOwnProperty.call(record?.feedback || {}, 'feedbackCorrectGenre')
+  );
+}
+
+function isFeedbackCorrected(record = {}) {
+  return isFeedbackProvided(record) && getFeedbackCorrectGenre(record) != null;
+}
+
+function isGenreFeedbackProvided(record = {}) {
+  return Boolean(
+    Object.prototype.hasOwnProperty.call(record, 'feedbackCorrectGenre')
+      || Object.prototype.hasOwnProperty.call(record?.feedback || {}, 'feedbackCorrectGenre')
+      || normalizeFeedbackGenreValues(record?.feedback?.genre || '').length
+  );
+}
+
+function getResolvedCorrectGenre(record = {}) {
+  return getFeedbackCorrectGenre(record) || normalizeGenreCode(record?.estimatedGenre || '');
+}
+
+function getFeedbackStatusLabel(record = {}) {
+  if (!isFeedbackProvided(record)) return '未フィードバック';
+  return isFeedbackCorrected(record) ? 'ジャンル修正済み' : 'ジャンル確認済み';
+}
+
 function syncFeedbackGenreButtons() {
   const input = document.getElementById('feedback-genre');
   const selected = new Set(normalizeFeedbackGenreValues(input?.value || ''));
@@ -6216,10 +6754,19 @@ async function saveFeedbackForLatest() {
       throw publicError || localError || new Error('感想の保存先へ接続できませんでした');
     }
 
+    const selectedFeedbackGenres = normalizeFeedbackGenreValues(feedback.genre || '');
+    const predictedFeedbackGenre = normalizeGenreCode(latestResultRecord.estimatedGenre || '');
+    const feedbackCorrectGenre = selectedFeedbackGenres.length
+      ? (selectedFeedbackGenres.includes(predictedFeedbackGenre) ? null : selectedFeedbackGenres[0])
+      : null;
     const updatedRecord = {
       ...latestResultRecord,
+      feedbackProvided: true,
+      ...(selectedFeedbackGenres.length ? { feedbackCorrectGenre } : {}),
+      feedbackTimestamp: new Date().toISOString(),
       feedback: {
         ...feedback,
+        ...(selectedFeedbackGenres.length ? { feedbackCorrectGenre } : {}),
         savedAt: localResponse?.savedAt || publicResponse?.savedAt || new Date().toISOString(),
         status: publicResponse && !localResponse ? '精度改善用として保存済み' : '保存済み',
       },
@@ -6297,6 +6844,9 @@ async function exportLearningData(format) {
           'subjectScore',
           'impressionScore',
           'estimatedGenre',
+          'feedbackProvided',
+          'feedbackCorrectGenre',
+          'reviewMode',
           'evaluationMode',
           'modelVersion',
           'scoreGap',
@@ -6313,6 +6863,9 @@ async function exportLearningData(format) {
           record.subjectScore ?? '',
           record.impressionScore ?? '',
           record.estimatedGenre || '',
+          isFeedbackProvided(record) ? 'true' : 'false',
+          getFeedbackCorrectGenre(record) ?? '',
+          record.feedback?.reviewMode || (isFeedbackCorrected(record) ? 'corrected' : (isFeedbackProvided(record) ? 'confirmed' : '')),
           record.evaluationMode || '',
           record.modelVersion || '',
           record.scoreGap ?? '',
@@ -6338,6 +6891,65 @@ async function exportLearningData(format) {
   } catch (error) {
     console.error(error);
     showError(error.message || '結果の書き出しに失敗しました');
+  }
+}
+
+async function exportLearningDatasetCsv() {
+  try {
+    const history = await loadHistory();
+    const learningRows = history.filter(record => isFeedbackProvided(record));
+    if (!learningRows.length) {
+      showError('書き出せる学習データがありません');
+      return;
+    }
+    const rows = [
+      [
+        'id',
+        'createdAt',
+        'fileName',
+        'estimatedGenre',
+        'feedbackCorrectGenre',
+        'reviewMode',
+        'totalScore',
+        'compositionScore',
+        'lightScore',
+        'colorScore',
+        'technicalScore',
+        'subjectScore',
+        'impressionScore',
+      ],
+      ...learningRows.map(record => ([
+        record.id,
+        record.createdAt || '',
+        record.fileName || '',
+        record.estimatedGenre || '',
+        getFeedbackCorrectGenre(record) ?? '',
+        record.feedback?.reviewMode || (isFeedbackCorrected(record) ? 'corrected' : 'confirmed'),
+        record.totalScore ?? '',
+        record.compositionScore ?? '',
+        record.lightScore ?? '',
+        record.colorScore ?? '',
+        record.technicalScore ?? '',
+        record.subjectScore ?? '',
+        record.impressionScore ?? '',
+      ])),
+    ];
+    const csv = rows.map(columns => columns.map(value => {
+      const text = String(value ?? '');
+      return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+    }).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'photo-eval-learning-dataset.csv';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+    showError(error.message || '学習データCSVの書き出しに失敗しました');
   }
 }
 
@@ -6552,6 +7164,8 @@ function buildHistoryCard(record, index) {
   const genreLabel = getEstimatedGenreDisplayLabel(record.estimatedGenre);
   const modeLabel = getEvaluationModeLabel(record.evaluationMode || 'Rule-based');
   const scoreGapLabel = Number.isFinite(Number(record.scoreGap)) ? `${round(Number(record.scoreGap), 1)}点調整` : '';
+  const feedbackLabel = getFeedbackStatusLabel(record);
+  const feedbackBadgeClass = isFeedbackCorrected(record) ? 'feedback-badge corrected' : 'feedback-badge';
 
   return `
     <div class="history-card" style="animation-delay:${index * 0.04}s" onclick="openModal(${record.id})">
@@ -6563,6 +7177,7 @@ function buildHistoryCard(record, index) {
           <span class="history-score-big" style="color:${totalColor.text}">${record.totalScore}<span style="font-size:0.7em;color:var(--text-dim)">/100</span></span>
           <span class="history-date">${escapeHtml(formatDate(record.createdAt))}</span>
         </div>
+        ${isFeedbackProvided(record) ? `<span class="${feedbackBadgeClass}">${escapeHtml(feedbackLabel)}</span>` : ''}
         <div class="history-comment">${escapeHtml(`${genreLabel} / ${modeLabel}${scoreGapLabel ? ` / ${scoreGapLabel}` : ''}`)}</div>
         <div class="history-card-footer">
           <button class="btn-detail" onclick="openModal(${record.id});event.stopPropagation()">詳細</button>
@@ -6573,6 +7188,44 @@ function buildHistoryCard(record, index) {
   `;
 }
 
+function filterHistoryRecords(history = []) {
+  if (historyFilter === 'unreviewed') return history.filter(record => !isFeedbackProvided(record));
+  if (historyFilter === 'reviewed') return history.filter(record => isFeedbackProvided(record));
+  if (historyFilter === 'corrected') return history.filter(record => isFeedbackCorrected(record));
+  return history;
+}
+
+function getHistoryFilterCounts(history = []) {
+  return {
+    all: history.length,
+    unreviewed: history.filter(record => !isFeedbackProvided(record)).length,
+    reviewed: history.filter(record => isFeedbackProvided(record)).length,
+    corrected: history.filter(record => isFeedbackCorrected(record)).length,
+  };
+}
+
+function renderHistoryFilterCounts(history = []) {
+  const counts = getHistoryFilterCounts(history);
+  const labels = {
+    all: 'すべて',
+    unreviewed: '未フィードバック',
+    reviewed: 'フィードバック済み',
+    corrected: '修正済み',
+  };
+  document.querySelectorAll('[data-history-filter]').forEach(button => {
+    const filter = button.dataset.historyFilter;
+    button.textContent = `${labels[filter]} (${counts[filter] || 0})`;
+    button.classList.toggle('active', filter === historyFilter);
+  });
+}
+
+function setHistoryFilter(filter) {
+  historyFilter = filter;
+  historyRenderLimit = HISTORY_RENDER_PAGE_SIZE;
+  historyNeedsRender = true;
+  void renderHistory();
+}
+
 async function renderHistory() {
   const grid = document.getElementById('history-grid');
   const empty = document.getElementById('history-empty');
@@ -6581,16 +7234,21 @@ async function renderHistory() {
   try {
     const history = await loadHistory();
     historyRecordCache = history;
-    count.textContent = `${history.length}件`;
-    if (!history.length) {
+    renderHistoryFilterCounts(history);
+    const filteredHistory = filterHistoryRecords(history);
+    count.textContent = `${filteredHistory.length}件`;
+    if (!history.length || !filteredHistory.length) {
       grid.innerHTML = '';
       empty.style.display = 'block';
+      empty.querySelector('.empty-text').innerHTML = history.length
+        ? '条件に合う履歴がありません<br>フィルタを変更してください'
+        : 'まだチェック結果がありません<br>写真をアップロードして最初のチェックをしてみましょう';
       historyNeedsRender = false;
       return;
     }
     empty.style.display = 'none';
-    const visibleItems = history.slice(0, historyRenderLimit);
-    const hasMore = history.length > visibleItems.length;
+    const visibleItems = filteredHistory.slice(0, historyRenderLimit);
+    const hasMore = filteredHistory.length > visibleItems.length;
     grid.innerHTML = `
       ${visibleItems.map(buildHistoryCard).join('')}
       ${hasMore ? `
@@ -6611,6 +7269,138 @@ function loadMoreHistoryItems() {
   historyRenderLimit += HISTORY_RENDER_PAGE_SIZE;
   historyNeedsRender = true;
   void renderHistory();
+}
+
+function populateReviewGenreSelect() {
+  const select = document.getElementById('review-correction-genre');
+  if (!select || select.options.length) return;
+  select.innerHTML = FEEDBACK_GENRE_OPTIONS
+    .filter(option => option.code !== 'other')
+    .map(option => `<option value="${option.code}">${escapeHtml(option.label)}</option>`)
+    .join('');
+}
+
+async function startReviewMode() {
+  const history = await loadHistory();
+  reviewList = history.filter(record => !isFeedbackProvided(record));
+  reviewIndex = 0;
+  if (!reviewList.length) {
+    showError('未フィードバックの履歴はありません');
+    return;
+  }
+  populateReviewGenreSelect();
+  const overlay = document.getElementById('review-overlay');
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+  renderReviewRecord();
+}
+
+function closeReviewMode() {
+  const overlay = document.getElementById('review-overlay');
+  overlay.classList.remove('active');
+  overlay.setAttribute('aria-hidden', 'true');
+  reviewList = [];
+  reviewIndex = 0;
+  historyNeedsRender = true;
+  void renderHistory();
+}
+
+function getCurrentReviewRecord() {
+  return reviewList[reviewIndex] || null;
+}
+
+function renderReviewRecord() {
+  const record = getCurrentReviewRecord();
+  const progress = reviewList.length ? `${reviewIndex + 1} / ${reviewList.length}` : '0 / 0';
+  const image = document.getElementById('review-image');
+  const aiGenre = document.getElementById('review-ai-genre');
+  const fileName = document.getElementById('review-file-name');
+  const progressBottom = document.getElementById('review-progress');
+  const progressTop = document.getElementById('review-progress-top');
+  const aiLabel = document.getElementById('review-ai-label');
+  const select = document.getElementById('review-correction-genre');
+
+  if (!record) {
+    closeReviewMode();
+    return;
+  }
+  const predicted = normalizeGenreCode(record.estimatedGenre || '');
+  image.src = record.imageSrc || record.historyThumbSrc || '';
+  aiGenre.textContent = `AI判定 ${getEstimatedGenreDisplayLabel(predicted)}`;
+  fileName.textContent = record.fileName || '-';
+  progressBottom.textContent = progress;
+  progressTop.textContent = progress;
+  aiLabel.textContent = getEstimatedGenreDisplayLabel(predicted);
+  if (select) {
+    const firstDifferent = FEEDBACK_GENRE_OPTIONS.find(option => option.code !== predicted && option.code !== 'other');
+    select.value = firstDifferent?.code || 'portrait';
+  }
+}
+
+function moveReviewPrevious() {
+  if (!reviewList.length) return;
+  reviewIndex = Math.max(0, reviewIndex - 1);
+  renderReviewRecord();
+}
+
+function moveReviewNext() {
+  if (!reviewList.length) return;
+  if (reviewIndex >= reviewList.length - 1) {
+    closeReviewMode();
+    return;
+  }
+  reviewIndex += 1;
+  renderReviewRecord();
+}
+
+async function hydrateReviewRecord(record) {
+  if (!record || record.imageSrc) return record;
+  const hydrated = await getRecordById(record.id);
+  if (!hydrated) return record;
+  reviewList = reviewList.map(item => item.id === hydrated.id ? hydrated : item);
+  historyRecordCache = historyRecordCache.map(item => item.id === hydrated.id ? hydrated : item);
+  return hydrated;
+}
+
+async function saveReviewFeedback(correctGenre) {
+  const current = getCurrentReviewRecord();
+  if (!current) return;
+  const record = await hydrateReviewRecord(current);
+  const predicted = normalizeGenreCode(record.estimatedGenre || '');
+  const normalizedCorrectGenre = correctGenre == null ? null : normalizeGenreCode(correctGenre);
+  const feedbackGenre = normalizedCorrectGenre || predicted;
+  const savedAt = new Date().toISOString();
+  const updatedRecord = {
+    ...record,
+    feedbackProvided: true,
+    feedbackCorrectGenre: normalizedCorrectGenre,
+    feedbackTimestamp: savedAt,
+    feedback: {
+      ...(record.feedback || {}),
+      fairness: 'valid',
+      genre: feedbackGenre,
+      feedbackCorrectGenre: normalizedCorrectGenre,
+      reviewMode: normalizedCorrectGenre == null ? 'confirmed' : 'corrected',
+      savedAt,
+      status: normalizedCorrectGenre == null ? 'ジャンル確認済み' : 'ジャンル修正済み',
+    },
+  };
+  await saveToHistory(updatedRecord);
+  historyRecordCache = historyRecordCache.map(item => item.id === updatedRecord.id ? updatedRecord : item);
+  reviewList.splice(reviewIndex, 1);
+  if (reviewIndex >= reviewList.length) reviewIndex = Math.max(0, reviewList.length - 1);
+  await refreshLocalHistoryStats();
+  renderHistoryFilterCounts(historyRecordCache);
+  if (!reviewList.length) {
+    closeReviewMode();
+    return;
+  }
+  renderReviewRecord();
+}
+
+function saveReviewCorrection() {
+  const select = document.getElementById('review-correction-genre');
+  saveReviewFeedback(select?.value || 'other');
 }
 
 async function deleteRecord(id, event) {
@@ -6945,6 +7735,27 @@ updateActionLinks();
 void loadPublicStats();
 void refreshMlStatus();
 void renderHistory();
+void refreshSettingsPage();
+
+const reviewOverlay = document.getElementById('review-overlay');
+if (reviewOverlay) {
+  reviewOverlay.addEventListener('touchstart', event => {
+    const touch = event.changedTouches[0];
+    reviewTouchStartX = touch.clientX;
+    reviewTouchStartY = touch.clientY;
+  }, { passive: true });
+  reviewOverlay.addEventListener('touchend', event => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - reviewTouchStartX;
+    const deltaY = touch.clientY - reviewTouchStartY;
+    if (Math.abs(deltaX) <= Math.abs(deltaY) || Math.abs(deltaX) < 50) return;
+    if (deltaX < 0) {
+      moveReviewNext();
+    } else {
+      moveReviewPrevious();
+    }
+  }, { passive: true });
+}
 
 if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
   navigator.serviceWorker.register('./service-worker.js').catch(error => {
@@ -6953,7 +7764,14 @@ if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
 }
 
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closeModalDirect();
+  if (event.key === 'Escape') {
+    closeModalDirect();
+    closeReviewMode();
+  }
+  if (document.getElementById('review-overlay')?.classList.contains('active')) {
+    if (event.key === 'ArrowLeft') moveReviewPrevious();
+    if (event.key === 'ArrowRight') moveReviewNext();
+  }
 });
 </script>
 
